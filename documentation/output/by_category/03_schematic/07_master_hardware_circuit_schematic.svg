@@ -682,19 +682,26 @@
 
   <!-- ==================== 5. 3.3V LOGIC POWER RAIL ==================== -->
   <g id="wires-3v3-logic">
-    <!-- ESP32 3V3 (470, 510) -> 3.3V distribution Highway at y=386 -->
+    <!-- Continuous 3.3V Logic Highway at y=386 from Left Margin (x=15) to Right Alley (x=975) -->
     <path class="wire-line" stroke="#ea580c" stroke-width="4" 
-          d="M 470 510 L 445 510 L 445 386 L 940 386 L 940 325"/> <!-- To INA219 #3 VCC -->
+          d="M 15 386 L 975 386"/>
+
+    <!-- ESP32 3V3 (470, 510) feeds into 3.3V Highway at (445, 386) -->
+    <path class="wire-line" stroke="#ea580c" stroke-width="4" 
+          d="M 470 510 L 445 510 L 445 386"/>
+    <circle cx="445" cy="386" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="2"/>
     
-    <!-- Tap to INA219 #1 VCC (420, 325) & INA219 #2 VCC (680, 325) -->
+    <!-- Tap down left into TB6612 VCC (75, 1025) via Left Margin (x=15) -->
+    <path class="wire-line" stroke="#ea580c" stroke-width="3.5" 
+          d="M 15 386 L 15 1025 L 75 1025"/>
+
+    <!-- Taps up to INA219 VCC pins: #1 (420, 325), #2 (680, 325), #3 (940, 325) -->
     <path class="wire-line" stroke="#ea580c" stroke-width="3.5" d="M 420 386 L 420 325"/>
     <circle cx="420" cy="386" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="2"/>
     <path class="wire-line" stroke="#ea580c" stroke-width="3.5" d="M 680 386 L 680 325"/>
     <circle cx="680" cy="386" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="2"/>
-
-    <!-- Tap left into TB6612 VCC (75, 1025) via Left Margin (x=15) -->
-    <path class="wire-line" stroke="#ea580c" stroke-width="3.5" 
-          d="M 445 386 L 15 386 L 15 1025 L 75 1025"/>
+    <path class="wire-line" stroke="#ea580c" stroke-width="3.5" d="M 940 386 L 940 325"/>
+    <circle cx="940" cy="386" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="2"/>
 
     <!-- Tap down Right Alley (x=975) to Dual DS18B20 VCC pins (705, 995 & 705, 1215) -->
     <path class="wire-line" stroke="#ea580c" stroke-width="3.5" 
@@ -708,45 +715,62 @@
 
   <!-- ==================== 6. I2C BUS WIRING (SCL & SDA) ==================== -->
   <g id="wires-i2c">
-    <!-- I2C SCL (Cyan) at y=350: ESP32 D22 (930, 595) -> SCL Bus Highway -->
+    <!-- Continuous I2C SCL Highway (Cyan) at y=350 from INA219 #1 SCL (x=515) to LCD SCL drop (x=1600) -->
     <path class="wire-line" stroke="#0284c7" stroke-width="3.5" 
-          d="M 930 595 L 940 595 L 940 350 L 515 350 L 515 325"/> <!-- To INA219 #1 SCL -->
-    <!-- Taps to INA219 #2 SCL (775, 325) & INA219 #3 SCL (1035, 325) -->
+          d="M 515 350 L 1600 350 L 1600 993"/>
+
+    <!-- ESP32 D22 (SCL at 930, 595) connects to SCL Highway at (940, 350) -->
+    <path class="wire-line" stroke="#0284c7" stroke-width="3.5" 
+          d="M 930 595 L 940 595 L 940 350"/>
+    <circle cx="940" cy="350" r="4.5" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/>
+
+    <!-- Taps up to INA219 SCL pins: #1 (515, 325), #2 (775, 325), #3 (1035, 325) -->
+    <path class="wire-line" stroke="#0284c7" stroke-width="3.5" d="M 515 350 L 515 325"/>
+    <circle cx="515" cy="350" r="4.5" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/>
     <path class="wire-line" stroke="#0284c7" stroke-width="3.5" d="M 775 350 L 775 325"/>
     <circle cx="775" cy="350" r="4.5" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/>
     <path class="wire-line" stroke="#0284c7" stroke-width="3.5" d="M 1035 350 L 1035 325"/>
     <circle cx="1035" cy="350" r="4.5" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/>
-    <!-- Tap to LCD SCL (1600, 993) -->
-    <path class="wire-line" stroke="#0284c7" stroke-width="3.5" 
-          d="M 1035 350 L 1600 350 L 1600 993"/>
 
-    <!-- I2C SDA (Blue) at y=368: ESP32 D21 (930, 680) -> SDA Bus Highway -->
+    <!-- Continuous I2C SDA Highway (Blue) at y=368 from INA219 #1 SDA (x=565) to LCD SDA drop (x=1550) -->
     <path class="wire-line" stroke="#2563eb" stroke-width="3.5" 
-          d="M 930 680 L 955 680 L 955 368 L 565 368 L 565 325"/> <!-- To INA219 #1 SDA -->
-    <!-- Taps to INA219 #2 SDA (825, 325) & INA219 #3 SDA (1085, 325) -->
+          d="M 565 368 L 1550 368 L 1550 993"/>
+
+    <!-- ESP32 D21 (SDA at 930, 680) connects to SDA Highway at (955, 368) -->
+    <path class="wire-line" stroke="#2563eb" stroke-width="3.5" 
+          d="M 930 680 L 955 680 L 955 368"/>
+    <circle cx="955" cy="368" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+
+    <!-- Taps up to INA219 SDA pins: #1 (565, 325), #2 (825, 325), #3 (1085, 325) -->
+    <path class="wire-line" stroke="#2563eb" stroke-width="3.5" d="M 565 368 L 565 325"/>
+    <circle cx="565" cy="368" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
     <path class="wire-line" stroke="#2563eb" stroke-width="3.5" d="M 825 368 L 825 325"/>
     <circle cx="825" cy="368" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
     <path class="wire-line" stroke="#2563eb" stroke-width="3.5" d="M 1085 368 L 1085 325"/>
     <circle cx="1085" cy="368" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
-    <!-- Tap to LCD SDA (1550, 993) -->
-    <path class="wire-line" stroke="#2563eb" stroke-width="3.5" 
-          d="M 1085 368 L 1550 368 L 1550 993"/>
   </g>
 
 
   <!-- ==================== 7. COMMON GROUND NETWORK (GND) ==================== -->
   <g id="wires-gnd">
-    <!-- Heavy System Ground Highway at y=422 -->
+    <!-- Continuous System Ground Highway at y=422 from Left Margin (x=55) to External Load Return (x=1630) -->
     <path class="wire-line" stroke="#0f172a" stroke-width="4.5" 
-          d="M 300 283 L 335 283 L 335 422 L 985 422 L 985 325"/> <!-- To INA219 #3 GND -->
+          d="M 55 422 L 1630 422"/>
 
-    <!-- Drops into INA219 #1 GND (465, 325) & INA219 #2 GND (725, 325) -->
+    <!-- ATX Breakout GND post (300, 283) feeds into Ground Highway at (335, 422) -->
+    <path class="wire-line" stroke="#0f172a" stroke-width="4.5" 
+          d="M 300 283 L 335 283 L 335 422"/>
+    <circle cx="335" cy="422" r="5.5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
+
+    <!-- Drops up into INA219 GND pins: #1 (465, 325), #2 (725, 325), #3 (985, 325) -->
     <path class="wire-line" stroke="#0f172a" stroke-width="4" d="M 465 422 L 465 325"/>
     <circle cx="465" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
     <path class="wire-line" stroke="#0f172a" stroke-width="4" d="M 725 422 L 725 325"/>
     <circle cx="725" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
+    <path class="wire-line" stroke="#0f172a" stroke-width="4" d="M 985 422 L 985 325"/>
+    <circle cx="985" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
 
-    <!-- ESP32 GND (930, 510) connects to GND line -->
+    <!-- ESP32 GND (930, 510) connects to Ground Highway at (970, 422) -->
     <path class="wire-line" stroke="#0f172a" stroke-width="4" 
           d="M 930 510 L 970 510 L 970 422"/>
     <circle cx="970" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
@@ -759,13 +783,12 @@
           d="M 780 1085 L 780 1305 L 705 1305"/>
     <circle cx="780" cy="1085" r="4.5" fill="#0f172a" stroke="#ffffff" stroke-width="1.5"/>
 
-    <!-- TB6612 GND (75, 1060) connects to Ground line via Left Margin (x=35) -->
+    <!-- TB6612 GND (75, 1060) connects to Ground line via Left Margin (x=55) -->
     <path class="wire-line" stroke="#0f172a" stroke-width="3.5" 
-          d="M 75 1060 L 55 1060 L 55 422 L 335 422"/>
+          d="M 75 1060 L 55 1060 L 55 422"/>
+    <circle cx="55" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
 
-    <!-- Ground continuation to LCD GND (1450, 993) & External Load Common GND (1630, 422) -->
-    <path class="wire-line" stroke="#0f172a" stroke-width="4.5" 
-          d="M 985 422 L 1630 422"/>
+    <!-- Drop down to LCD GND (1450, 993) from Ground Highway at (1450, 422) -->
     <path class="wire-line" stroke="#0f172a" stroke-width="4" 
           d="M 1450 422 L 1450 993"/>
     <circle cx="1450" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
