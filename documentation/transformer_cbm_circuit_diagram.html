@@ -135,7 +135,7 @@
       letter-spacing: -0.5px;
     }
     .comp-title {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 800;
       fill: #0f172a;
       letter-spacing: 0.5px;
@@ -166,23 +166,22 @@
   <rect width="2000" height="1440" fill="url(#cirkit-grid)"/>
 
   <!-- ===================================================================== -->
-  <!-- CLEAN PROJECT HEADER BAR (y = 0 to 60) - NO SUBTITLE, NO WATERMARK   -->
+  <!-- PROJECT HEADER BAR (y = 30) - CLEAN & SEPARATED FROM ROOF WIRES      -->
   <!-- ===================================================================== -->
-  <g transform="translate(50, 48)">
+  <g transform="translate(50, 32)">
     <text class="sheet-title" x="0" y="0">IoT Transformer Condition Monitoring System</text>
   </g>
 
 
   <!-- ===================================================================== -->
   <!-- ==================== TIER 1: CONTINUOUS POWER ROW =================== -->
-  <!-- Roof Wires: y = 65 (+3.3V) & y = 80 (+5V)                            -->
-  <!-- Component Titles: y = 108 (Spacious, Zero Collisions!)                -->
-  <!-- Component Bodies: y = 130 to 340                                     -->
+  <!-- Roof Wires: y = 50 (+3.3V), y = 68 (+5V), y = 86 (+12V)               -->
+  <!-- Component Bodies: y = 135 to 345                                     -->
   <!-- ===================================================================== -->
 
   <!-- 1. ATX BREAKOUT BOARD (XH-M229) -->
-  <text class="comp-title" x="195" y="108" text-anchor="middle">ATX BREAKOUT (XH-M229)</text>
-  <g id="atx-board" transform="translate(50, 130)" filter="url(#pcb-shadow)">
+  <text class="comp-title" x="195" y="115" text-anchor="middle">ATX BREAKOUT (XH-M229)</text>
+  <g id="atx-board" transform="translate(50, 135)" filter="url(#pcb-shadow)">
     <!-- Blue PCB -->
     <rect width="285" height="210" rx="8" fill="#0d47a1" stroke="#1565c0" stroke-width="2"/>
     <circle cx="14" cy="14" r="5" fill="#0d47a1" stroke="#eab308" stroke-width="2"/>
@@ -219,48 +218,47 @@
       <rect y="120" width="45" height="15" rx="2" fill="#0f172a"/><rect x="8" y="122" width="29" height="11" fill="url(#fuse-glass)"/>
     </g>
 
-    <!-- 4 Heavy Binding Posts on Right Edge (cx = 250) with 22px Bold Labels! -->
-    <!-- +12V (cy = 28 -> Global: 300, 158) -->
+    <!-- 4 Heavy Binding Posts on Right Edge (cx = 250) -->
+    <!-- +12V (cy = 28 -> Global: 300, 163) -->
     <circle cx="250" cy="28" r="14" fill="#d97706" stroke="#fef08a" stroke-width="3"/>
     <circle cx="250" cy="28" r="5" fill="#78350f"/>
     <text class="pin-label-lg" x="226" y="35" fill="#fef08a" text-anchor="end">+12V</text>
 
-    <!-- +5V (cy = 68 -> Global: 300, 198) -->
+    <!-- +5V (cy = 68 -> Global: 300, 203) -->
     <circle cx="250" cy="68" r="14" fill="#dc2626" stroke="#fca5a5" stroke-width="3"/>
     <circle cx="250" cy="68" r="5" fill="#7f1d1d"/>
     <text class="pin-label-lg" x="226" y="75" fill="#fca5a5" text-anchor="end">+5V</text>
 
-    <!-- +3.3V (cy = 108 -> Global: 300, 238) -->
+    <!-- +3.3V (cy = 108 -> Global: 300, 243) -->
     <circle cx="250" cy="108" r="14" fill="#ea580c" stroke="#fed7aa" stroke-width="3"/>
     <circle cx="250" cy="108" r="5" fill="#7c2d12"/>
     <text class="pin-label-lg" x="226" y="115" fill="#fed7aa" text-anchor="end">+3.3V</text>
 
-    <!-- GND (cy = 148 -> Global: 300, 278) -->
+    <!-- GND (cy = 148 -> Global: 300, 283) -->
     <circle cx="250" cy="148" r="14" fill="#0f172a" stroke="#f8fafc" stroke-width="3"/>
     <circle cx="250" cy="148" r="5" fill="#334155"/>
     <text class="pin-label-lg" x="226" y="155" fill="#f8fafc" text-anchor="end">GND</text>
 
-    <!-- Standby & Control Terminals at Bottom with Zero Collision -->
-    <!-- +5VSB (Purple): terminal at cx = 85, cy = 195 -> Global: (135, 325) -->
+    <!-- Standby & Control Terminals at Bottom -->
+    <!-- +5VSB (Purple): terminal at cx = 85, cy = 195 -> Global: (135, 330) -->
     <text x="85" y="180" fill="#e9d5ff" font-size="16" font-weight="800" text-anchor="middle">+5VSB</text>
     <circle cx="85" cy="195" r="9" fill="#9333ea" stroke="#f3e8ff" stroke-width="2.5"/>
 
-    <!-- PS_ON# (Green): terminal at cx = 160, cy = 195 -> Global: (210, 325) -->
+    <!-- PS_ON# (Green): terminal at cx = 160, cy = 195 -> Global: (210, 330) -->
     <text x="160" y="180" fill="#a7f3d0" font-size="16" font-weight="800" text-anchor="middle">PS_ON#</text>
     <circle cx="160" cy="195" r="9" fill="#10b981" stroke="#d1fae5" stroke-width="2.5"/>
   </g>
 
 
   <!-- 2. INA219 #1 (12V RAIL CURRENT MONITOR - ADDR 0x40) -->
-  <text class="comp-title" x="495" y="108" text-anchor="middle">INA219 (12V RAIL)</text>
-  <g id="ina219-12v" transform="translate(390, 130)" filter="url(#pcb-shadow)">
+  <g id="ina219-12v" transform="translate(390, 135)" filter="url(#pcb-shadow)">
     <rect width="210" height="210" rx="8" fill="#581c87" stroke="#7e22ce" stroke-width="2"/>
     <circle cx="12" cy="12" r="4.5" fill="#581c87" stroke="#eab308" stroke-width="1.5"/>
     <circle cx="198" cy="12" r="4.5" fill="#581c87" stroke="#eab308" stroke-width="1.5"/>
     <circle cx="12" cy="198" r="4.5" fill="#581c87" stroke="#eab308" stroke-width="1.5"/>
     <circle cx="198" cy="198" r="4.5" fill="#581c87" stroke="#eab308" stroke-width="1.5"/>
 
-    <!-- Screw Terminal Block for VIN+ / VIN- with 20px Bold Labels -->
+    <!-- Screw Terminal Block for VIN+ / VIN- -->
     <g transform="translate(20, 20)">
       <rect width="90" height="52" rx="3" fill="#15803d" stroke="#166534" stroke-width="1.5"/>
       <circle cx="24" cy="25" r="13" fill="#14532d"/>
@@ -277,56 +275,31 @@
       <text class="pin-label-lg" x="34" y="24" fill="#38bdf8" text-anchor="middle">R100</text>
     </g>
 
-    <!-- Address Badge -->
-    <rect x="75" y="90" width="60" height="28" rx="3" fill="#3b0764" stroke="#a855f7"/>
-    <text class="pin-label" x="105" y="110" fill="#d8b4fe" font-size="16" text-anchor="middle">0x40</text>
+    <!-- Center Silkscreen -->
+    <text x="105" y="98" fill="#f8fafc" font-size="19" font-weight="900" text-anchor="middle">INA219</text>
+    <text x="105" y="119" fill="#fef08a" font-size="15" font-weight="800" text-anchor="middle">+12V SHUNT</text>
 
-    <!-- 4-Pin Logic Header at Bottom with 20px BOLD TEXT! -->
-    <g transform="translate(0, 185)">
+    <!-- Address Badge (Zero Collision: safely above pin labels!) -->
+    <rect x="65" y="128" width="80" height="22" rx="3" fill="#3b0764" stroke="#a855f7"/>
+    <text class="pin-label" x="105" y="144" fill="#fef08a" font-size="13" font-weight="700" text-anchor="middle">ADDR: 0x40</text>
+
+    <!-- 4-Pin Logic Header at Bottom (Global y = 325) -->
+    <g transform="translate(0, 190)">
       <rect x="15" y="-12" width="180" height="24" rx="2" fill="#0f172a" stroke="#334155"/>
       <circle cx="30" cy="0" r="8" fill="#ea580c" stroke="#fed7aa" stroke-width="2.5"/>
-      <text class="pin-label" x="30" y="-18" fill="#fed7aa" text-anchor="middle">VCC</text>
+      <text class="pin-label" x="30" y="-15" fill="#fed7aa" text-anchor="middle">VCC</text>
       <circle cx="75" cy="0" r="8" fill="#0f172a" stroke="#f8fafc" stroke-width="2.5"/>
-      <text class="pin-label" x="75" y="-18" fill="#f8fafc" text-anchor="middle">GND</text>
+      <text class="pin-label" x="75" y="-15" fill="#f8fafc" text-anchor="middle">GND</text>
       <circle cx="125" cy="0" r="8" fill="#0284c7" stroke="#bae6fd" stroke-width="2.5"/>
-      <text class="pin-label" x="125" y="-18" fill="#bae6fd" text-anchor="middle">SCL</text>
+      <text class="pin-label" x="125" y="-15" fill="#bae6fd" text-anchor="middle">SCL</text>
       <circle cx="175" cy="0" r="8" fill="#2563eb" stroke="#bfdbfe" stroke-width="2.5"/>
-      <text class="pin-label" x="175" y="-18" fill="#bfdbfe" text-anchor="middle">SDA</text>
+      <text class="pin-label" x="175" y="-15" fill="#bfdbfe" text-anchor="middle">SDA</text>
     </g>
   </g>
 
 
-  <!-- 3. 12V LOAD RESISTOR (Clean, Normal & Simple Industrial Power Resistor) -->
-  <text class="comp-title" x="775" y="108" text-anchor="middle">12V DUMMY LOAD</text>
-  <g id="load-resistor" transform="translate(645, 130)" filter="url(#pcb-shadow)">
-    <!-- Industrial Slate Enclosure -->
-    <rect width="260" height="210" rx="8" fill="#334155" stroke="#475569" stroke-width="2"/>
-
-    <!-- Resistor Body: Clean High-Power Ceramic Core -->
-    <rect x="30" y="25" width="200" height="85" rx="4" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
-    <text class="comp-title" x="130" y="60" fill="#f8fafc" text-anchor="middle">10 Ω, 50 W</text>
-    <text class="pin-label" x="130" y="90" fill="#94a3b8" text-anchor="middle">12.0V DC • 1.20A</text>
-
-    <!-- Heavy Screw Terminals with 20px BOLD TEXT & Connected Ground! -->
-    <!-- IN (+) on Left -> Global: (690, 280) -->
-    <g transform="translate(45, 150)">
-      <text class="pin-label-lg" x="0" y="-15" fill="#fef08a" text-anchor="middle">IN (+)</text>
-      <circle cx="0" cy="0" r="14" fill="#d97706" stroke="#fef08a" stroke-width="3"/>
-      <circle cx="0" cy="0" r="5" fill="#78350f"/>
-    </g>
-
-    <!-- GND (-) on Right -> Global: (860, 280) -->
-    <g transform="translate(215, 150)">
-      <text class="pin-label-lg" x="0" y="-15" fill="#f8fafc" text-anchor="middle">GND (-)</text>
-      <circle cx="0" cy="0" r="14" fill="#0f172a" stroke="#f8fafc" stroke-width="3"/>
-      <circle cx="0" cy="0" r="5" fill="#334155"/>
-    </g>
-  </g>
-
-
-  <!-- 4. INA219 #2 (5V RAIL CURRENT MONITOR - ADDR 0x41) -->
-  <text class="comp-title" x="1055" y="108" text-anchor="middle">INA219 (5V RAIL)</text>
-  <g id="ina219-5v" transform="translate(950, 130)" filter="url(#pcb-shadow)">
+  <!-- 3. INA219 #2 (5V RAIL CURRENT MONITOR - ADDR 0x41) - IN LINE! -->
+  <g id="ina219-5v" transform="translate(650, 135)" filter="url(#pcb-shadow)">
     <rect width="210" height="210" rx="8" fill="#581c87" stroke="#7e22ce" stroke-width="2"/>
     <circle cx="12" cy="12" r="4.5" fill="#581c87" stroke="#eab308" stroke-width="1.5"/>
     <circle cx="198" cy="12" r="4.5" fill="#581c87" stroke="#eab308" stroke-width="1.5"/>
@@ -350,28 +323,31 @@
       <text class="pin-label-lg" x="34" y="24" fill="#38bdf8" text-anchor="middle">R100</text>
     </g>
 
-    <!-- Address Badge -->
-    <rect x="75" y="90" width="60" height="28" rx="3" fill="#3b0764" stroke="#a855f7"/>
-    <text class="pin-label" x="105" y="110" fill="#fef08a" font-size="16" text-anchor="middle">0x41 [A0]</text>
+    <!-- Center Silkscreen -->
+    <text x="105" y="98" fill="#f8fafc" font-size="19" font-weight="900" text-anchor="middle">INA219</text>
+    <text x="105" y="119" fill="#fca5a5" font-size="15" font-weight="800" text-anchor="middle">+5V SHUNT</text>
 
-    <!-- 4-Pin Logic Header with 20px BOLD TEXT! -->
-    <g transform="translate(0, 185)">
+    <!-- Address Badge -->
+    <rect x="55" y="128" width="100" height="22" rx="3" fill="#3b0764" stroke="#a855f7"/>
+    <text class="pin-label" x="105" y="144" fill="#fef08a" font-size="13" font-weight="700" text-anchor="middle">ADDR: 0x41 [A0]</text>
+
+    <!-- 4-Pin Logic Header at Bottom (Global y = 325) -->
+    <g transform="translate(0, 190)">
       <rect x="15" y="-12" width="180" height="24" rx="2" fill="#0f172a" stroke="#334155"/>
       <circle cx="30" cy="0" r="8" fill="#ea580c" stroke="#fed7aa" stroke-width="2.5"/>
-      <text class="pin-label" x="30" y="-18" fill="#fed7aa" text-anchor="middle">VCC</text>
+      <text class="pin-label" x="30" y="-15" fill="#fed7aa" text-anchor="middle">VCC</text>
       <circle cx="75" cy="0" r="8" fill="#0f172a" stroke="#f8fafc" stroke-width="2.5"/>
-      <text class="pin-label" x="75" y="-18" fill="#f8fafc" text-anchor="middle">GND</text>
+      <text class="pin-label" x="75" y="-15" fill="#f8fafc" text-anchor="middle">GND</text>
       <circle cx="125" cy="0" r="8" fill="#0284c7" stroke="#bae6fd" stroke-width="2.5"/>
-      <text class="pin-label" x="125" y="-18" fill="#bae6fd" text-anchor="middle">SCL</text>
+      <text class="pin-label" x="125" y="-15" fill="#bae6fd" text-anchor="middle">SCL</text>
       <circle cx="175" cy="0" r="8" fill="#2563eb" stroke="#bfdbfe" stroke-width="2.5"/>
-      <text class="pin-label" x="175" y="-18" fill="#bfdbfe" text-anchor="middle">SDA</text>
+      <text class="pin-label" x="175" y="-15" fill="#bfdbfe" text-anchor="middle">SDA</text>
     </g>
   </g>
 
 
-  <!-- 5. INA219 #3 (3.3V RAIL CURRENT MONITOR - ADDR 0x44) -->
-  <text class="comp-title" x="1310" y="108" text-anchor="middle">INA219 (3.3V RAIL)</text>
-  <g id="ina219-3v3" transform="translate(1205, 130)" filter="url(#pcb-shadow)">
+  <!-- 4. INA219 #3 (3.3V RAIL CURRENT MONITOR - ADDR 0x44) - IN LINE! -->
+  <g id="ina219-3v3" transform="translate(910, 135)" filter="url(#pcb-shadow)">
     <rect width="210" height="210" rx="8" fill="#581c87" stroke="#7e22ce" stroke-width="2"/>
     <circle cx="12" cy="12" r="4.5" fill="#581c87" stroke="#eab308" stroke-width="1.5"/>
     <circle cx="198" cy="12" r="4.5" fill="#581c87" stroke="#eab308" stroke-width="1.5"/>
@@ -395,154 +371,182 @@
       <text class="pin-label-lg" x="34" y="24" fill="#38bdf8" text-anchor="middle">R100</text>
     </g>
 
-    <!-- Address Badge -->
-    <rect x="75" y="90" width="60" height="28" rx="3" fill="#3b0764" stroke="#a855f7"/>
-    <text class="pin-label" x="105" y="110" fill="#fef08a" font-size="16" text-anchor="middle">0x44 [A1]</text>
+    <!-- Center Silkscreen -->
+    <text x="105" y="98" fill="#f8fafc" font-size="19" font-weight="900" text-anchor="middle">INA219</text>
+    <text x="105" y="119" fill="#fed7aa" font-size="15" font-weight="800" text-anchor="middle">+3.3V SHUNT</text>
 
-    <!-- 4-Pin Logic Header with 20px BOLD TEXT! -->
-    <g transform="translate(0, 185)">
+    <!-- Address Badge -->
+    <rect x="55" y="128" width="100" height="22" rx="3" fill="#3b0764" stroke="#a855f7"/>
+    <text class="pin-label" x="105" y="144" fill="#fef08a" font-size="13" font-weight="700" text-anchor="middle">ADDR: 0x44 [A1]</text>
+
+    <!-- 4-Pin Logic Header at Bottom (Global y = 325) -->
+    <g transform="translate(0, 190)">
       <rect x="15" y="-12" width="180" height="24" rx="2" fill="#0f172a" stroke="#334155"/>
       <circle cx="30" cy="0" r="8" fill="#ea580c" stroke="#fed7aa" stroke-width="2.5"/>
-      <text class="pin-label" x="30" y="-18" fill="#fed7aa" text-anchor="middle">VCC</text>
+      <text class="pin-label" x="30" y="-15" fill="#fed7aa" text-anchor="middle">VCC</text>
       <circle cx="75" cy="0" r="8" fill="#0f172a" stroke="#f8fafc" stroke-width="2.5"/>
-      <text class="pin-label" x="75" y="-18" fill="#f8fafc" text-anchor="middle">GND</text>
+      <text class="pin-label" x="75" y="-15" fill="#f8fafc" text-anchor="middle">GND</text>
       <circle cx="125" cy="0" r="8" fill="#0284c7" stroke="#bae6fd" stroke-width="2.5"/>
-      <text class="pin-label" x="125" y="-18" fill="#bae6fd" text-anchor="middle">SCL</text>
+      <text class="pin-label" x="125" y="-15" fill="#bae6fd" text-anchor="middle">SCL</text>
       <circle cx="175" cy="0" r="8" fill="#2563eb" stroke="#bfdbfe" stroke-width="2.5"/>
-      <text class="pin-label" x="175" y="-18" fill="#bfdbfe" text-anchor="middle">SDA</text>
+      <text class="pin-label" x="175" y="-15" fill="#bfdbfe" text-anchor="middle">SDA</text>
     </g>
+  </g>
+
+
+  <!-- 5. MULTI-RAIL EXTERNAL SYSTEM LOADS (CLEAN BENCHTOP PANEL, ZERO WIRE OVERLAPS) -->
+  <g id="external-loads" transform="translate(1180, 135)" filter="url(#pcb-shadow)">
+    <!-- Industrial Slate Enclosure -->
+    <rect width="480" height="210" rx="8" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+    <circle cx="14" cy="14" r="5" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5"/>
+    <circle cx="466" cy="14" r="5" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5"/>
+    <circle cx="14" cy="196" r="5" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5"/>
+    <circle cx="466" cy="196" r="5" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5"/>
+
+    <!-- 4 Heavy Binding Posts: 3 Positive Monitored Rail Inputs + 1 Common Return Ground -->
+    <!-- Incoming wires enter the top of posts (y = 46) directly from above with ZERO text collisions! -->
+    
+    <!-- 1. +12V LOAD IN (cx = 65, cy = 46 -> Global: 1245, 181) -->
+    <g transform="translate(65, 46)">
+      <circle cx="0" cy="0" r="14" fill="#d97706" stroke="#fef08a" stroke-width="3"/>
+      <circle cx="0" cy="0" r="5" fill="#78350f"/>
+      <text class="pin-label-lg" x="0" y="26" fill="#fef08a" text-anchor="middle">+12V</text>
+      <text x="0" y="44" fill="#fef08a" font-size="11" font-weight="700" text-anchor="middle">VIN (+12V)</text>
+      <text x="0" y="60" fill="#cbd5e1" font-size="12" font-weight="700" text-anchor="middle">10Ω (50W)</text>
+    </g>
+
+    <!-- 2. +5V LOAD IN (cx = 175, cy = 46 -> Global: 1355, 181) -->
+    <g transform="translate(175, 46)">
+      <circle cx="0" cy="0" r="14" fill="#dc2626" stroke="#fca5a5" stroke-width="3"/>
+      <circle cx="0" cy="0" r="5" fill="#7f1d1d"/>
+      <text class="pin-label-lg" x="0" y="26" fill="#fca5a5" text-anchor="middle">+5V</text>
+      <text x="0" y="44" fill="#fca5a5" font-size="11" font-weight="700" text-anchor="middle">VIN (+5V)</text>
+      <text x="0" y="60" fill="#cbd5e1" font-size="12" font-weight="700" text-anchor="middle">5V AUX</text>
+    </g>
+
+    <!-- 3. +3.3V LOAD IN (cx = 285, cy = 46 -> Global: 1465, 181) -->
+    <g transform="translate(285, 46)">
+      <circle cx="0" cy="0" r="14" fill="#ea580c" stroke="#fed7aa" stroke-width="3"/>
+      <circle cx="0" cy="0" r="5" fill="#7c2d12"/>
+      <text class="pin-label-lg" x="0" y="26" fill="#fed7aa" text-anchor="middle">+3.3V</text>
+      <text x="0" y="44" fill="#fed7aa" font-size="11" font-weight="700" text-anchor="middle">VIN (+3.3V)</text>
+      <text x="0" y="60" fill="#cbd5e1" font-size="12" font-weight="700" text-anchor="middle">3.3V AUX</text>
+    </g>
+
+    <!-- 4. COMMON GND (cx = 395, cy = 46 -> Global: 1575, 181) -->
+    <g transform="translate(395, 46)">
+      <circle cx="0" cy="0" r="14" fill="#334155" stroke="#94a3b8" stroke-width="3"/>
+      <circle cx="0" cy="0" r="5" fill="#1e293b"/>
+      <text class="pin-label-lg" x="0" y="26" fill="#f8fafc" text-anchor="middle">GND</text>
+      <text x="0" y="44" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle">COMMON</text>
+      <text x="0" y="60" fill="#cbd5e1" font-size="12" font-weight="700" text-anchor="middle">RETURN</text>
+    </g>
+
+    <!-- Lower Panel Silkscreen (Completely clear of wires!) -->
+    <line x1="25" y1="125" x2="455" y2="125" stroke="#334155" stroke-width="1.5" stroke-dasharray="4,4"/>
+    <text x="240" y="156" fill="#f8fafc" font-size="19" font-weight="800" letter-spacing="0.5" text-anchor="middle">MULTI-RAIL EXTERNAL SYSTEM LOADS</text>
+    <text x="240" y="180" fill="#94a3b8" font-size="13" font-weight="600" text-anchor="middle">Independent Monitored Positive Rails with Common Ground</text>
   </g>
 
 
   <!-- ===================================================================== -->
   <!-- ==================== TIER 2: MIDDLE ROW ============================= -->
-  <!-- Discrete PS_ON# Circuit (NO PCB BOX!) | ESP32-WROOM-32 DevKit         -->
+  <!-- Discrete PS_ON# Circuit | ESP32-WROOM-32 DevKit                       -->
   <!-- ===================================================================== -->
 
-  <!-- 6. PURE DISCRETE PS_ON# TRANSISTOR SWITCH (NO FAKE PCB BOX!) -->
-  <!-- Title cleanly placed at x=120 in the open quadrant, zero wire collisions -->
+  <!-- 6. PURE DISCRETE PS_ON# TRANSISTOR SWITCH -->
   <g transform="translate(120, 560)">
     <text class="comp-title" x="0" y="0" text-anchor="middle">PS_ON#</text>
     <text class="comp-title" x="0" y="28" text-anchor="middle">SWITCH</text>
   </g>
   <g id="bc547-schematic" transform="translate(50, 470)">
-    <!-- Standard Clean Schematic Symbol for Q1 (BC547 NPN Transistor at cx=160, cy=150 -> Global 210, 620) -->
     <g transform="translate(160, 150)">
       <!-- Transistor Circle -->
       <circle cx="0" cy="0" r="32" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
-      <!-- Base Bar -->
       <line x1="-15" y1="-20" x2="-15" y2="20" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
-      <!-- Base Lead -->
       <line x1="-15" y1="0" x2="35" y2="0" stroke="#0f172a" stroke-width="3"/>
-      <!-- Collector Lead (Enters from Top at x=0 -> Global 210, 575) -->
       <line x1="-15" y1="-10" x2="0" y2="-24" stroke="#0f172a" stroke-width="3"/>
       <line x1="0" y1="-24" x2="0" y2="-45" stroke="#0f172a" stroke-width="3.5"/>
-      <!-- Emitter Lead (Exits to Bottom at x=0 with Arrow -> Global 210, 665) -->
       <line x1="-15" y1="10" x2="0" y2="24" stroke="#0f172a" stroke-width="3"/>
       <line x1="0" y1="24" x2="0" y2="45" stroke="#0f172a" stroke-width="3.5"/>
       <polygon points="-6,15 1,25 -9,23" fill="#0f172a"/>
-      <!-- Label placed on left -->
       <text class="pin-label-lg" x="-38" y="6" fill="#0f172a" text-anchor="end">BC547</text>
       <text class="pin-label" x="-38" y="28" fill="#64748b" font-size="16" text-anchor="end">Q1 (NPN)</text>
     </g>
 
-    <!-- Horizontal 1 kΩ Base Resistor R1 (from cx=195 to 295 -> Global 245 to 345) -->
+    <!-- Horizontal 1 kΩ Base Resistor R1 -->
     <g transform="translate(195, 150)">
       <line x1="0" y1="0" x2="20" y2="0" stroke="#0f172a" stroke-width="3"/>
-      <!-- Resistor Body -->
       <rect x="20" y="-16" width="55" height="32" rx="4" fill="#d97706" stroke="#78350f" stroke-width="2"/>
       <text class="pin-label" x="47" y="7" fill="#fef08a" text-anchor="middle">1 kΩ</text>
       <text class="pin-label" x="47" y="-22" fill="#065f46" font-size="16" text-anchor="middle">R1 (BASE)</text>
       <line x1="75" y1="0" x2="100" y2="0" stroke="#10b981" stroke-width="3.5"/>
     </g>
 
-    <!-- Vertical 10 kΩ Pull-Down Resistor R2 (Base junction cx=205 to Ground) -->
+    <!-- Vertical 10 kΩ Pull-Down Resistor R2 -->
     <g transform="translate(205, 150)">
-      <!-- Line from Base junction down -->
       <line x1="0" y1="0" x2="0" y2="35" stroke="#0f172a" stroke-width="2.5"/>
       <rect x="-16" y="35" width="32" height="55" rx="4" fill="#d97706" stroke="#78350f" stroke-width="2"/>
       <text class="pin-label" x="0" y="68" fill="#fef08a" text-anchor="middle" transform="rotate(-90 0 68)">10 kΩ</text>
       <text class="pin-label" x="24" y="68" fill="#64748b" font-size="15">R2 (PULL-DOWN)</text>
       <line x1="0" y1="90" x2="0" y2="120" stroke="#0f172a" stroke-width="2.5"/>
-      <!-- Join into emitter ground line at cx=160, cy=270 (Global 210, 740) -->
       <line x1="0" y1="120" x2="-45" y2="120" stroke="#0f172a" stroke-width="2.5"/>
       <circle cx="-45" cy="120" r="4.5" fill="#0f172a"/>
     </g>
 
-    <!-- Emitter Wire Downwards to Ground Junction (Global 210, 740) -->
+    <!-- Emitter Wire Downwards to Ground Junction -->
     <line x1="160" y1="195" x2="160" y2="270" stroke="#0f172a" stroke-width="4"/>
     <text class="pin-label" x="65" y="260" fill="#0f172a" text-anchor="middle">TO GND</text>
   </g>
 
 
-  <!-- 7. ESP32-WROOM-32 DEVKIT (NORMAL, SIMPLE & MAXIMUM LEGIBILITY!) -->
+  <!-- 7. ESP32-WROOM-32 DEVKIT -->
   <text class="comp-title-lg" x="700" y="450" text-anchor="middle">ESP32-WROOM-32 DEVKIT</text>
   <g id="esp32-devkit" transform="translate(440, 470)" filter="url(#pcb-shadow)">
-    <!-- Clean, Sleek Black PCB -->
     <rect width="520" height="415" rx="10" fill="#18181b" stroke="#27272a" stroke-width="2.5"/>
     <circle cx="18" cy="18" r="5" fill="#18181b" stroke="#eab308" stroke-width="2"/>
     <circle cx="502" cy="18" r="5" fill="#18181b" stroke="#eab308" stroke-width="2"/>
     <circle cx="18" cy="397" r="5" fill="#18181b" stroke="#eab308" stroke-width="2"/>
     <circle cx="502" cy="397" r="5" fill="#18181b" stroke="#eab308" stroke-width="2"/>
 
-    <!-- Simple, Clean Center Silkscreen (Bright High Contrast White & Gray) -->
+    <!-- Center Silkscreen -->
     <g transform="translate(260, 205)">
       <text x="0" y="-10" fill="#f8fafc" font-size="24" font-weight="800" text-anchor="middle">ESP32 DEVKIT V1</text>
       <text x="0" y="24" fill="#94a3b8" font-size="20" font-weight="700" text-anchor="middle">ESP-WROOM-32</text>
     </g>
 
-    <!-- Micro-USB Metal Jack at Bottom Center -->
+    <!-- USB Jack -->
     <g transform="translate(230, 387)">
       <rect width="60" height="26" rx="3" fill="#cbd5e1" stroke="#64748b" stroke-width="1.5"/>
       <text class="pin-label" x="30" y="18" fill="#334155" text-anchor="middle">USB</text>
     </g>
 
-    <!-- ==================== LEFT HEADER PINS (20px-22px BOLD TEXT, 55px PITCH!) ==================== -->
+    <!-- Left Header Pins (cy = 40, 95, 150, 205, 260, 315, 370) -->
     <g id="esp32-left-pins">
-      <!-- 1. 3V3 (cy = 40 -> Global: 470, 510) -->
       <circle cx="30" cy="40" r="11" fill="#ea580c" stroke="#fed7aa" stroke-width="3"/>
       <text class="pin-label-lg" x="52" y="47" fill="#fed7aa">3V3</text>
-
-      <!-- 2. D32 (PS_ON#) (cy = 95 -> Global: 470, 565) -->
       <circle cx="30" cy="95" r="11" fill="#10b981" stroke="#d1fae5" stroke-width="3"/>
       <text class="pin-label" x="52" y="102" fill="#a7f3d0">D32 (PS_ON#)</text>
-
-      <!-- 3. D33 (STBY) (cy = 150 -> Global: 470, 620) -->
       <circle cx="30" cy="150" r="11" fill="#06b6d4" stroke="#cffafe" stroke-width="3"/>
       <text class="pin-label" x="52" y="157" fill="#cffafe">D33 (STBY)</text>
-
-      <!-- 4. D25 (PWM) (cy = 205 -> Global: 470, 675) -->
       <circle cx="30" cy="205" r="11" fill="#8b5cf6" stroke="#ede9fe" stroke-width="3"/>
       <text class="pin-label" x="52" y="212" fill="#ede9fe">D25 (PWM)</text>
-
-      <!-- 5. D26 (AIN1) (cy = 260 -> Global: 470, 730) -->
       <circle cx="30" cy="260" r="11" fill="#ec4899" stroke="#fce7f3" stroke-width="3"/>
       <text class="pin-label" x="52" y="267" fill="#fce7f3">D26 (AIN1)</text>
-
-      <!-- 6. D27 (TEMP) (cy = 315 -> Global: 470, 785) -->
       <circle cx="30" cy="315" r="11" fill="#eab308" stroke="#fef08a" stroke-width="3"/>
       <text class="pin-label" x="52" y="322" fill="#fef08a">D27 (TEMP)</text>
-
-      <!-- 7. 5V (VIN) (cy = 370 -> Global: 470, 840) -->
       <circle cx="30" cy="370" r="11" fill="#9333ea" stroke="#f3e8ff" stroke-width="3"/>
       <text class="pin-label-lg" x="52" y="377" fill="#f3e8ff">5V (VIN)</text>
     </g>
 
-    <!-- ==================== RIGHT HEADER PINS (20px-22px BOLD TEXT!) ==================== -->
+    <!-- Right Header Pins -->
     <g id="esp32-right-pins">
-      <!-- 1. GND (cy = 40 -> Global: 930, 510) -->
       <circle cx="490" cy="40" r="11" fill="#0f172a" stroke="#f8fafc" stroke-width="3"/>
       <text class="pin-label-lg" x="468" y="47" fill="#f8fafc" text-anchor="end">GND</text>
-
-      <!-- 2. D22 (SCL) (cy = 125 -> Global: 930, 595) -->
       <circle cx="490" cy="125" r="11" fill="#0284c7" stroke="#bae6fd" stroke-width="3"/>
       <text class="pin-label" x="468" y="132" fill="#bae6fd" text-anchor="end">D22 (SCL)</text>
-
-      <!-- 3. D21 (SDA) (cy = 210 -> Global: 930, 680) -->
       <circle cx="490" cy="210" r="11" fill="#2563eb" stroke="#bfdbfe" stroke-width="3"/>
       <text class="pin-label" x="468" y="217" fill="#bfdbfe" text-anchor="end">D21 (SDA)</text>
-
-      <!-- 4. GND (cy = 370 -> Global: 930, 840) -->
       <circle cx="490" cy="370" r="11" fill="#0f172a" stroke="#f8fafc" stroke-width="3"/>
       <text class="pin-label-lg" x="468" y="377" fill="#f8fafc" text-anchor="end">GND</text>
     </g>
@@ -551,58 +555,40 @@
 
   <!-- ===================================================================== -->
   <!-- ==================== TIER 3: BOTTOM ROW ============================= -->
-  <!-- TB6612 & Fan (Left) | Dual DS18B20 (Center) | 16x2 LCD (Right)        -->
+  <!-- TB6612 & Fan | Dual DS18B20 | 16x2 LCD                                -->
   <!-- ===================================================================== -->
 
   <!-- 8. TB6612FNG MOTOR DRIVER MODULE -->
   <text class="comp-title" x="190" y="935" text-anchor="middle">TB6612FNG MOTOR DRIVER</text>
   <g id="tb6612-module" transform="translate(50, 955)" filter="url(#pcb-shadow)">
-    <!-- Red PCB -->
     <rect width="280" height="200" rx="8" fill="#991b1b" stroke="#b91c1c" stroke-width="2"/>
     <circle cx="12" cy="12" r="4.5" fill="#991b1b" stroke="#eab308" stroke-width="1.5"/>
     <circle cx="268" cy="12" r="4.5" fill="#991b1b" stroke="#eab308" stroke-width="1.5"/>
     <circle cx="12" cy="188" r="4.5" fill="#991b1b" stroke="#eab308" stroke-width="1.5"/>
     <circle cx="268" cy="188" r="4.5" fill="#991b1b" stroke="#eab308" stroke-width="1.5"/>
 
-    <!-- Center Chip -->
     <rect x="105" y="75" width="70" height="50" rx="2" fill="#18181b" stroke="#3f3f46"/>
     <text class="pin-label" x="140" y="105" fill="#f8fafc" text-anchor="middle">TB6612</text>
 
-    <!-- Left Header Row with 20px Bold Labels -->
-    <!-- VM (+12V): cy = 35 -> Global: (75, 990) -->
+    <!-- Left Header Row -->
     <circle cx="25" cy="35" r="9" fill="#d97706" stroke="#fef08a" stroke-width="2.5"/>
     <text class="pin-label" x="42" y="42" fill="#fef08a">VM (+12V)</text>
-
-    <!-- VCC (3.3V): cy = 70 -> Global: (75, 1025) -->
     <circle cx="25" cy="70" r="9" fill="#ea580c" stroke="#fed7aa" stroke-width="2.5"/>
     <text class="pin-label" x="42" y="77" fill="#fed7aa">VCC (3.3V)</text>
-
-    <!-- GND: cy = 105 -> Global: (75, 1060) -->
     <circle cx="25" cy="105" r="9" fill="#0f172a" stroke="#f8fafc" stroke-width="2.5"/>
     <text class="pin-label" x="42" y="112" fill="#f8fafc">GND</text>
-
-    <!-- AO1 (+): cy = 140 -> Global: (75, 1095) -->
     <circle cx="25" cy="140" r="9" fill="#dc2626" stroke="#fca5a5" stroke-width="2.5"/>
     <text class="pin-label" x="42" y="147" fill="#fca5a5">AO1 (+)</text>
-
-    <!-- AO2 (-): cy = 170 -> Global: (75, 1125) -->
     <circle cx="25" cy="170" r="9" fill="#0f172a" stroke="#cbd5e1" stroke-width="2.5"/>
     <text class="pin-label" x="42" y="177" fill="#cbd5e1">AO2 (-)</text>
 
-    <!-- Right Header Row with 20px Bold Labels -->
-    <!-- STBY: cy = 35 -> Global: (305, 990) -->
+    <!-- Right Header Row -->
     <circle cx="255" cy="35" r="9" fill="#06b6d4" stroke="#cffafe" stroke-width="2.5"/>
     <text class="pin-label" x="238" y="42" fill="#cffafe" text-anchor="end">STBY</text>
-
-    <!-- PWMA: cy = 75 -> Global: (305, 1030) -->
     <circle cx="255" cy="75" r="9" fill="#8b5cf6" stroke="#ede9fe" stroke-width="2.5"/>
     <text class="pin-label" x="238" y="82" fill="#ede9fe" text-anchor="end">PWMA</text>
-
-    <!-- AIN1: cy = 115 -> Global: (305, 1070) -->
     <circle cx="255" cy="115" r="9" fill="#ec4899" stroke="#fce7f3" stroke-width="2.5"/>
     <text class="pin-label" x="238" y="122" fill="#fce7f3" text-anchor="end">AIN1</text>
-
-    <!-- AIN2 (GND): cy = 155 -> Global: (305, 1110) -->
     <circle cx="255" cy="155" r="9" fill="#0f172a" stroke="#f8fafc" stroke-width="2.5"/>
     <text class="pin-label" x="238" y="162" fill="#f8fafc" text-anchor="end">AIN2 (GND)</text>
   </g>
@@ -620,14 +606,11 @@
     <circle cx="140" cy="110" r="32" fill="#334155" stroke="#64748b" stroke-width="2"/>
     <text class="pin-label" x="140" y="116" fill="#f8fafc" text-anchor="middle">12V FAN</text>
 
-    <!-- Terminals with 22px BOLD LABELS & Wide Separation (No Overlap!) -->
-    <!-- RED (+) Terminal: cx = 60, cy = 25 -> Global: (110, 1210) -->
+    <!-- Terminals: RED (+) at (110, 1210) & BLK (-) at (270, 1210) -->
     <g transform="translate(60, 25)">
       <circle cx="0" cy="0" r="10" fill="#dc2626" stroke="#fca5a5" stroke-width="3"/>
       <text class="pin-label-lg" x="0" y="28" fill="#fca5a5" text-anchor="middle">RED (+)</text>
     </g>
-
-    <!-- BLK (-) Terminal: cx = 220, cy = 25 -> Global: (270, 1210) -->
     <g transform="translate(220, 25)">
       <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#cbd5e1" stroke-width="3"/>
       <text class="pin-label-lg" x="0" y="28" fill="#cbd5e1" text-anchor="middle">BLK (-)</text>
@@ -636,27 +619,18 @@
   <text class="comp-title-lg" x="190" y="1410" text-anchor="middle">12V DC COOLING FAN</text>
 
 
-  <!-- 10. DUAL DS18B20 TEMPERATURE SENSORS (CLEAN 3-PIN BREAKOUT MODULES) -->
-  <!-- DS18B20 Title placed at bottom at y=1410 with Fan and LCD for zero top wire collisions -->
-  
+  <!-- 10. DUAL DS18B20 TEMPERATURE SENSORS -->
   <!-- PROBE 1: TRANSFORMER CORE TEMP -->
   <g id="temp-core-mod" transform="translate(460, 955)" filter="url(#pcb-shadow)">
     <rect width="270" height="170" rx="8" fill="#1e3a8a" stroke="#1d4ed8" stroke-width="2"/>
-    <!-- Crisp High-Contrast Pure White Text (Zero CSS Class Override) -->
     <text x="25" y="52" fill="#ffffff" font-size="24" font-weight="900" letter-spacing="0.5px">PROBE 1</text>
     <text x="25" y="85" fill="#f8fafc" font-size="19" font-weight="800">TRANSFORMER</text>
     <text x="25" y="112" fill="#f8fafc" font-size="19" font-weight="800">CORE TEMP</text>
 
-    <!-- 3-Pin Header on Right with 22px BOLD TEXT! -->
-    <!-- VCC: cy = 40 -> Global: (705, 995) -->
     <circle cx="245" cy="40" r="10" fill="#ea580c" stroke="#fed7aa" stroke-width="3"/>
     <text x="224" y="47" fill="#fed7aa" font-size="22" font-weight="800" text-anchor="end">VCC</text>
-
-    <!-- DAT: cy = 85 -> Global: (705, 1040) -->
     <circle cx="245" cy="85" r="10" fill="#eab308" stroke="#fef08a" stroke-width="3"/>
     <text x="224" y="92" fill="#fef08a" font-size="22" font-weight="800" text-anchor="end">DAT</text>
-
-    <!-- GND: cy = 130 -> Global: (705, 1085) -->
     <circle cx="245" cy="130" r="10" fill="#0f172a" stroke="#f8fafc" stroke-width="3"/>
     <text x="224" y="137" fill="#f8fafc" font-size="22" font-weight="800" text-anchor="end">GND</text>
   </g>
@@ -664,60 +638,44 @@
   <!-- PROBE 2: AMBIENT AIR TEMP -->
   <g id="temp-amb-mod" transform="translate(460, 1175)" filter="url(#pcb-shadow)">
     <rect width="270" height="170" rx="8" fill="#1e3a8a" stroke="#1d4ed8" stroke-width="2"/>
-    <!-- Crisp High-Contrast Pure White Text (Zero CSS Class Override) -->
     <text x="25" y="52" fill="#ffffff" font-size="24" font-weight="900" letter-spacing="0.5px">PROBE 2</text>
     <text x="25" y="85" fill="#f8fafc" font-size="19" font-weight="800">AMBIENT</text>
     <text x="25" y="112" fill="#f8fafc" font-size="19" font-weight="800">AIR TEMP</text>
 
-    <!-- 3-Pin Header on Right with 22px BOLD TEXT! -->
-    <!-- VCC: cy = 40 -> Global: (705, 1215) -->
     <circle cx="245" cy="40" r="10" fill="#ea580c" stroke="#fed7aa" stroke-width="3"/>
     <text x="224" y="47" fill="#fed7aa" font-size="22" font-weight="800" text-anchor="end">VCC</text>
-
-    <!-- DAT: cy = 85 -> Global: (705, 1260) -->
     <circle cx="245" cy="85" r="10" fill="#eab308" stroke="#fef08a" stroke-width="3"/>
     <text x="224" y="92" fill="#fef08a" font-size="22" font-weight="800" text-anchor="end">DAT</text>
-
-    <!-- GND: cy = 130 -> Global: (705, 1305) -->
     <circle cx="245" cy="130" r="10" fill="#0f172a" stroke="#f8fafc" stroke-width="3"/>
     <text x="224" y="137" fill="#f8fafc" font-size="22" font-weight="800" text-anchor="end">GND</text>
   </g>
   <text class="comp-title-lg" x="595" y="1410" text-anchor="middle">DS18B20 TEMPERATURE SENSORS</text>
 
 
-  <!-- 11. AUTHENTIC 16x2 CHARACTER LCD WITH PCF8574 I2C BACKPACK (5VSB POWERED) -->
+  <!-- 11. 16x2 CHARACTER LCD WITH PCF8574 I2C BACKPACK -->
   <g id="lcd-display" transform="translate(1010, 955)" filter="url(#pcb-shadow)">
-    <!-- Dark Green Board -->
     <rect width="700" height="420" rx="8" fill="#14532d" stroke="#166534" stroke-width="2"/>
     <circle cx="16" cy="16" r="6" fill="#14532d" stroke="#eab308" stroke-width="2"/>
     <circle cx="684" cy="16" r="6" fill="#14532d" stroke="#eab308" stroke-width="2"/>
     <circle cx="16" cy="404" r="6" fill="#14532d" stroke="#eab308" stroke-width="2"/>
     <circle cx="684" cy="404" r="6" fill="#14532d" stroke="#eab308" stroke-width="2"/>
 
-    <!-- PCF8574 I2C BACKPACK MODULE ON TOP (Width 520, Height 64) -->
+    <!-- PCF8574 I2C BACKPACK -->
     <g transform="translate(90, 8)">
       <rect width="520" height="64" rx="4" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
       <text class="pin-label" x="40" y="38" fill="#f8fafc">I2C BACKPACK (0x27)</text>
 
-      <!-- 4-Pin Header: GND, VCC (5VSB), SDA, SCL with 22px BOLD TEXT & 50px SPACING -->
-      <!-- GND: cx = 350 -> Global: (1450, 993) -->
       <circle cx="350" cy="30" r="10" fill="#0f172a" stroke="#f8fafc" stroke-width="3"/>
       <text class="pin-label-lg" x="350" y="58" fill="#f8fafc" text-anchor="middle">GND</text>
-
-      <!-- VCC (5VSB): cx = 400 -> Global: (1500, 993) - POWERED FROM STANDBY 5V! -->
       <circle cx="400" cy="30" r="10" fill="#9333ea" stroke="#f3e8ff" stroke-width="3"/>
       <text class="pin-label-lg" x="400" y="58" fill="#e9d5ff" text-anchor="middle">VCC</text>
-
-      <!-- SDA: cx = 450 -> Global: (1550, 993) -->
       <circle cx="450" cy="30" r="10" fill="#2563eb" stroke="#bfdbfe" stroke-width="3"/>
       <text class="pin-label-lg" x="450" y="58" fill="#bfdbfe" text-anchor="middle">SDA</text>
-
-      <!-- SCL: cx = 500 -> Global: (1600, 993) -->
       <circle cx="500" cy="30" r="10" fill="#0284c7" stroke="#bae6fd" stroke-width="3"/>
       <text class="pin-label-lg" x="500" y="58" fill="#bae6fd" text-anchor="middle">SCL</text>
     </g>
 
-    <!-- Screen Glass & Massive 32px Dot-Matrix Characters! -->
+    <!-- Screen Glass & Dot-Matrix Characters -->
     <rect x="50" y="95" width="600" height="290" rx="6" fill="#0f172a" stroke="#334155" stroke-width="2"/>
     <rect x="70" y="115" width="560" height="250" rx="4" fill="url(#lcd-blue-glass)" stroke="#0284c7" stroke-width="2"/>
 
@@ -733,41 +691,49 @@
 
   <!-- ===================================================================== -->
   <!-- ==================== WIRING INTERCONNECTS =========================== -->
-  <!-- Clean, Spacious, 100% Orthogonal Jumper Wires                         -->
+  <!-- 100% Orthogonal, Clean, Non-Crossing Bus Architecture                 -->
   <!-- ===================================================================== -->
 
   <!-- ==================== 1. POWER PATH WIRING ==================== -->
   <g id="wires-power">
-    <!-- ATX +12V post (300, 158) -> INA219 #1 VIN+ (434, 175) -->
+    <!-- ATX +12V post (300, 163) -> INA219 #1 VIN+ (434, 180) -->
     <path class="wire-line" stroke="#d97706" stroke-width="4.5" 
-          d="M 300 158 L 434 158 L 434 175"/>
+          d="M 300 163 L 434 163 L 434 180"/>
 
-    <!-- INA219 #1 VIN- (468, 175) -> 12V Load IN (+) (690, 280) -->
-    <path class="wire-line" stroke="#d97706" stroke-width="4.5" 
-          d="M 468 175 L 468 195 L 630 195 L 630 280 L 690 280"/>
+    <!-- ATX +5V post (300, 203) -> INA219 #2 VIN+ (694, 180) via Roof at y=76 -->
+    <path class="wire-line" stroke="#dc2626" stroke-width="4" 
+          d="M 300 203 L 340 203 L 340 76 L 694 76 L 694 180"/>
 
-    <!-- 12V Load GND (-) (860, 280) -> Common Ground Highway at y=422 -->
-    <path class="wire-line" stroke="#0f172a" stroke-width="4.5" 
-          d="M 860 280 L 920 280 L 920 422"/>
-    <circle cx="920" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
+    <!-- ATX +3.3V post (300, 243) -> INA219 #3 VIN+ (954, 180) via Roof at y=56 -->
+    <path class="wire-line" stroke="#ea580c" stroke-width="4" 
+          d="M 300 243 L 355 243 L 355 56 L 954 56 L 954 180"/>
 
     <!-- ATX +12V Tap down to TB6612 VM (+12V at 75, 990) via Outer Left Margin (x=25) -->
     <path class="wire-line" stroke="#d97706" stroke-width="4" 
-          d="M 300 158 L 320 158 L 320 345 L 25 345 L 25 990 L 75 990"/>
-    <circle cx="320" cy="158" r="5" fill="#d97706" stroke="#ffffff" stroke-width="2"/>
+          d="M 300 163 L 320 163 L 320 345 L 25 345 L 25 990 L 75 990"/>
+    <circle cx="320" cy="163" r="5" fill="#d97706" stroke="#ffffff" stroke-width="2"/>
 
-    <!-- ATX +5V post (300, 198) -> INA219 #2 VIN+ (994, 175) via Roof at y=80 (STOPS AT INA219!) -->
+    <!-- ==================== MONITORED POWER FEEDS TO EXTERNAL LOAD ==================== -->
+    <!-- INA219 #1 VIN- (476, 180) -> Monitored +12V Rail -> External Load +12V Post (1245, 181) via y=96 -->
+    <path class="wire-line" stroke="#d97706" stroke-width="4.5" 
+          d="M 476 180 L 476 96 L 1245 96 L 1245 181"/>
+
+    <!-- INA219 #2 VIN- (736, 180) -> Monitored +5V Rail -> External Load +5V Post (1355, 181) via y=76 -->
     <path class="wire-line" stroke="#dc2626" stroke-width="4" 
-          d="M 300 198 L 340 198 L 340 80 L 994 80 L 994 175"/>
+          d="M 736 180 L 736 76 L 1355 76 L 1355 181"/>
 
-    <!-- ATX +3.3V post (300, 238) -> INA219 #3 VIN+ (1249, 175) via Roof at y=65 -->
+    <!-- INA219 #3 VIN- (996, 180) -> Monitored +3.3V Rail -> External Load +3.3V Post (1465, 181) via y=56 -->
     <path class="wire-line" stroke="#ea580c" stroke-width="4" 
-          d="M 300 238 L 355 238 L 355 65 L 1249 65 L 1249 175"/>
+          d="M 996 180 L 996 56 L 1465 56 L 1465 181"/>
 
-    <!-- ATX +5VSB (135, 325) -> Standby Power Highway at y=404 -->
-    <!-- Feeds ESP32 5V/VIN (470, 840) AND LCD VCC (1500, 993) so status shows even when ATX is OFF! -->
+    <!-- External Load Common GND: exits right from Post 4 (1589, 181) to x=1630, then straight DOWN to Ground Highway at y=422 -->
+    <path class="wire-line" stroke="#0f172a" stroke-width="4.5" 
+          d="M 1589 181 L 1630 181 L 1630 422"/>
+    <circle cx="1630" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
+
+    <!-- ATX +5VSB (135, 330) -> Standby Power Highway at y=404 -->
     <path class="wire-line" stroke="#9333ea" stroke-width="4.5" 
-          d="M 135 325 L 135 404 L 1500 404 L 1500 993"/>
+          d="M 135 330 L 135 404 L 1500 404 L 1500 993"/>
     
     <!-- Tap down to ESP32 5V (VIN at 470, 840) -->
     <path class="wire-line" stroke="#9333ea" stroke-width="4" 
@@ -778,15 +744,15 @@
 
   <!-- ==================== 2. CONTROL & TRANSISTOR SWITCH WIRING ==================== -->
   <g id="wires-control">
-    <!-- ATX PS_ON# (210, 325) drops STRAIGHT VERTICAL to BC547 Collector (210, 575) - ZERO BENDS! -->
+    <!-- ATX PS_ON# (210, 330) drops straight to BC547 Collector (210, 575) -->
     <path class="wire-line" stroke="#10b981" stroke-width="4" 
-          d="M 210 325 L 210 575"/>
+          d="M 210 330 L 210 575"/>
 
-    <!-- ESP32 D32 (470, 565) -> Base Resistor R1 Input (295, 620) -->
+    <!-- ESP32 D32 (470, 565) -> Base Resistor R1 Input (345, 620) -->
     <path class="wire-line" stroke="#10b981" stroke-width="4" 
           d="M 470 565 L 375 565 L 375 620 L 345 620"/>
 
-    <!-- BC547 Emitter & R2 Ground Lead (210, 740) -> System Ground Highway at x=55 -->
+    <!-- BC547 Emitter & R2 Ground Lead (210, 740) -> Ground at x=55 -->
     <path class="wire-line" stroke="#0f172a" stroke-width="4" 
           d="M 210 665 L 210 740 L 55 740"/>
     <circle cx="55" cy="740" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
@@ -795,7 +761,6 @@
 
   <!-- ==================== 3. MOTOR DRIVER (TB6612) & FAN WIRING ==================== -->
   <g id="wires-driver">
-    <!-- 3 Dedicated parallel non-crossing tracks in Left Alley (x=345, 370, 395) -->
     <!-- ESP32 D33 (STBY: 470, 620) -> TB6612 STBY (305, 990) -->
     <path class="wire-line" stroke="#06b6d4" stroke-width="3.5" 
           d="M 470 620 L 395 620 L 395 990 L 305 990"/>
@@ -812,7 +777,6 @@
     <path class="wire-line" stroke="#0f172a" stroke-width="3" 
           d="M 305 1110 L 325 1110 L 325 1140 L 45 1140 L 45 1060 L 75 1060"/>
 
-    <!-- TB6612 Motor Outputs down to 12V Fan Leads -->
     <!-- AO1 (+) (75, 1095) -> Fan RED (+) (110, 1210) -->
     <path class="wire-line" stroke="#dc2626" stroke-width="4" 
           d="M 75 1095 L 35 1095 L 35 1165 L 110 1165 L 110 1210"/>
@@ -825,7 +789,6 @@
 
   <!-- ==================== 4. 1-WIRE TEMPERATURE SENSOR WIRING ==================== -->
   <g id="wires-temperature">
-    <!-- ESP32 D27 (470, 785) -> Dual DS18B20 DAT pins (705, 1040 & 705, 1260) -->
     <path class="wire-line" stroke="#eab308" stroke-width="3.5" 
           d="M 470 785 L 435 785 L 435 915 L 740 915 L 740 1040 L 705 1040"/>
     <path class="wire-line" stroke="#eab308" stroke-width="3.5" 
@@ -836,15 +799,15 @@
 
   <!-- ==================== 5. 3.3V LOGIC POWER RAIL ==================== -->
   <g id="wires-3v3-logic">
-    <!-- ESP32 3V3 (470, 510) -> 3.3V distribution to INA219s, TB6612, and DS18B20s -->
+    <!-- ESP32 3V3 (470, 510) -> 3.3V distribution Highway at y=386 -->
     <path class="wire-line" stroke="#ea580c" stroke-width="4" 
-          d="M 470 510 L 445 510 L 445 386 L 1235 386 L 1235 315"/> <!-- To INA219 #3 VCC -->
+          d="M 470 510 L 445 510 L 445 386 L 940 386 L 940 325"/> <!-- To INA219 #3 VCC -->
     
-    <!-- Tap to INA219 #1 VCC (420, 315) & INA219 #2 VCC (980, 315) -->
-    <path class="wire-line" stroke="#ea580c" stroke-width="3.5" d="M 420 386 L 420 315"/>
+    <!-- Tap to INA219 #1 VCC (420, 325) & INA219 #2 VCC (680, 325) -->
+    <path class="wire-line" stroke="#ea580c" stroke-width="3.5" d="M 420 386 L 420 325"/>
     <circle cx="420" cy="386" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="2"/>
-    <path class="wire-line" stroke="#ea580c" stroke-width="3.5" d="M 980 386 L 980 315"/>
-    <circle cx="980" cy="386" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="2"/>
+    <path class="wire-line" stroke="#ea580c" stroke-width="3.5" d="M 680 386 L 680 325"/>
+    <circle cx="680" cy="386" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="2"/>
 
     <!-- Tap left into TB6612 VCC (75, 1025) via Left Margin (x=15) -->
     <path class="wire-line" stroke="#ea580c" stroke-width="3.5" 
@@ -864,27 +827,27 @@
   <g id="wires-i2c">
     <!-- I2C SCL (Cyan) at y=350: ESP32 D22 (930, 595) -> SCL Bus Highway -->
     <path class="wire-line" stroke="#0284c7" stroke-width="3.5" 
-          d="M 930 595 L 940 595 L 940 350 L 515 350 L 515 315"/> <!-- To INA219 #1 SCL -->
-    <!-- Taps to INA219 #2 SCL (1075, 315) & INA219 #3 SCL (1330, 315) -->
-    <path class="wire-line" stroke="#0284c7" stroke-width="3.5" d="M 1075 350 L 1075 315"/>
-    <circle cx="1075" cy="350" r="4.5" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/>
-    <path class="wire-line" stroke="#0284c7" stroke-width="3.5" d="M 1330 350 L 1330 315"/>
-    <circle cx="1330" cy="350" r="4.5" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/>
-    <!-- Tap to LCD SCL (1600, 993) - STRAIGHT VERTICAL DROP FROM y=350 (ZERO CROSSINGS!) -->
+          d="M 930 595 L 940 595 L 940 350 L 515 350 L 515 325"/> <!-- To INA219 #1 SCL -->
+    <!-- Taps to INA219 #2 SCL (775, 325) & INA219 #3 SCL (1035, 325) -->
+    <path class="wire-line" stroke="#0284c7" stroke-width="3.5" d="M 775 350 L 775 325"/>
+    <circle cx="775" cy="350" r="4.5" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/>
+    <path class="wire-line" stroke="#0284c7" stroke-width="3.5" d="M 1035 350 L 1035 325"/>
+    <circle cx="1035" cy="350" r="4.5" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/>
+    <!-- Tap to LCD SCL (1600, 993) -->
     <path class="wire-line" stroke="#0284c7" stroke-width="3.5" 
-          d="M 1330 350 L 1600 350 L 1600 993"/>
+          d="M 1035 350 L 1600 350 L 1600 993"/>
 
     <!-- I2C SDA (Blue) at y=368: ESP32 D21 (930, 680) -> SDA Bus Highway -->
     <path class="wire-line" stroke="#2563eb" stroke-width="3.5" 
-          d="M 930 680 L 955 680 L 955 368 L 565 368 L 565 315"/> <!-- To INA219 #1 SDA -->
-    <!-- Taps to INA219 #2 SDA (1125, 315) & INA219 #3 SDA (1380, 315) -->
-    <path class="wire-line" stroke="#2563eb" stroke-width="3.5" d="M 1125 368 L 1125 315"/>
-    <circle cx="1125" cy="368" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
-    <path class="wire-line" stroke="#2563eb" stroke-width="3.5" d="M 1380 368 L 1380 315"/>
-    <circle cx="1380" cy="368" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
-    <!-- Tap to LCD SDA (1550, 993) - STRAIGHT VERTICAL DROP FROM y=368 (ZERO CROSSINGS!) -->
+          d="M 930 680 L 955 680 L 955 368 L 565 368 L 565 325"/> <!-- To INA219 #1 SDA -->
+    <!-- Taps to INA219 #2 SDA (825, 325) & INA219 #3 SDA (1085, 325) -->
+    <path class="wire-line" stroke="#2563eb" stroke-width="3.5" d="M 825 368 L 825 325"/>
+    <circle cx="825" cy="368" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+    <path class="wire-line" stroke="#2563eb" stroke-width="3.5" d="M 1085 368 L 1085 325"/>
+    <circle cx="1085" cy="368" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+    <!-- Tap to LCD SDA (1550, 993) -->
     <path class="wire-line" stroke="#2563eb" stroke-width="3.5" 
-          d="M 1380 368 L 1550 368 L 1550 993"/>
+          d="M 1085 368 L 1550 368 L 1550 993"/>
   </g>
 
 
@@ -892,13 +855,13 @@
   <g id="wires-gnd">
     <!-- Heavy System Ground Highway at y=422 -->
     <path class="wire-line" stroke="#0f172a" stroke-width="4.5" 
-          d="M 300 278 L 335 278 L 335 422 L 1280 422 L 1280 315"/> <!-- To INA219 #3 GND -->
+          d="M 300 283 L 335 283 L 335 422 L 985 422 L 985 325"/> <!-- To INA219 #3 GND -->
 
-    <!-- Drops into INA219 #1 GND (465, 315) & INA219 #2 GND (1025, 315) -->
-    <path class="wire-line" stroke="#0f172a" stroke-width="4" d="M 465 422 L 465 315"/>
+    <!-- Drops into INA219 #1 GND (465, 325) & INA219 #2 GND (725, 325) -->
+    <path class="wire-line" stroke="#0f172a" stroke-width="4" d="M 465 422 L 465 325"/>
     <circle cx="465" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
-    <path class="wire-line" stroke="#0f172a" stroke-width="4" d="M 1025 422 L 1025 315"/>
-    <circle cx="1025" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
+    <path class="wire-line" stroke="#0f172a" stroke-width="4" d="M 725 422 L 725 325"/>
+    <circle cx="725" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
 
     <!-- ESP32 GND (930, 510) connects to GND line -->
     <path class="wire-line" stroke="#0f172a" stroke-width="4" 
@@ -917,9 +880,12 @@
     <path class="wire-line" stroke="#0f172a" stroke-width="3.5" 
           d="M 75 1060 L 55 1060 L 55 422 L 335 422"/>
 
-    <!-- LCD GND (1450, 993) - STRAIGHT VERTICAL DROP FROM y=422! -->
+    <!-- Ground continuation to LCD GND (1450, 993) & External Load Common GND (1630, 422) -->
+    <path class="wire-line" stroke="#0f172a" stroke-width="4.5" 
+          d="M 985 422 L 1630 422"/>
     <path class="wire-line" stroke="#0f172a" stroke-width="4" 
-          d="M 1280 422 L 1450 422 L 1450 993"/>
+          d="M 1450 422 L 1450 993"/>
+    <circle cx="1450" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
   </g>
 
 </svg>
