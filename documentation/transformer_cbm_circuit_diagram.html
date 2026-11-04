@@ -774,9 +774,9 @@
 
   <!-- ==================== 5. 3.3V LOGIC POWER RAIL ==================== -->
   <g id="wires-3v3-logic">
-    <!-- Continuous 3.3V Logic Highway at y=386 from Left Margin (x=15) to Right Alley (x=975) -->
+    <!-- Continuous 3.3V Logic Highway at y=386 from Left Margin (x=15) to Open Right Corridor (x=1130) -->
     <path class="wire-line" stroke="#ea580c" stroke-width="4" 
-          d="M 15 386 L 975 386"/>
+          d="M 15 386 L 1130 386"/>
 
     <!-- ESP32 3V3 (470, 510) feeds into 3.3V Highway at (445, 386) -->
     <path class="wire-line" stroke="#ea580c" stroke-width="4" 
@@ -795,10 +795,10 @@
     <path class="wire-line" stroke="#ea580c" stroke-width="3.5" d="M 940 386 L 940 325"/>
     <circle cx="940" cy="386" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="2"/>
 
-    <!-- Tap down Right Alley (x=975) to Dual DS18B20 VCC pins (705, 995 & 705, 1215) -->
+    <!-- Tap down Open Right Corridor (x=1130) to Dual DS18B20 VCC pins (705, 995 & 705, 1215) -->
     <path class="wire-line" stroke="#ea580c" stroke-width="3.5" 
-          d="M 975 386 L 975 925 L 760 925 L 760 995 L 705 995"/>
-    <circle cx="975" cy="386" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="2"/>
+          d="M 1130 386 L 1130 925 L 760 925 L 760 995 L 705 995"/>
+    <circle cx="1130" cy="386" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="2"/>
     <path class="wire-line" stroke="#ea580c" stroke-width="3.5" 
           d="M 760 995 L 760 1215 L 705 1215"/>
     <circle cx="760" cy="995" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="2"/>
@@ -811,10 +811,10 @@
     <path class="wire-line" stroke="#0284c7" stroke-width="3.5" 
           d="M 515 350 L 1600 350 L 1600 993"/>
 
-    <!-- ESP32 D22 (SCL at 930, 595) connects to SCL Highway at (940, 350) -->
+    <!-- ESP32 D22 (SCL at 930, 595) connects to SCL Highway at (1010, 350) with generous spacing -->
     <path class="wire-line" stroke="#0284c7" stroke-width="3.5" 
-          d="M 930 595 L 940 595 L 940 350"/>
-    <circle cx="940" cy="350" r="4.5" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/>
+          d="M 930 595 L 1010 595 L 1010 350"/>
+    <circle cx="1010" cy="350" r="4.5" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/>
 
     <!-- Taps up to INA219 SCL pins: #1 (515, 325), #2 (775, 325), #3 (1035, 325) -->
     <path class="wire-line" stroke="#0284c7" stroke-width="3.5" d="M 515 350 L 515 325"/>
@@ -828,10 +828,10 @@
     <path class="wire-line" stroke="#2563eb" stroke-width="3.5" 
           d="M 565 368 L 1550 368 L 1550 993"/>
 
-    <!-- ESP32 D21 (SDA at 930, 680) connects to SDA Highway at (955, 368) -->
+    <!-- ESP32 D21 (SDA at 930, 680) connects to SDA Highway at (1060, 368) with generous spacing -->
     <path class="wire-line" stroke="#2563eb" stroke-width="3.5" 
-          d="M 930 680 L 955 680 L 955 368"/>
-    <circle cx="955" cy="368" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+          d="M 930 680 L 1060 680 L 1060 368"/>
+    <circle cx="1060" cy="368" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
 
     <!-- Taps up to INA219 SDA pins: #1 (565, 325), #2 (825, 325), #3 (1085, 325) -->
     <path class="wire-line" stroke="#2563eb" stroke-width="3.5" d="M 565 368 L 565 325"/>
@@ -862,15 +862,15 @@
     <path class="wire-line" stroke="#0f172a" stroke-width="4" d="M 985 422 L 985 325"/>
     <circle cx="985" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
 
-    <!-- ESP32 GND (930, 510) connects to Ground Highway at (970, 422) -->
+    <!-- ESP32 GND (930, 510) connects to Ground Highway at (960, 422) with 25px clearance from INA219 GND -->
     <path class="wire-line" stroke="#0f172a" stroke-width="4" 
-          d="M 930 510 L 970 510 L 970 422"/>
-    <circle cx="970" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
+          d="M 930 510 L 960 510 L 960 422"/>
+    <circle cx="960" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
 
-    <!-- Drops down Right Alley (x=995) to Dual DS18B20 GND (705, 1085 & 705, 1305) -->
+    <!-- Drops down Open Right Corridor (x=1160) to Dual DS18B20 GND (705, 1085 & 705, 1305) -->
     <path class="wire-line" stroke="#0f172a" stroke-width="3.5" 
-          d="M 995 422 L 995 940 L 780 940 L 780 1085 L 705 1085"/>
-    <circle cx="995" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
+          d="M 1160 422 L 1160 940 L 780 940 L 780 1085 L 705 1085"/>
+    <circle cx="1160" cy="422" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
     <path class="wire-line" stroke="#0f172a" stroke-width="3.5" 
           d="M 780 1085 L 780 1305 L 705 1305"/>
     <circle cx="780" cy="1085" r="4.5" fill="#0f172a" stroke="#ffffff" stroke-width="1.5"/>
