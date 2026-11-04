@@ -81,7 +81,7 @@ def generate_diagram_4():
     <text x="16" y="24" font-size="16" font-weight="900" fill="#ffffff">STATE 0: STANDBY_OFF (IDLE SUPERVISION)</text>
     <text x="16" y="56" font-size="13.5" font-weight="700" fill="#065f46">• Standby +5VSB active: ESP32, 16x2 LCD &amp; sensors fully powered</text>
     <text x="16" y="78" font-size="13.5" font-weight="600" fill="#334155">• ATX main rails (12V, 5V, 3.3V) DE-ENERGIZED; Dummy Load OFF</text>
-    <text x="16" y="100" font-size="13.5" font-weight="600" fill="#334155">• PS_ON# pulled HIGH (BC547 Q1 base LOW via 10k pull-down)</text>
+    <text x="16" y="100" font-size="13.5" font-weight="600" fill="#334155">• PS_ON# pulled HIGH (2N3904 Q1 base LOW via 10k pull-down)</text>
     <text x="16" y="122" font-size="13.5" font-weight="600" fill="#334155">• LCD displays "SYSTEM: STANDBY" • Sensors polled at 1 Hz</text>
     <text x="16" y="142" font-size="12.5" font-weight="700" fill="#0284c7">Awaiting operator run switch closure OR cloud start command</text>
   </g>
@@ -112,7 +112,7 @@ def generate_diagram_4():
     <rect width="440" height="34" rx="10" fill="#0284c7"/>
     <rect x="0" y="24" width="440" height="10" fill="#0284c7"/>
     <text x="16" y="24" font-size="16" font-weight="900" fill="#ffffff">STATE 1: STARTING (INRUSH BLANKING)</text>
-    <text x="16" y="56" font-size="13.5" font-weight="700" fill="#0369a1">• Assert GPIO 32 HIGH: BC547 saturates, pulling PS_ON# to GND</text>
+    <text x="16" y="56" font-size="13.5" font-weight="700" fill="#0369a1">• Assert GPIO 32 HIGH: 2N3904 saturates, pulling PS_ON# to GND</text>
     <text x="16" y="78" font-size="13.5" font-weight="600" fill="#334155">• ATX main inverter ignites; +12V, +5V, +3.3V power rails spin up</text>
     <text x="16" y="100" font-size="13.5" font-weight="700" fill="#ea580c">• 500 ms Inrush Blanking Window: Current spikes suppressed</text>
     <text x="16" y="122" font-size="13.5" font-weight="600" fill="#334155">• INA219 high-speed bus voltage qualification check</text>

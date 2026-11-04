@@ -120,7 +120,7 @@ The initial implementation explicitly does not provide:
       
       // Col 2: Actuators & Cloud Storage (x = 2)
       node((2, 0), [TB6612FNG Driver\ #sym.arrow.r Two-Wire Fan], width: 28mm),
-      node((2, 0.8), [BC547 NPN Switch\ #sym.arrow.r PS_ON\\# Pull-Down], width: 28mm),
+      node((2, 0.8), [2N3904 NPN Switch\ #sym.arrow.r PS_ON\\# Pull-Down], width: 28mm),
       node((2, 1.8), [Firebase RTDB\ `/latest`, `/events`], width: 28mm, fill: rgb("f8fafc")),
       
       // Col 3: Cloud Dashboards & Alerts (x = 3)
@@ -175,10 +175,10 @@ The instrumentation and control platform utilizes industrial-grade prototyping c
   [MOD1], [XH-M229 Bench Breakout], [24-pin ATX connector, terminal binding posts], [1], [Power Distribution],
   [VR1], [Buck Step-Down Converter], [6--40 V in, dual 5 V USB 3 A out], [1], [12 V Load Branch 2],
   [LOAD1], [12 V High-Density LED Strip], [Monochrome cold-white, 1 m, ~0.6 A nom.], [1], [12 V Load Branch 1],
-  [Q1], [BC547 NPN BJT], [TO-92, 45 V, 100 mA, $h_(F E) >= 110$], [1], [PS_ON\# Interface],
+  [Q1], [JCET 2N3904 NPN BJT], [TO-92, 40 V, 200 mA, $h_(F E) = 100 - 300$, Lead 1:E 2:B 3:C], [1], [PS_ON\# Interface],
   [SW1--SW2], [Miniature SPST Rockers], [2-pin panel mount, contact rated 250V/3A], [2], [Manual UI Controls],
   [F1--F4], [Fast-Acting Cartridge Fuses], [5x20 mm glass, 1.0 A (+5VSB), 3.15 A (12V)], [4], [Circuit Protection],
-  [PASS], [Passive Components Assortment], [Metal film resistors (4.7k, 10k, 100k), caps], [1 set], [Signal / Filter]
+  [PASS], [Passive Components Assortment], [Metal film resistors (1k, 4.7k, 10k), caps], [1 set], [Signal / Filter]
 )
 
 === 5.2 Component Technical Allocations
@@ -187,7 +187,7 @@ The instrumentation and control platform utilizes industrial-grade prototyping c
 2. *Thermal Sensors (DS18B20):* TS1 is mechanically coupled to the SMPS main transformer core wrapper with thermally conductive paste and Kapton insulation; TS2 is suspended in the chassis intake duct for ambient reference.
 3. *Power Telemetry (INA219):* Three shunt sensors monitor rail voltages and currents over a shared I2C bus with hardware jumper-selected addresses (`0x40`, `0x41`, `0x44`).
 4. *Thermal Actuator (TB6612FNG):* Provides high-frequency ($25 "kHz"$) PWM speed control for the 12 V cooling fan without audible switching noise or electrical motor stalling.
-5. *Supervisory Inhibit Switch (BC547):* Sinks the ATX PS_ON\\# wire to COM ground during active operation; de-energizing its base immediately trips all main DC rails to high-Z.
+5. *Supervisory Inhibit Switch (2N3904):* Sinks the ATX PS_ON\\# wire to COM ground during active operation; de-energizing its base immediately trips all main DC rails to high-Z.
 
 === 5.3 Prototyping Substrate and Interconnect Standards
 
@@ -366,7 +366,7 @@ Main 12 V, 5 V, and 3.3 V rails are enabled or disabled simultaneously via the P
   [GPIO25], [TB6612FNG PWMA -- Hardware PWM Speed Modulation], [3.3 V Push-Pull ($25 "kHz"$ PWM)],
   [GPIO26], [TB6612FNG AIN1 -- Motor Direction Control], [3.3 V Logic HIGH (Forward)],
   [GPIO33], [TB6612FNG STBY -- Hardware Driver Bridge Enable], [3.3 V Active-HIGH ($10 "k"Omega$ Pull-down)],
-  [GPIO32], [PS_ON\\# Transistor Base Control -- BC547 NPN Switch], [3.3 V Active-HIGH ($100 "k"Omega$ Pull-down)],
+  [GPIO32], [PS_ON\\# Transistor Base Control -- 2N3904 NPN Switch], [3.3 V Active-HIGH ($10 "k"Omega$ Base-Emitter Pull-down)],
   [GPIO18], [Main-Output SPST Rocker Switch Input], [3.3 V Active-LOW ($10 "k"Omega$ Pull-up)],
   [GPIO23], [Local-Setup SPST Rocker Switch Input], [3.3 V Active-LOW ($10 "k"Omega$ Pull-up)]
 )
@@ -435,16 +435,16 @@ Both DS18B20 digital probes operate in non-parasitic mode:
       node-inset: 4pt,
       
       node((0, 0), [ESP32 GPIO32\ (Output Pin)], width: 26mm),
-      edge((0, 0), (1, 0), "-|>", [$4.7 "k"Omega$], label-size: 6.5pt, label-side: left),
-      node((1, 0), [BC547 NPN Base\ (TO-92 Package)], width: 30mm),
+      edge((0, 0), (1, 0), "-|>", [$1 "k"Omega$], label-size: 6.5pt, label-side: left),
+      node((1, 0), [2N3904 Base (Pin 2)\ (JCET TO-92)], width: 30mm),
       
-      node((1, 1), [$100 "k"Omega$ Bleed\ to COM Ground], width: 28mm),
+      node((1, 1), [$10 "k"Omega$ Pull-Down\ to COM Ground], width: 28mm),
       edge((1, 0), (1, 1), "-"),
       
-      node((2, -0.6), [Collector Pin #sym.arrow.r\ SMPS PS_ON\# Wire], width: 32mm),
+      node((2, -0.6), [Collector Pin 3 #sym.arrow.r\ SMPS PS_ON\# Wire], width: 32mm),
       edge((1, 0), (2, -0.6), "-"),
       
-      node((2, 0.6), [Emitter Pin #sym.arrow.r\ SMPS Common (COM)], width: 32mm),
+      node((2, 0.6), [Emitter Pin 1 #sym.arrow.r\ SMPS Common (COM)], width: 32mm),
       edge((1, 0), (2, 0.6), "-"),
     )
   ]

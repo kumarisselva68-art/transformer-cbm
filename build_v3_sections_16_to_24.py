@@ -283,7 +283,7 @@ This enhancement enables surgical load shedding: the controller can isolate a fa
   table.header([*Test Phase*], [*Objective & Test Method*], [*Quantitative Acceptance Criteria*], [*Status*]),
   [Phase 1: Sensor Calibration], [Verify INA219 and DS18B20 accuracy against calibrated lab bench instruments.], [Voltage error $<= plus.minus 1%$, Current error $<= plus.minus 2%$, Temp error $<= plus.minus 0.5 degree"C"$.], [PASS],
   [Phase 2: Standby Domain Verification], [Measure +5VSB voltage stability, AMS1117 3.3 V output, and ESP32 boot behavior.], [Continuous $4.95 "V" <= V_("SB") <= 5.25 "V"$; zero brownout during Wi-Fi burst transmission.], [PASS],
-  [Phase 3: PS_ON\\# Gating Interface], [Verify BC547 transistor switching and SMPS main rail startup and shutdown response.], [GPIO32 HIGH asserts PS_ON\\# ($< 0.4 "V"$); GPIO32 LOW releases PS_ON\\# ($> 4.5 "V"$).], [PASS],
+  [Phase 3: PS_ON\\# Gating Interface], [Verify 2N3904 transistor switching and SMPS main rail startup and shutdown response.], [GPIO32 HIGH asserts PS_ON\\# ($< 0.4 "V"$); GPIO32 LOW releases PS_ON\\# ($> 4.5 "V"$).], [PASS],
   [Phase 4: Fan Modulation & Dynamics], [Test PWM duty modulation ($30% "to" 100%$) and verify stall-prevention boost.], [Smooth linear duty ramp; zero acoustic stall; slew-rate limited deceleration verified.], [PASS],
   [Phase 5: Electrical Trip Response], [Simulate overcurrent condition on 12 V load branch exceeding $3.15 "A"$.], [Supervisory shutdown executed within $<= 250 "ms"$; `ELECTRICAL_LOCKOUT` latched.], [PASS],
   [Phase 6: Thermal Ramp & Prediction], [Apply controlled resistive thermal load to simulate transformer heat rise.], [Predictor calculates valid slope $r$; fan duty increases ahead of raw threshold breaches.], [PASS],
@@ -346,7 +346,7 @@ Before connecting the ATX power supply AC line cord to utility mains power, the 
       node((1, 2.1), [LittleFS Web Server\ (Embedded Offline SPA)], width: 33mm),
       
       // Column 2: Local Actuators & Cloud Storage (x = 2)
-      node((2, 0.3), [TB6612 Fan Driver\ BC547 PS_ON\# Switch], width: 28mm),
+      node((2, 0.3), [TB6612 Fan Driver\ 2N3904 PS_ON\# Switch], width: 28mm),
       node((2, 1.1), [Firebase RTDB\ (`/latest`, `/events`)], width: 28mm, fill: rgb("f8fafc")),
       node((2, 2.1), [Local User Terminal\ (PC/Phone via SoftAP)], width: 28mm),
       
@@ -397,7 +397,7 @@ Before connecting the ATX power supply AC line cord to utility mains power, the 
       // PS_ON# Control (Row 1)
       node((0, 1), [SMPS PS_ON\# Pin\ (Green Wire Pin 16)], width: 28mm),
       edge((1, 1), (0, 1), "-|>", [Pull-Down], label-size: 6pt),
-      node((1, 1), [BC547 NPN Switch\ ($4.7 "k"Omega$ / $100 "k"Omega$)], width: 28mm),
+      node((1, 1), [2N3904 NPN Switch\ ($1 "k"Omega$ / $10 "k"Omega$)], width: 28mm),
       edge((2, 0), (1, 1), "-|>", [GPIO32 Inhibit], label-size: 6pt, label-pos: 0.5),
       
       // I2C Instrumentation Bus (Row 2)

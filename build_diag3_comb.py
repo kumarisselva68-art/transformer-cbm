@@ -246,7 +246,7 @@ def generate_diagram_3():
         <text x="200" y="116" font-weight="700" fill="#7e22ce">24/7 continuous supply to ESP32 VIN &amp; LCD VCC</text>
 
         <text x="0" y="140" font-weight="800" fill="#059669">• PS_ON# Interlock:</text>
-        <text x="200" y="140">BC547 NPN + 1k base resistor + 10k pull-down to GND</text>
+        <text x="200" y="140">2N3904 NPN + 1k base resistor + 10k pull-down to GND</text>
 
         <text x="0" y="170" font-weight="700" fill="#059669">Hardware failsafe: Transistor defaults OFF (rails cut) during MCU reboot</text>
       </g>
@@ -320,7 +320,7 @@ def generate_diagram_3():
   <rect x="970" y="980" width="140" height="26" rx="5" fill="#f0f9ff" stroke="#38bdf8" stroke-width="1.5"/>
   <text x="1040" y="998" font-size="12" font-weight="800" fill="#0284c7" text-anchor="middle">I2C / 1-WIRE DATA</text>
 
-  <!-- Firmware to Physical: GPIO 32 to BC547 PS_ON# Cutoff (Green) -->
+  <!-- Firmware to Physical: GPIO 32 to 2N3904 PS_ON# Cutoff (Green) -->
   <path class="wire" stroke="#059669" stroke-width="4" marker-end="url(#arrow-green)"
         d="M 350 960 L 350 1025"/>
   <rect x="275" y="980" width="150" height="26" rx="5" fill="#ecfdf5" stroke="#34d399" stroke-width="1.5"/>

@@ -13,7 +13,7 @@ def generate_gallery():
             "subtitle": "Power Distribution, ATX SMPS, Multi-Rail INA219 Sensing, Dual DS18B20 & TB6612 Fan Actuation",
             "svg_file": "diagram_1_hardware_block.svg",
             "png_file": "diagram_1_hardware_block.png",
-            "desc": "Illustrates the complete physical hardware topology: ATX breakout (XH-M229), +12V/5V/3.3V switched rails, standby +5VSB 24/7 logic supply, 3x INA219 current/voltage monitors, dual DS18B20 probes, 12V 50W dummy load, TB6612FNG MOSFET driver, and BC547 PS_ON# hardware failsafe interlock switch."
+            "desc": "Illustrates the complete physical hardware topology: ATX breakout (XH-M229), +12V/5V/3.3V switched rails, standby +5VSB 24/7 logic supply, 3x INA219 current/voltage monitors, dual DS18B20 probes, 12V 50W dummy load, TB6612FNG MOSFET driver, and 2N3904 PS_ON# hardware failsafe interlock switch."
         },
         {
             "id": "diag2",
@@ -58,10 +58,10 @@ def generate_gallery():
         {
             "id": "schematic",
             "title": "Master Hardware Schematic: Cirkit Designer Wiring Diagram",
-            "subtitle": "Complete Breadboard & Component Wiring: ESP32, ATX Breakout, INA219 x3, DS18B20 x2, TB6612, LCD & BC547",
+            "subtitle": "Complete Breadboard & Component Wiring: ESP32, ATX Breakout, INA219 x3, DS18B20 x2, TB6612, LCD & 2N3904",
             "svg_file": "transformer_cbm_circuit_diagram.svg",
             "png_file": "circuit_diagram_preview.png",
-            "desc": "Publication-grade wiring schematic with custom styled component chips, pin labels, color-coded power buses (+12V, +5V, +3.3V, +5VSB, GND), dedicated BC547 NPN transistor switch circuit, 16x2 I2C LCD, and 3-pin DS18B20 digital temperature sensor modules."
+            "desc": "Publication-grade wiring schematic with custom styled component chips, pin labels, color-coded power buses (+12V, +5V, +3.3V, +5VSB, GND), dedicated 2N3904 NPN transistor switch circuit, 16x2 I2C LCD, and 3-pin DS18B20 digital temperature sensor modules."
         }
     ]
 

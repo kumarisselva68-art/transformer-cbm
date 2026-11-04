@@ -531,7 +531,7 @@ def build_svg():
 
 
   <!-- ===================================================================== -->
-  <!-- 7. BC547 NPN TRANSISTOR SWITCH CIRCUIT                                -->
+  <!-- 7. 2N3904 NPN TRANSISTOR SWITCH CIRCUIT                                -->
   <!-- ===================================================================== -->
   <g id="comp-transistor" transform="translate(480, 520)" filter="url(#shadow)">
     <rect width="210" height="190" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5"/>
@@ -542,7 +542,7 @@ def build_svg():
     <g transform="translate(105, 95)">
       <path d="M -18 20 C -18 -12 18 -12 18 20 Z" fill="#18181b" stroke="#3f3f46" stroke-width="2"/>
       <rect x="-18" y="20" width="36" height="8" fill="#18181b"/>
-      <text x="0" y="12" fill="#f8fafc" font-size="9" font-weight="bold" text-anchor="middle">BC547</text>
+      <text x="0" y="12" fill="#f8fafc" font-size="9" font-weight="bold" text-anchor="middle">2N3904</text>
 
       <!-- Pins -->
       <circle cx="0" cy="-30" r="7" fill="#10b981" stroke="#a7f3d0" stroke-width="2"/>
@@ -736,7 +736,7 @@ def build_svg():
       <text class="badge-text" x="95" y="19" fill="#047857" text-anchor="middle">PS_ON# Supervisory Line</text>
     </g>
 
-    <!-- GPIO 32 => BC547 Base -->
+    <!-- GPIO 32 => 2N3904 Base -->
     <path class="wire wire-glow" stroke="#059669"
           d="M 822 566 L 710 566 L 710 635 L 515 635"/>
     <g transform="translate(685, 595)" filter="url(#badge-shadow)">
@@ -744,7 +744,7 @@ def build_svg():
       <text class="badge-text" x="57" y="18" fill="#047857" text-anchor="middle">GPIO 32 Trip</text>
     </g>
 
-    <!-- BC547 Emitter => GND -->
+    <!-- 2N3904 Emitter => GND -->
     <path class="wire wire-glow" stroke="#0f172a"
           d="M 585 670 L 585 730 L 670 730"/>
 

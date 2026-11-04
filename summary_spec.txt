@@ -199,7 +199,7 @@ ter
 & 3.3 V Decoupling
 TB6612FNG Driver
 → Two-Wire Fan
-BC547 NPN Switch
+2N3904 NPN Switch
 → PS_ON# Pull-
 Down
 Firebase RTDB
@@ -254,7 +254,7 @@ INA219 high-side DC I2C current/power sensor modules
 3
 12 V cold-white high-density LED strip, 1 metre
 1
-BC547 NPN general-purpose bipolar transistors
+JCET 2N3904 NPN general-purpose bipolar transistors (TO-92, Lead 1:E 2:B 3:C)
 Cart quantity
 Two-pin SPST miniature rocker switches
 2
@@ -265,8 +265,8 @@ Cart quantity
 The Type-C female test board is optional and is not required for the agreed architecture.
 5.3 Already Available in Lab
 • Complete E12 resistor assortment kit.
-• Relevant baseline resistors: 4.7 kΩ (DS18B20 1-Wire pull-up, BC547 base drive), 10 kΩ (switch pull-ups, I2C pull-ups), 
-and 100 kΩ (transistor base bleed/pull-down).
+• Relevant baseline resistors: 4.7 kΩ (DS18B20 1-Wire pull-up, 2N3904 base drive (1 kΩ)), 10 kΩ (switch pull-ups, I2C pull-ups), 
+and 10 kΩ (transistor base-emitter pull-down).
 5.4 Later Purchase
 • Standard ATX-compatible desktop power supply (SMPS) with verified continuous +5VSB standby rating (≥1.5 A) 
 and active-low PS_ON# wire.
@@ -426,7 +426,7 @@ TB6612FNG STBY – Hardware Driver Bridge Enable
 3.3 V Active-HIGH (10 kΩ Pull-
 down)
 GPIO32
-PS_ON# Transistor Base Control – BC547 NPN Switch
+PS_ON# Transistor Base Control – 2N3904 NPN Switch
 3.3 V Active-HIGH (100 kΩ Pull-
 down)
 GPIO18
@@ -524,7 +524,7 @@ motor sink path passes exclusively through terminal AO2.
 4.7 kΩ
 ESP32 GPIO32
 (Output Pin)
-BC547 NPN Base
+2N3904 NPN Base (Pin 2)
 (TO-92 Package)
 100 kΩ Bleed
 to COM Ground
@@ -1340,7 +1340,7 @@ sion.
 PASS
 Phase 3: PS_ON# Gat­
 ing Interface
-Verify BC547 transistor switching 
+Verify 2N3904 transistor switching 
 and SMPS main rail startup and 
 shutdown response.
 GPIO32 HIGH asserts PS_ON# (< 0.4 V); 
@@ -1468,7 +1468,7 @@ LittleFS Web Server
 Offline 
 SPA)
 TB6612 Fan Driver
-BC547 
+2N3904 
 PS_ON# 
 Switch
 Firebase RTDB
@@ -1519,8 +1519,8 @@ ESP32 DevKitC
 SMPS PS_ON# Pin
 (Green Wire Pin 
 16)
-BC547 NPN Switch
-(4.7 kΩ / 100 kΩ)
+2N3904 NPN Switch
+(1 kΩ / 10 kΩ)
 ESP32 I2C Core
 (GPIO21 / GPIO22)
 INA219 Cluster (×

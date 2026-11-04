@@ -174,7 +174,7 @@ The architecture is partitioned into two galvanically separated power domains: a
       // Right Col: Core & Actuators (x = 1)
       node((1, 0), [ESP32 Dual-Core\ FreeRTOS Engine], width: 35mm, fill: rgb("f1f5f9")),
       node((1, 1), [TB6612FNG H-Bridge\ 25 kHz PWM Fan], width: 35mm),
-      node((1, 2), [BC547 NPN Switch\ PS_ON\# Supervisory], width: 35mm),
+      node((1, 2), [2N3904 NPN Switch\ PS_ON\# Supervisory], width: 35mm),
       node((1, 3), [16#sym.times;2 I2C Character LCD\ Cyclic Loop Display], width: 35mm, fill: rgb("f8fafc")),
       
       // Edges
@@ -207,11 +207,11 @@ Thermal telemetry utilizes two Dallas Semiconductor DS18B20 digital probes commu
   [U3--5], [INA219 Power Shunt], [12-bit ADC, $10 "m"Omega$, $plus.minus 3.2 "A"$, $0-26 "V"$], [Electrical],
   [TS1--2], [DS18B20 Probes], [$-55 "to" +125 degree"C"$, $plus.minus 0.5 degree"C"$, 12-bit], [Thermal],
   [DISP], [16#sym.times;2 Alphanumeric], [HD44780 with PCF8574 I2C Backpack], [Display],
-  [Q1], [BC547 NPN BJT], [45 V, 100 mA, $h_(F E) >= 110$, TO-92], [Supervisory]
+  [Q1], [JCET 2N3904 NPN BJT], [TO-92, 40 V, 200 mA, $h_(F E) = 100 - 300$], [Supervisory]
 )
 
 == C. Standby Domain Power Isolation and PS_ON\# Gating
-Main DC rail gating is governed by a discrete BC547 NPN transistor interface. The collector connects directly to the active-low ATX PS_ON\# wire (pulled up internally to +5VSB inside the SMPS), while the emitter connects to common DC ground (COM). When ESP32 GPIO32 asserts logic HIGH ($3.3 "V"$), base current saturates the transistor, clamping PS_ON\# below $0.4 "V"$ to energize the main power rails.
+Main DC rail gating is governed by a discrete JCET 2N3904 NPN transistor interface (TO-92 package, lead 1: emitter, lead 2: base, lead 3: collector). The collector connects directly to the active-low ATX PS_ON\# wire (pulled up internally to +5VSB inside the SMPS), while the emitter connects to common DC ground (COM). The base is driven by ESP32 GPIO32 via a $1 "k"Omega$ series base resistor, with a $10 "k"Omega$ base-emitter pull-down resistor to COM ensuring reliable cutoff during power-on reset or high-impedance states. When ESP32 GPIO32 asserts logic HIGH ($3.3 "V"$), base current saturates the transistor, clamping PS_ON\# below $0.4 "V"$ to energize the main power rails. Breakout-board mechanical switches must remain open to ensure full supervisory control without bypass.
 
 If a validated protective trip occurs, GPIO32 transitions to logic LOW in $< 5 "ms"$. Cutoff releases PS_ON\#, prompting the SMPS internal PWM controller to de-assert all main outputs (+12 V, +5 V, +3.3 V) simultaneously. Cooldown proceeds via passive convection while the ESP32 remains fully operational on standby power.
 

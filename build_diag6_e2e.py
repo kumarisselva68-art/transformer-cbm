@@ -182,7 +182,7 @@ def generate_diagram_6():
     <rect x="0" y="24" width="740" height="10" fill="#dc2626"/>
     <text x="18" y="24" font-size="16" font-weight="900" fill="#ffffff">BRANCH B1: INSTANT HARDWARE CUTOFF &amp; POWER DE-ENERGIZATION</text>
     <text x="18" y="58" font-size="14" font-weight="900" fill="#b91c1c">• Fast Cutoff (&lt; 5 ms): ESP32 GPIO 32 pulled LOW instantaneously</text>
-    <text x="18" y="80" font-size="13.5" font-weight="700" fill="#0f172a">• PS_ON# Interlock Releases: BC547 Q1 turns OFF; ATX PS_ON# pulled to +5V</text>
+    <text x="18" y="80" font-size="13.5" font-weight="700" fill="#0f172a">• PS_ON# Interlock Releases: 2N3904 Q1 turns OFF; ATX PS_ON# pulled to +5V</text>
     <text x="18" y="102" font-size="13.5" font-weight="900" fill="#dc2626">• ATX Main Power Rails Collapse: +12V, +5V, +3.3V fall to 0V within milliseconds</text>
     <text x="18" y="124" font-size="13.5" font-weight="700" fill="#b91c1c">• Load Disconnected: Removes power from 12V 50W Dummy Load (Stops I²R losses)</text>
     <text x="18" y="146" font-size="13.5" font-weight="600" fill="#334155">• 500 ms Rail Collapse Check: INA219 confirms V_12V &lt; 2.0V (detects stuck relay)</text>

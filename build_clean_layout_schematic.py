@@ -4,7 +4,7 @@ High-Precision CAD Circuit Diagram Generator for Transformer_CBM
 Rev 10.0 - Hardware Authenticity Edition:
 1. ATX Wiring Fix: +12V (y=65), +5V (y=105), +3.3V (y=145), GND (y=185) - 100% verified connections!
    TB6612 VM connects strictly to +12V at y=65 (never +5V).
-2. No OS Windows: Removed the artificial desktop-window boxes on BC547 and DS18B20.
+2. No OS Windows: Removed the artificial desktop-window boxes on 2N3904 and DS18B20.
 3. Clean DS18B20 Modules: Simple, realistic 3-pin breakout modules (VCC, DAT, GND) without ugly transistor graphics.
 4. Authentic 16x2 LCD: Realistic wide 2.2:1 aspect ratio, 16-pin gold bus, metal bezel, 16x2 character grid.
 5. Spacious 45px wire corridors, 100% strictly orthogonal routing.
@@ -320,10 +320,10 @@ def generate_circuit_svg():
   <!-- PS_ON# Switch (No OS Window!) | ESP32 Controller (Center)             -->
   <!-- ===================================================================== -->
 
-  <!-- 6. BC547 NPN TRANSISTOR SWITCH MODULE (x=40, y=390, w=270, h=260: Sleek PCB, NO OS Window) -->
+  <!-- 6. 2N3904 NPN TRANSISTOR SWITCH MODULE (x=40, y=390, w=270, h=260: Sleek PCB, NO OS Window) -->
   <g id="cmp-transistor-circuit" transform="translate(40, 390)" filter="url(#card-shadow)">
     <rect width="270" height="260" rx="8" fill="#1e293b" stroke="#334155" stroke-width="2"/>
-    <text x="135" y="24" fill="#38bdf8" font-size="13" font-weight="800" text-anchor="middle">PS_ON# SWITCH (BC547)</text>
+    <text x="135" y="24" fill="#38bdf8" font-size="13" font-weight="800" text-anchor="middle">PS_ON# SWITCH (2N3904)</text>
 
     <!-- Collector Terminal on TOP EDGE (x=135, y=45) -> global x=175, y=435 -->
     <circle cx="135" cy="45" r="7.5" fill="#10b981" stroke="#d1fae5" stroke-width="2"/>
@@ -356,7 +356,7 @@ def generate_circuit_svg():
     <polygon points="130,153 135,165 122,163" fill="#cbd5e1"/>
 
     <circle cx="118" cy="110" r="32" fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3"/>
-    <text x="70" y="114" fill="#94a3b8" font-size="11" font-weight="800" text-anchor="middle">BC547</text>
+    <text x="70" y="114" fill="#94a3b8" font-size="11" font-weight="800" text-anchor="middle">2N3904</text>
 
     <!-- 10k Base-Emitter Pull-Down Resistor (Vertical) -->
     <g transform="translate(123, 170)">
@@ -622,16 +622,16 @@ def generate_circuit_svg():
     <path class="wire" stroke="#9333ea"
           d="M 145 205 L 145 235 L 335 235 L 335 30 L 1200 30 L 1200 650 L 1035 650"/>
 
-    <!-- ATX PS_ON# from (200, 205) drops straight down into BC547 Collector (175, 435) -->
+    <!-- ATX PS_ON# from (200, 205) drops straight down into 2N3904 Collector (175, 435) -->
     <path class="wire" stroke="#10b981"
           d="M 200 205 L 200 380 L 175 380 L 175 435"/>
 
-    <!-- BC547 Emitter (175, 630) connects down and right to GND Bus at y=245 -->
+    <!-- 2N3904 Emitter (175, 630) connects down and right to GND Bus at y=245 -->
     <path class="wire" stroke="#0f172a"
           d="M 175 630 L 175 660 L 320 660 L 320 245"/>
     <circle cx="320" cy="245" r="5" fill="#0f172a" class="solder-junction"/>
 
-    <!-- ESP32 D32 Trip Signal (505, 475) routes 100% STRAIGHT LEFT into BC547 IN (295, 500) -->
+    <!-- ESP32 D32 Trip Signal (505, 475) routes 100% STRAIGHT LEFT into 2N3904 IN (295, 500) -->
     <path class="wire" stroke="#10b981" stroke-width="3.5"
           d="M 505 475 L 340 475 L 340 500 L 295 500"/>
   </g>

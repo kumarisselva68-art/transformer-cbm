@@ -201,7 +201,7 @@ The system is built around an ATX power supply platform providing two distinct p
       // Right Col: Core & Actuators (x = 1)
       node((1, 0), [ESP32 DevKit Core\ Predictive Engine], width: 35mm, fill: rgb("f1f5f9")),
       node((1, 1), [TB6612FNG Driver\ 25 kHz PWM Fan], width: 35mm),
-      node((1, 2), [BC547 NPN Switch\ PS_ON\# Pull-Down], width: 35mm),
+      node((1, 2), [2N3904 NPN Switch\ PS_ON\# Pull-Down], width: 35mm),
       node((1, 3), [16#sym.times;2 Character LCD\ Cyclic Loop Display], width: 35mm, fill: rgb("f8fafc")),
       
       // Edges
@@ -232,14 +232,14 @@ Electrical monitoring is handled by three Texas Instruments INA219 current and p
   [U3--5], [INA219 Power Shunt], [12-bit ADC, $10 "m"Omega$ Shunt, I2C], [Power Mon.],
   [TS1--2], [DS18B20 Sensors], [$-55 "to" +125 degree"C"$, $plus.minus 0.5 degree"C"$ accuracy], [Temperatures],
   [DISP], [16#sym.times;2 Character LCD], [HD44780 with PCF8574 I2C Backpack], [Local UI],
-  [Q1], [BC547 NPN BJT], [45 V, 100 mA, $h_(F E) >= 110$, TO-92], [PS_ON\# Gating],
+  [Q1], [JCET 2N3904 NPN BJT], [TO-92, 40 V, 200 mA, $h_(F E) = 100 - 300$], [PS_ON\# Gating],
   [SW1--2], [SPST Miniature Switch], [2-pin rocker, panel mount], [Controls]
 )
 
 == C. PS_ON\# Supervisory Isolation Circuit
-To safely enable and disable the main power outputs without placing high currents through mechanical switches, the ESP32 drives the base of a BC547 NPN transistor through a $4.7 "k"Omega$ resistor on GPIO32. A $100 "k"Omega$ resistor pulls the base to ground during power-on reset.
+To safely enable and disable the main power outputs without placing high currents through mechanical switches, the ESP32 drives the base of a JCET 2N3904 NPN transistor (TO-92 package, lead 1: emitter, lead 2: base, lead 3: collector) through a $1 "k"Omega$ resistor on GPIO32. A $10 "k"Omega$ base-emitter resistor pulls the base to common ground (COM) during power-on reset and high-impedance states.
 
-When GPIO32 is HIGH ($3.3 "V"$), the transistor saturates, pulling the PS_ON\# wire to COM ($< 0.4 "V"$) and turning on the main outputs. Setting GPIO32 LOW turns off the transistor; the SMPS internal pull-up raises PS_ON\# to +5VSB, instantly disabling the +12 V, +5 V, and +3.3 V rails within $5 "ms"$.
+When GPIO32 is HIGH ($3.3 "V"$), the transistor saturates, pulling the PS_ON\# wire to COM ($< 0.4 "V"$) and turning on the main outputs. Setting GPIO32 LOW turns off the transistor; the SMPS internal pull-up raises PS_ON\# to +5VSB, instantly disabling the +12 V, +5 V, and +3.3 V rails within $5 "ms"$. No breakout-board mechanical switch path may independently ground PS_ON\#.
 
 == D. Local 16x2 LCD Cyclic Display
 A 16#sym.times;2 character LCD with a PCF8574 I2C backpack gives operators immediate real-time information without requiring a phone or computer. The 5 V pull-ups on the backpack are disconnected so the I2C lines stay safe at 3.3 V logic levels.
@@ -538,7 +538,7 @@ U2 & TB6612FNG Driver & 1.2 A Continuous, 3.2 A Peak & Fan PWM \\
 U3--5 & INA219 Power Shunt & 12-bit ADC, $10\text{ m}\Omega$ Shunt, $\text{I}^2\text{C}$ & Power Mon. \\
 TS1--2 & DS18B20 Sensors & $-55\text{ to }+125^\circ\text{C}$, $\pm 0.5^\circ\text{C}$ & Temperatures \\
 DISP & $16\times2$ LCD & HD44780, PCF8574 $\text{I}^2\text{C}$ & Local UI \\
-Q1 & BC547 NPN BJT & 45 V, 100 mA, $h_{FE} \ge 110$ & PS\_ON\# Gate \\
+Q1 & JCET 2N3904 NPN BJT & TO-92, 40 V, 200 mA, $h_{FE} = 100\text{--}300$ & PS\_ON\# Gate \\
 SW1--2 & SPST Switch & 2-pin rocker, panel mount & Controls \\
 \bottomrule
 \end{tabular}
@@ -547,9 +547,9 @@ SW1--2 & SPST Switch & 2-pin rocker, panel mount & Controls \\
 \end{table}
 
 \subsection{PS\_ON\# Supervisory Isolation Circuit}
-To safely enable and disable the main power outputs without placing high currents through mechanical switches, the ESP32 drives the base of a BC547 NPN transistor through a 4.7~k$\Omega$ resistor on GPIO32. A 100~k$\Omega$ resistor pulls the base to ground during power-on reset.
+To safely enable and disable the main power outputs without placing high currents through mechanical switches, the ESP32 drives the base of a JCET 2N3904 NPN transistor (TO-92 package, lead 1: emitter, lead 2: base, lead 3: collector) through a 1~k$\Omega$ resistor on GPIO32. A 10~k$\Omega$ base-emitter resistor pulls the base to common ground (COM) during power-on reset and high-impedance states.
 
-When GPIO32 is HIGH (3.3~V), the transistor saturates, pulling the PS\_ON\# wire to COM ($< 0.4\text{ V}$) and turning on the main outputs. Setting GPIO32 LOW turns off the transistor; the SMPS internal pull-up raises PS\_ON\# to +5VSB, instantly disabling the +12~V, +5~V, and +3.3~V rails within 5~ms.
+When GPIO32 is HIGH (3.3~V), the transistor saturates, pulling the PS\_ON\# wire to COM ($< 0.4\text{ V}$) and turning on the main outputs. Setting GPIO32 LOW turns off the transistor; the SMPS internal pull-up raises PS\_ON\# to +5VSB, instantly disabling the +12~V, +5~V, and +3.3~V rails within 5~ms. No breakout-board mechanical switch path may independently ground PS\_ON\#.
 
 \subsection{Local $16\times2$ LCD Cyclic Display}
 A $16\times2$ character LCD with a PCF8574 $\text{I}^2\text{C}$ backpack gives operators immediate real-time information without requiring a phone or computer. The 5~V pull-ups on the backpack are disconnected so the $\text{I}^2\text{C}$ lines stay safe at 3.3~V logic levels.

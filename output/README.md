@@ -26,7 +26,7 @@ output/
 | **04** | `04_hardware_operational_state_flowchart` | `02_flowcharts` | Complete 10-state supervisory engine: Standby, Inrush Blanking, Running, Cutoffs (Electric, Bus, Thermal), Auto-Recovery test loop, and Lockouts. |
 | **05** | `05_predictive_thermal_algorithm_flowchart` | `02_flowcharts` | 1.00 Hz closed-loop algorithm: Sensor acquisition, EMA filter, rate-of-rise calculation, 30s forward projection, dual-demand cooling & cloud upload. |
 | **06** | `06_combined_supervisory_system_flowchart` | `02_flowcharts` | End-to-end supervisory flowchart: Path A Normal Closed-Loop Regulation vs. Path B Emergency Hardware Cutoff (< 5 ms trip, NVS latch, email alert, lockout). |
-| **07** | `07_master_hardware_circuit_schematic` | `03_schematic` | Complete breadboard & circuit wiring schematic: ESP32, ATX Breakout, 3x INA219, 2x DS18B20, TB6612FNG driver, 12V fan, 16x2 LCD & BC547 cutoff switch. |
+| **07** | `07_master_hardware_circuit_schematic` | `03_schematic` | Complete breadboard & circuit wiring schematic: ESP32, ATX Breakout, 3x INA219, 2x DS18B20, TB6612FNG driver, 12V fan, 16x2 LCD & 2N3904 cutoff switch. |
 
 ---
 *Generated automatically by Antigravity Engineering Toolkit.*

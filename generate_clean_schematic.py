@@ -408,16 +408,16 @@ def generate_clean_schematic():
 
 
   <!-- ===================================================================== -->
-  <!-- 7. BC547 TRANSISTOR SWITCH (Between ATX and ESP32)                    -->
+  <!-- 7. 2N3904 TRANSISTOR SWITCH (Between ATX and ESP32)                    -->
   <!-- ===================================================================== -->
-  <g id="mod-bc547" transform="translate(390, 310)" filter="url(#module-shadow)">
+  <g id="mod-2n3904" transform="translate(390, 310)" filter="url(#module-shadow)">
     <rect width="130" height="130" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3"/>
-    <text x="65" y="18" fill="#0f172a" font-size="9" font-weight="bold" text-anchor="middle">BC547 SWITCH</text>
+    <text x="65" y="18" fill="#0f172a" font-size="9" font-weight="bold" text-anchor="middle">2N3904 SWITCH</text>
 
     <!-- Transistor Shape -->
     <path d="M 50 65 C 50 45 80 45 80 65 Z" fill="#18181b"/>
     <rect x="50" y="65" width="30" height="5" fill="#18181b"/>
-    <text x="65" y="58" fill="#f8fafc" font-size="7" font-weight="bold" text-anchor="middle">BC547</text>
+    <text x="65" y="58" fill="#f8fafc" font-size="7" font-weight="bold" text-anchor="middle">2N3904</text>
 
     <!-- Pins -->
     <circle cx="65" cy="35" r="5" fill="#10b981"/><text class="pin-text" x="75" y="38" fill="#047857">C</text>
@@ -438,7 +438,7 @@ def generate_clean_schematic():
     <path class="wire wire-gnd" d="M 335 260 L 500 260 L 500 120 L 1380 120 L 1380 170 L 1475 170"/>
     <circle cx="500" cy="260" r="4.5" fill="#047857" class="junction"/>
 
-    <!-- Tap to BC547 Emitter (455, 405) -->
+    <!-- Tap to 2N3904 Emitter (455, 405) -->
     <path class="wire wire-gnd" d="M 455 405 L 500 405"/>
     <circle cx="500" cy="405" r="4" fill="#047857" class="junction"/>
 
@@ -516,11 +516,11 @@ def generate_clean_schematic():
     <path class="wire wire-5v" d="M 820 820 L 1525 820 L 1525 770"/>
     <circle cx="820" cy="820" r="4" fill="#dc2626" class="junction"/>
 
-    <!-- ATX PS_ON# (240, 252) -> BC547 Collector (455, 345) -->
+    <!-- ATX PS_ON# (240, 252) -> 2N3904 Collector (455, 345) -->
     <path class="wire" stroke="#10b981" stroke-width="3.5"
           d="M 240 252 L 240 345 L 455 345"/>
 
-    <!-- ESP32 GPIO 32 (576, 532) -> BC547 Base (425, 375) -->
+    <!-- ESP32 GPIO 32 (576, 532) -> 2N3904 Base (425, 375) -->
     <path class="wire" stroke="#059669" stroke-width="3"
           d="M 576 532 L 425 532 L 425 375"/>
   </g>

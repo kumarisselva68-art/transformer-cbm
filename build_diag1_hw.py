@@ -125,8 +125,8 @@ def generate_diagram_1():
     <!-- Sub-elements -->
     <g transform="translate(24, 92)">
       <rect width="402" height="56" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
-      <text x="20" y="26" font-size="17" font-weight="800" fill="#0f172a">BC547 NPN Transistor (Q1)</text>
-      <text x="20" y="46" font-size="14" font-weight="600" fill="#475569">Collector pulls PS_ON# to GND; Emitter to Star GND</text>
+      <text x="20" y="26" font-size="17" font-weight="800" fill="#0f172a">2N3904 NPN Transistor (Q1)</text>
+      <text x="20" y="46" font-size="14" font-weight="600" fill="#475569">Collector (Pin 3) pulls PS_ON# to GND; Emitter (Pin 1) to Star GND</text>
     </g>
 
     <g transform="translate(24, 160)">
@@ -290,7 +290,7 @@ def generate_diagram_1():
         <text x="0" y="24" fill="#60a5fa">GPIO 21 (SDA):</text><text x="130" y="24" fill="#f8fafc">I2C Data Bus (3x INA219 + 16x2 LCD)</text>
         <text x="0" y="52" fill="#38bdf8">GPIO 22 (SCL):</text><text x="130" y="52" fill="#f8fafc">I2C Clock Bus (400 kHz Fast-Mode)</text>
         <text x="0" y="80" fill="#facc15">GPIO 27 (TEMP):</text><text x="130" y="80" fill="#f8fafc">1-Wire DQ Bus (Dual DS18B20 Probes)</text>
-        <text x="0" y="108" fill="#4ade80">GPIO 32 (PS_ON#):</text><text x="130" y="108" fill="#f8fafc">Active-Low Driver → BC547 NPN Switch</text>
+        <text x="0" y="108" fill="#4ade80">GPIO 32 (PS_ON#):</text><text x="130" y="108" fill="#f8fafc">Active-Low Driver → 2N3904 NPN Switch</text>
 
         <!-- Col 2 -->
         <text x="460" y="24" fill="#c084fc">GPIO 25 (PWM):</text><text x="590" y="24" fill="#f8fafc">25 kHz Fan PWM → TB6612 PWMA</text>
@@ -434,7 +434,7 @@ def generate_diagram_1():
   <path class="wire" stroke="#eab308" stroke-width="4"
         d="M 1025 730 L 1025 705"/>
 
-  <!-- Control Line: ESP32 GPIO 32 to BC547 Base -->
+  <!-- Control Line: ESP32 GPIO 32 to 2N3904 Base -->
   <path class="wire" stroke="#059669" stroke-width="4"
         d="M 560 810 L 510 810"/>
 

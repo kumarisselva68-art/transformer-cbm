@@ -358,12 +358,15 @@ def generate_cirkit_svg():
   <!-- Discrete PS_ON# Circuit | ESP32-WROOM-32 DevKit                       -->
   <!-- ===================================================================== -->
 
-  <!-- 6. PURE DISCRETE PS_ON# TRANSISTOR SWITCH -->
-  <g transform="translate(120, 560)">
-    <text class="comp-title" x="0" y="0" text-anchor="middle">PS_ON#</text>
-    <text class="comp-title" x="0" y="28" text-anchor="middle">SWITCH</text>
+  <!-- 6. PURE DISCRETE PS_ON# TRANSISTOR SWITCH (JCET 2N3904) -->
+  <g transform="translate(132, 452)" text-anchor="middle">
+    <text class="comp-title" x="0" y="0">PS_ON#</text>
+    <text class="comp-title" x="0" y="24">SWITCH</text>
+    <text class="pin-label-lg" x="0" y="50" fill="#0f172a">2N3904</text>
+    <text class="pin-label" x="0" y="70" fill="#334155" font-size="14" font-weight="bold">Q1 (JCET NPN)</text>
+    <text class="pin-label" x="0" y="90" fill="#047857" font-size="13" font-weight="bold">1:E | 2:B | 3:C</text>
   </g>
-  <g id="bc547-schematic" transform="translate(50, 470)">
+  <g id="2n3904-schematic" transform="translate(50, 470)">
     <g transform="translate(160, 150)">
       <!-- Transistor Circle -->
       <circle cx="0" cy="0" r="32" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
@@ -374,15 +377,18 @@ def generate_cirkit_svg():
       <line x1="-15" y1="10" x2="0" y2="24" stroke="#0f172a" stroke-width="3"/>
       <line x1="0" y1="24" x2="0" y2="45" stroke="#0f172a" stroke-width="3.5"/>
       <polygon points="-6,15 1,25 -9,23" fill="#0f172a"/>
-      <text class="pin-label-lg" x="-38" y="6" fill="#0f172a" text-anchor="end">BC547</text>
-      <text class="pin-label" x="-38" y="28" fill="#64748b" font-size="16" text-anchor="end">Q1 (NPN)</text>
+
+      <!-- Lead Pin Designations on Transistor Terminals -->
+      <text class="pin-label" x="-8" y="-30" fill="#047857" font-size="13" font-weight="bold" text-anchor="end">3 (C)</text>
+      <text class="pin-label" x="0" y="14" fill="#047857" font-size="12" font-weight="bold">2 (B)</text>
+      <text class="pin-label" x="-8" y="38" fill="#047857" font-size="13" font-weight="bold" text-anchor="end">1 (E)</text>
     </g>
 
     <!-- Horizontal 1 kΩ Base Resistor R1 -->
     <g transform="translate(195, 150)">
       <line x1="0" y1="0" x2="20" y2="0" stroke="#0f172a" stroke-width="3"/>
       <rect x="20" y="-16" width="55" height="32" rx="4" fill="#d97706" stroke="#78350f" stroke-width="2"/>
-      <text class="pin-label" x="47" y="7" fill="#fef08a" text-anchor="middle">1 kΩ</text>
+      <text class="pin-label" x="47" y="7" fill="#fef08a" text-anchor="middle">1 k&#937;</text>
       <text class="pin-label" x="47" y="-22" fill="#065f46" font-size="16" text-anchor="middle">R1 (BASE)</text>
       <line x1="75" y1="0" x2="100" y2="0" stroke="#10b981" stroke-width="3.5"/>
     </g>
@@ -391,7 +397,7 @@ def generate_cirkit_svg():
     <g transform="translate(205, 150)">
       <line x1="0" y1="0" x2="0" y2="35" stroke="#0f172a" stroke-width="2.5"/>
       <rect x="-16" y="35" width="32" height="55" rx="4" fill="#d97706" stroke="#78350f" stroke-width="2"/>
-      <text class="pin-label" x="0" y="68" fill="#fef08a" text-anchor="middle" transform="rotate(-90 0 68)">10 kΩ</text>
+      <text class="pin-label" x="0" y="68" fill="#fef08a" text-anchor="middle" transform="rotate(-90 0 68)">10 k&#937;</text>
       <text class="pin-label" x="24" y="68" fill="#64748b" font-size="15">R2 (PULL-DOWN)</text>
       <line x1="0" y1="90" x2="0" y2="120" stroke="#0f172a" stroke-width="2.5"/>
       <line x1="0" y1="120" x2="-45" y2="120" stroke="#0f172a" stroke-width="2.5"/>
@@ -646,7 +652,7 @@ def generate_cirkit_svg():
 
   <!-- ==================== 2. CONTROL & TRANSISTOR SWITCH WIRING ==================== -->
   <g id="wires-control">
-    <!-- ATX PS_ON# (210, 330) drops straight to BC547 Collector (210, 575) -->
+    <!-- ATX PS_ON# (210, 330) drops straight to 2N3904 Collector (210, 575) -->
     <path class="wire-line" stroke="#10b981" stroke-width="4" 
           d="M 210 330 L 210 575"/>
 
@@ -654,7 +660,7 @@ def generate_cirkit_svg():
     <path class="wire-line" stroke="#10b981" stroke-width="4" 
           d="M 470 565 L 375 565 L 375 620 L 345 620"/>
 
-    <!-- BC547 Emitter & R2 Ground Lead (210, 740) -> Ground at x=55 -->
+    <!-- 2N3904 Emitter & R2 Ground Lead (210, 740) -> Ground at x=55 -->
     <path class="wire-line" stroke="#0f172a" stroke-width="4" 
           d="M 210 665 L 210 740 L 55 740"/>
     <circle cx="55" cy="740" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>

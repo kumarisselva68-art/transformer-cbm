@@ -89,7 +89,7 @@ DIAGRAM_MANIFEST = [
         "title": "Master Hardware Schematic: Cirkit Designer Wiring Diagram",
         "src_svg": "transformer_cbm_circuit_diagram.svg",
         "src_png": "circuit_diagram_preview.png",
-        "desc": "Complete breadboard & circuit wiring schematic: ESP32, ATX Breakout, 3x INA219, 2x DS18B20, TB6612FNG driver, 12V fan, 16x2 LCD & BC547 cutoff switch."
+        "desc": "Complete breadboard & circuit wiring schematic: ESP32, ATX Breakout, 3x INA219, 2x DS18B20, TB6612FNG driver, 12V fan, 16x2 LCD & 2N3904 cutoff switch."
     }
 ]
 
