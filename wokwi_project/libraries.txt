@@ -1,0 +1,4 @@
+# Wokwi Library Dependencies
+LiquidCrystal I2C
+OneWire
+DallasTemperature

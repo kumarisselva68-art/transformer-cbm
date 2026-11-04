@@ -1,0 +1,1623 @@
+
+--- PAGE 1 ---
+CON T RO L L E D E NG I N E E R I NG S PE C I F I C AT I ON
+HARDWARE ARCHITECTURE, EMBEDDED CONTROL & CLOUD SUPERVISION
+Development of an IoT-Based Transformer Condition Mon­
+itoring System with Predictive Adaptive Thermal Manage­
+ment
+Consolidated Project Design, Circuit Interfaces, Real-Time Predictive Algorithms, and Validation Protocols
+DOCUMENT INFORMATION
+Document Type:
+Consolidated 
+Engineering 
+Spec
+Baseline Rev:
+3.0 – Production Baseline
+Date:
+October 30, 2026
+Classification:
+Engineering Design Record
+Target System:
+Small-Scale ATX SMPS Bench
+Primary Controller:
+ESP32-WROOM DevKitC (30-
+pin)
+Status:
+Procurement in Progress
+ARCHITECTURE ALLOCATION
+Embedded Core:
+ESP32 (Acquisition & Trips)
+Power Isolation:
+Active-Low PS_ON# Circuit
+Cooling Driver:
+TB6612FNG H-Bridge (PWM)
+Instrumentation:
+3x INA219 (I2C) + 2x DS18B20
+Local Interface:
+ESP32 
+Embedded 
+LittleFS 
+Server
+Cloud Storage:
+Firebase Realtime Database
+Supervision:
+Cloudflare Worker + Brevo 
+API
+SYSTEM ARCHITECTURAL GOVERNING PRINCIPLE
+All safety-critical thermal monitoring, multi-rail electrical supervision, forward temperature trend projection, and 
+protective shutdown decisions execute autonomously within the local ESP32 firmware loop. The ATX switch-mode power 
+supply (SMPS) remains fully monitored and controllable locally from uninterrupted +5VSB standby power, even during 
+total external internet, Wi-Fi, or cloud service outages.
+PROJECT PLATFORM & SCOPE DELIMITATION
+This specification establishes the hardware, firmware, and supervisory implementation for demonstrating condition 
+monitoring and predictive adaptive thermal control on a small-scale ATX switch-mode power supply assembly. This 
+design demonstrates the monitoring and control principles using low-voltage instrumentation – it does not constitute a 
+certified utility-grid transformer protective device, substation protection relay, or safety-instrumented emergency-stop 
+(SIS/E-stop) system.
+
+--- PAGE 2 ---
+Table of Contents
+1. Document Information . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠3
+2. Abstract . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠3
+3. Objectives . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠3
+4. System Architecture . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠4
+5. Hardware and Procurement Status . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠4
+6. Measurement and Load Arrangement . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠6
+7. Power Domains . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠6
+8. Proposed Circuit Connections . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠8
+9. Firmware Architecture . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠10
+10. Predictive Thermal-Management Algorithm . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠11
+11. Protection Logic . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠13
+12. Recovery and Power-State Control . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠13
+13. Maintenance-Advisory Function . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠15
+14. Local Dashboard and Setup . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠15
+15. Internet Deployment and Full Data Flow . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠16
+16. Data Model and Update Timing . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠16
+17. Buffering and Historical Retention . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠18
+18. Heartbeat Supervision and Email Notifications . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠18
+19. Security and Privacy . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠20
+20. Architecture Justification . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠20
+21. Future Independent Branch / Rail Switching . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠21
+22. Testing and Acceptance Criteria . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠22
+23. Safety Precautions and Commissioning Checklist . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠22
+24. Final Deliverables and Engineering Sign-Off . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ⁠24
+Hardware & Firmware Systems Architecture Baseline
+Page 2 of 26
+
+--- PAGE 3 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+1. Document Information
+Item
+Description
+Document Type
+Consolidated project design and implementation documentation
+Version
+3.0 – Production Baseline
+Date
+October 30, 2026
+Project Platform
+Small-scale ATX SMPS demonstration
+Controller
+ESP32-WROOM development board (30-pin, CP2102 USB-C)
+Status
+Robocraze components ordered; Robu components and SMPS pending
+Main Objective
+Demonstrate condition monitoring, predictive cooling, supervisory shutdown, 
+and IoT reporting
+This document consolidates the agreed technical design. It is not a claim that the system has already been assembled, 
+calibrated, or validated.
+SCOPE BOUNDARY & DEMONSTRATION OBJECTIVE
+The objective of this project is to demonstrate condition-monitoring, predictive thermal-control, and supervisory-
+protection principles using a small-scale ATX switch-mode power supply (SMPS) bench. It is not intended to construct 
+an industrial grid transformer-protection system or replace certified primary overcurrent devices.
+1.1 Interpretation
+• “Shall” identifies a mandatory implementation requirement.
+• “Proposed” identifies an engineering value, threshold, or method that requires experimental bench testing before 
+final commissioning acceptance.
+2. Abstract
+The project monitors the surface temperature of an SMPS transformer, inlet-air temperature, and the voltage, current, 
+and power of three DC output rails: 12 V, 5 V, and 3.3 V.
+An ESP32 microcontroller processes all sensor measurements locally, predicts near-term temperature rise through 
+numerical trend extrapolation, and modulates a two-wire fan through a Toshiba TB6612FNG dual-bridge driver. The 
+controller requests emergency supervisory shutdown of all main outputs via the ATX PS_ON# active-low interface 
+when validated thermal or electrical trip conditions occur.
+The ESP32 operates continuously from the SMPS +5VSB standby supply so that condition monitoring, event logging, 
+and telemetry reporting continue uninterrupted even after main outputs are disabled. Selected thermal trip incidents 
+may permit a qualified automatic restart following verified cooldown, whereas electrical overcurrent and bus fault trips 
+remain latched permanently for physical inspection.
+The system provides:
+• An offline, zero-dependency dashboard hosted directly by the ESP32 via LittleFS.
+• An internet-accessible real-time dashboard hosted on Firebase Hosting.
+• Persistent time-series history, statistical summaries, and fault event logs stored in Firebase Realtime Database.
+• Transactional email alert notifications dispatched via a Cloudflare Worker invoking the Brevo API.
+• Independent heartbeat communication-loss supervision executed by scheduled Cloudflare Cron Triggers.
+• Explainable, condition-based maintenance advisories derived from thermal trends and fault history without unsup­
+ported component failure-life claims.
+3. Objectives
+1. Measure transformer-surface temperature and ambient inlet-air reference temperature with calibrated digital 
+sensors.
+Hardware & Firmware Systems Architecture Baseline
+Page 3 of 26
+
+--- PAGE 4 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+2. Continuously monitor native DC output-rail voltage, load current, and power across all three primary outputs (12 
+V, 5 V, and 3.3 V).
+3. Demonstrate measurable, verified external electrical loading on the 12 V rail using parallel DC branches.
+4. Predict short-term transformer surface-temperature trends using a rolling least-squares digital filter.
+5. Dynamically increase fan cooling demand ahead of time before a measured-temperature trip threshold is breached.
+6. Request prompt supervisory shutdown of all main SMPS DC outputs upon detection of confirmed thermal or 
+electrical faults.
+7. Maintain continuous monitoring, diagnostic reporting, and network connectivity from standby power during main-
+rail shutdown.
+8. Provide dual-tier local (offline SoftAP) and remote (cloud-synchronized) operational dashboards.
+9. Maintain persistent telemetry history and structured event logs with bounded outage buffering.
+10. Deliver actionable, explainable maintenance advisories based on empirical thermal resistance and operating history.
+3.1 Exclusions
+The initial implementation explicitly does not provide:
+• Direct measurement of internal transformer winding hot-spot temperature, core magnetic flux, or insulation dielectric 
+degradation.
+• Insulation-health remaining useful life (RUL) prognostic estimation.
+• AC mains line input-power or power-factor measurement.
+• Actual fan tachometer (RPM) pulse feedback or blade stall detection.
+• Individual branch load disconnection (all main outputs are interrupted together via PS_ON#).
+• Primary certified circuit-breaker or fast short-circuit protection (the INA219 is an instrument, not a circuit breaker).
+• Safety-instrumented system (SIS) or emergency-stop (E-stop) functional safety certification.
+4. System Architecture
+1-Wire
+I2C
++5VSB
+Reg. 5V
+HTTP / WS
+PWM Duty
+GPIO32
+HTTPS PUT
+WebSockets
+Cron Audit
+Transformer 
+DS18B20
+& Inlet DS18B20
+INA219 Modules 
+(× 3)
+12 V, 5 V, 3.3 V
+ATX SMPS +5VSB
+Standby Supply
+Local User Terminal
+(Direct Wi-Fi / SoftAP)
+ESP32 Controller Core
+(Acquisition, Predictor,
+Protection 
+& 
+Web 
+Server)
+Standby Power Fil­
+ter
+& 3.3 V Decoupling
+TB6612FNG Driver
+→ Two-Wire Fan
+BC547 NPN Switch
+→ PS_ON# Pull-
+Down
+Firebase RTDB
+/latest, /events
+Firebase Hosting
+SPA Dashboard
+Cloudflare Worker
+& Brevo Email API
+Figure 1: Complete System Hardware Interconnect, Local Access, and Cloud Telemetry Architecture
+4.1 Control Authority
+The ESP32 microcontroller retains sole, uncompromised real-time control authority over fan speed modulation 
+and supervisory shutdown. The cloud infrastructure provides secondary telemetry persistence, browser visualization, 
+authenticated remote OFF commands, and asynchronous notifications. Under no circumstances is the local protection 
+loop dependent on network connectivity, internet availability, or cloud service responsiveness.
+5. Hardware and Procurement Status
+5.1 Robocraze Order – Confirmed
+Component Description
+Quantity
+ESP32 CP2102 USB-C development board, 30-pin
+1
+Hardware & Firmware Systems Architecture Baseline
+Page 4 of 26
+
+--- PAGE 5 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+Component Description
+Quantity
+TB6612FNG dual-channel motor driver module
+1
+DS18B20 digital temperature sensor modules
+2
+6–40 V input to 5 V dual-USB step-down converter
+1
+16×2 blue character LCD with I2C backpack
+1
+Male-to-female jumper wire set
+1
+Single-sided Vero prototyping boards
+2
+Glue gun kit
+1
+• Order Confirmation ID: ZUPY0750I
+• Total Amount Paid: ₹1,073.50 (inclusive of ORDER5 promotional discount and free surface logistics).
+5.2 Robu Items – Planned
+Component Description
+Quantity
+XH-M229 ATX 24-pin benchtop breakout adapter
+1
+INA219 high-side DC I2C current/power sensor modules
+3
+12 V cold-white high-density LED strip, 1 metre
+1
+BC547 NPN general-purpose bipolar transistors
+Cart quantity
+Two-pin SPST miniature rocker switches
+2
+Multicore flat ribbon cable
+1 metre
+Polyolefin heat-shrink tubing assortment
+Cart quantity
+The Type-C female test board is optional and is not required for the agreed architecture.
+5.3 Already Available in Lab
+• Complete E12 resistor assortment kit.
+• Relevant baseline resistors: 4.7 kΩ (DS18B20 1-Wire pull-up, BC547 base drive), 10 kΩ (switch pull-ups, I2C pull-ups), 
+and 100 kΩ (transistor base bleed/pull-down).
+5.4 Later Purchase
+• Standard ATX-compatible desktop power supply (SMPS) with verified continuous +5VSB standby rating (≥1.5 A) 
+and active-low PS_ON# wire.
+• Existing internal fan may be reused only after bench testing confirms that its startup inrush and steady-state 
+operating current do not exceed the 1.2 A continuous rating of the TB6612FNG driver channel.
+Hardware & Firmware Systems Architecture Baseline
+Page 5 of 26
+
+--- PAGE 6 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+6. Measurement and Load Arrangement
+6.1 Channel Assignment
+Channel
+Measurement Target
+Physical Instrumentation Boundary
+Temperature 1
+Transformer Surface
+Direct contact with core/winding outer insulation wrap­
+per
+Temperature 2
+Inlet-Air Reference
+Ambient airflow infeed path upstream of thermal rise
+INA219 1
+12 V External Load
+Shunt in series with parallel LED strip & USB converter
+INA219 2
+Native 5 V Rail
+Unloaded native SMPS 5 V bus voltage monitoring
+INA219 3
+Native 3.3 V Rail
+Unloaded native SMPS 3.3 V bus voltage monitoring
+6.2 External Loads
+Only the 12 V external load path is populated with active loads during initial demonstration:
+12 V Infeed
+Protected
+Branch 1
+Branch 2
+Main 12 V Rail
+(XH-M229)
+Branch Fuse
+(Fast 3.15 A)
+INA219 1 Shunt
+(10 mΩ Resistor)
+12 V LED Strip
+( 0.5 A to 1.0 A)
+6-40V to 5V USB
+Step-Down Con­
+verter
+Figure 2: 12 V External Load Path and Measurement Boundary
+• The 12 V LED strip and the dual-USB step-down converter are connected in parallel downstream of INA219 1
+• The 5 V output from the step-down converter is completely separate and isolated from the native SMPS 5 V rail.
+6.3 Unloaded Channels
+The native 5 V and 3.3 V INA219 modules remain fully connected to the I2C bus and their respective rails to provide 
+continuous bus voltage supervision. In the absence of external loads, measured current on these rails shall read 
+approximately zero (𝐼≈0 A). No artificial dummy loads shall be added merely to simulate non-zero current.
+6.4 Fan Measurement Boundary
+The 12 V cooling fan is supplied directly from a separately protected 12 V branch upstream of INA219 1 Consequently:
+𝐼INA219,12V = 𝐼LED + 𝐼USB converter input
+Fan operating current and standby controller consumption are explicitly excluded from INA219 1 measurements. This 
+measurement boundary shall be clearly documented on all hardware schematics and dashboard metrics.
+7. Power Domains
+7.1 Standby Domain
+The ATX standby rail (+5VSB) remains energized continuously whenever the power supply AC mains line cord is 
+connected, irrespective of whether the main outputs are enabled or disabled via PS_ON#.
+Permanent
+Gated Switch
+PS_ON# Gating
+AC Mains Infeed
+& SMPS Stage
++5VSB Standby
+(Continuous)
+Filter & 3.3 V
+LDO Regulator
+ESP32 Core &
+Sensors Logic
+Main DC Rails
+12 V, 5 V, 3.3 V
+INA219 Shunts
+& Branch Fuses
+Loads 
+Subsys­
+tem
+& 12 V Fan
+Hardware & Firmware Systems Architecture Baseline
+Page 6 of 26
+
+--- PAGE 7 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+Figure 3: Standby (+5VSB) vs. Switched Main DC Power Domain Separation
+Continuous +5 V
+Fused Rail
+Filtered 5 V
+3.3 V Logic
+Direct COM
+ATX SMPS +5VSB
+Standby Terminal
+Inline Fast-Acting Fuse
+(1.0 A / 250 V Littelfuse)
+Bulk Decoupling Filter
+(100𝜇F Electro. + 0.1𝜇F Cer.)
+ESP32 DevKitC 5V Input Pin
+(AMS1117-3.3 LDO Regulator)
+Sensors, Logic Bus & Pull-ups
+(INA219, DS18B20, TB6612)
+SMPS Common Ground (COM)
+Single-Point Star Ground
+Figure 4: Standby (+5VSB) Power Conditioning and Grounding Schematic
+7.2 Switched Domain
+Main 12 V, 5 V, and 3.3 V rails are enabled or disabled simultaneously via the PS_ON# line. When disabled:
+• External loads (LED strip and USB converter) immediately lose power.
+• The 12 V cooling fan ceases operation due to absence of motor supply.
+• The ESP32 controller, sensor instrumentation, and LittleFS web server remain active on standby power.
+• System cooldown occurs via passive natural convection.
+• Real-time diagnostic reporting and telemetry upload continue uninterrupted.
+7.3 Power Requirements
+1. Verify manufacturer nameplate confirms +5VSB is rated for continuous current ≥1.5 A.
+2. Feed power strictly into the ESP32 5 V pin; never feed 5 V directly to the 3.3 V rail.
+3. Under no circumstances join the +5VSB standby rail to the main switched 5 V rail.
+4. Prevent USB programming cable backfeeding using Schottky diode or MOSFET isolation.
+5. Verify brownout immunity during Wi-Fi transmission power spikes (≈240 mA).
+Hardware & Firmware Systems Architecture Baseline
+Page 7 of 26
+
+--- PAGE 8 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+8. Proposed Circuit Connections
+8.1 GPIO Map
+ESP32 GPIO
+Assigned Hardware Function
+Signal Logic Standard
+GPIO21
+I2C Serial Data (SDA) – INA219 modules & 16x2 LCD
+3.3 V Open-Drain (4.7 kΩ Pull-
+up)
+GPIO22
+I2C Serial Clock (SCL) – INA219 modules & 16x2 LCD
+3.3 V Open-Drain (4.7 kΩ Pull-
+up)
+GPIO27
+1-Wire Digital Bus (DQ) – Two DS18B20 Probes
+3.3 V Open-Drain (4.7 kΩ Pull-
+up)
+GPIO25
+TB6612FNG PWMA – Hardware PWM Speed Modulation
+3.3 V Push-Pull (25 kHz PWM)
+GPIO26
+TB6612FNG AIN1 – Motor Direction Control
+3.3 V Logic HIGH (Forward)
+GPIO33
+TB6612FNG STBY – Hardware Driver Bridge Enable
+3.3 V Active-HIGH (10 kΩ Pull-
+down)
+GPIO32
+PS_ON# Transistor Base Control – BC547 NPN Switch
+3.3 V Active-HIGH (100 kΩ Pull-
+down)
+GPIO18
+Main-Output SPST Rocker Switch Input
+3.3 V Active-LOW (10 kΩ Pull-
+up)
+GPIO23
+Local-Setup SPST Rocker Switch Input
+3.3 V Active-LOW (10 kΩ Pull-
+up)
+8.2 INA219 Logic Connections & Addressing
+All three INA219 modules share the same I2C bus:
+• VCC: Connected to standby-derived 3.3 V rail.
+• GND: Connected to secondary common ground (COM).
+• SDA / SCL: Connected in parallel to GPIO21 and GPIO22 with combined effective pull-up 1.8 kΩ ≤𝑅eff ≤3.3 kΩ.
+Monitored Rail
+I2C Address
+Address Jumper Configuration
+12 V External Load
+0x40 (Default)
+A0 = Open, A1 = Open
+Native 5 V Rail
+0x41
+A0 = Bridged to VCC, A1 = Open
+Native 3.3 V Rail
+0x44
+A0 = Open, A1 = Bridged to VCC
+8.3 INA219 Power Paths
+Sensor
+VIN+ Connection (Source-Side)
+VIN- Connection (Load-Side)
+1 (12 V)
+Main 12 V downstream of branch fuse
+LED strip and USB step-down positive infeed
+2 (5 V)
+Main 5 V native output terminal
+Unloaded, insulated terminal post
+3 (3.3 V)
+Main 3.3 V native output terminal
+Unloaded, insulated terminal post
+Important: VIN- is not ground. The INA219 measures rail voltage between VIN- and COM ground.
+8.4 DS18B20 Wiring
+Both DS18B20 digital probes operate in non-parasitic mode:
+• VDD connected to standby-derived 3.3 V; GND connected to COM.
+• Shared DQ data wire connected to GPIO27 with a single 4.7 kΩ pull-up resistor to 3.3 V.
+• Probe 64-bit factory ROM registration is bound during commissioning (CH1: transformer surface; CH2: inlet air).
+8.5 Fan Driver (TB6612FNG)
+Terminal
+Hardware Electrical Connection
+Functional Role
+VM
+Protected main 12 V branch
+Motor power supply (≥10𝜇F 
+Decoupled)
+VCC
+Standby-derived 3.3 V rail
+Logic power supply (0.1𝜇F De­
+coupled)
+Hardware & Firmware Systems Architecture Baseline
+Page 8 of 26
+
+--- PAGE 9 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+Terminal
+Hardware Electrical Connection
+Functional Role
+GND / PGND
+SMPS Common Ground (COM)
+Single-point reference ground
+AO1
+Fan positive terminal wire (+12 V)
+Half-bridge A positive drive
+AO2
+Fan negative terminal wire
+Half-bridge A negative sink
+AIN1
+ESP32 GPIO26
+Direction logic (Set HIGH)
+AIN2
+SMPS Common Ground (COM)
+Direction logic (Tied LOW)
+PWMA
+ESP32 GPIO25
+Speed modulation PWM input 
+(25 kHz)
+STBY
+ESP32 GPIO33
+Driver bridge enable (10 kΩ 
+Pull-down)
+Wiring Invariant: Do not connect fan negative (AO2) to COM or chassis ground. In this H-bridge configuration, the 
+motor sink path passes exclusively through terminal AO2.
+8.6 PS_ON# Active-Low Transistor Interface
+4.7 kΩ
+ESP32 GPIO32
+(Output Pin)
+BC547 NPN Base
+(TO-92 Package)
+100 kΩ Bleed
+to COM Ground
+Collector Pin →
+SMPS PS_ON# Wire
+Emitter Pin →
+SMPS 
+Common 
+(COM)
+Figure 5: Discrete NPN Transistor Pull-Down Interface for ATX PS_ON# Control
+GPIO32 State
+Hardware Electrical Result
+LOW / High-Z
+Transistor cutoff; PS_ON# pulled high to +5VSB; main DC outputs are disabled (OFF).
+HIGH (3.3 V)
+Transistor saturated; PS_ON# pulled low to < 0.4 V; main DC outputs are energized 
+(ON).
+ELECTRICAL HAZARD STATEMENT
+PS_ON# is an active-low supervisory inhibit. Releasing PS_ON# disables the switched DC outputs (+12 V, +5 V, +3.3 V) 
+but does not isolate AC utility line voltage or de-energize the +5VSB standby rail. The SMPS chassis must never be 
+opened or touched without completely removing the AC mains power cord.
+8.7 Physical SPST Rocker Switches
+10 kΩ Pull-up
+Standby 3.3 V Logic
+ESP32 Input Pin
+(GPIO18 / GPIO23)
+SPST Rocker Switch
+(Contact to COM)
+Secondary 
+COM 
+Ground
+Figure 6: SPST Rocker Switch Input Circuit with Hardware Debounce Filter
+Switch
+GPIO Wiring
+Software Functional Action
+Main-Output Switch
+GPIO18 
+to 
+COM 
+when 
+closed
+OFF inhibits operation; OFF → ON requests authorized 
+startup.
+Setup Switch
+GPIO23 
+to 
+COM 
+when 
+closed
+Requests local SoftAP provisioning mode upon deliberate 
+closure.
+Hardware & Firmware Systems Architecture Baseline
+Page 9 of 26
+
+--- PAGE 10 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+Safety Invariant: A maintained ON position of the switch must never bypass software fault lockouts or override a 
+validated remote emergency OFF command.
+8.8 16x2 Character LCD Interface
+The LCD backpack provides an I2C interface operating at 5 V. Level-shifting must be verified prior to connection to 
+protect ESP32 GPIO tolerance (≤3.6 V). The controller firmware communicates over standard I2C commands without 
+stalling real-time control.
+8.9 Wiring and Decoupling Best Practices
+1. All high-current connections (≥2 A) use 18 AWG copper conductors; low-current logic uses 24 AWG ribbon wire.
+2. Local 10𝜇F electrolytic bulk decoupling and 0.1𝜇F high-frequency ceramic capacitors are placed adjacent to the 
+TB6612FNG driver and INA219 logic pins.
+3. Star grounding topology connects all logic and sensor grounds to a single physical terminal on the SMPS secondary 
+side. Never route high-current motor or LED return currents through sensor breadboard jumpers.
+9. Firmware Architecture
+Firmware Subsystem
+Functional Architectural Responsibility
+Sensor Manager
+Coordinates non-blocking periodic conversions and binds hardware ROM/I2C 
+addresses.
+Quality Manager
+Enforces data validity flags, timestamp freshness, CRC verification, and bus time­
+outs.
+Measurement Processor
+Calculates numerical moving averages, rate-of-change, and multi-sample statis­
+tical reductions.
+Thermal Predictor
+Executes rolling 30-second linear regression slope and projects forward horizon 
+temperature.
+Fan Controller
+Translates thermal demand into rate-limited PWM duty cycles with stall-prevention 
+boost.
+Protection Supervisor
+Executes deterministic, non-preemptible threshold checks for thermal and elec­
+trical trips.
+Power Manager
+Coordinates state machine transitions, inrush blanking timers, and PS_ON# gating.
+Local Web Server
+Serves embedded LittleFS dashboard assets and handles authenticated SoftAP 
+endpoints.
+Network Manager
+Maintains Wi-Fi link, performs non-blocking reconnects, and caches IP configu­
+ration.
+Firebase Transport
+Executes authenticated REST PUT/POST uploads and reads remote command 
+queues.
+Buffer Manager
+Maintains 120-minute circular RAM outage queue for reliable network backfill.
+Event/Advisory Manager
+Evaluates persistent trend deviations and formats structured incident telemetry 
+frames.
+Configuration Store
+Manages persistent Non-Volatile Storage (NVS) for calibration offsets and lockout 
+flags.
+NON-BLOCKING REAL-TIME ARCHITECTURAL PRINCIPLE
+Safety-critical acquisition, fan modulation, and supervisory fault evaluation tasks execute with strict real-time priority. 
+Protection routines shall never wait on Wi-Fi connection attempts, HTTP transactions, Firebase database round-trips, 
+or Cloudflare Worker invocations.
+Hardware & Firmware Systems Architecture Baseline
+Page 10 of 26
+
+--- PAGE 11 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+10. Predictive Thermal-Management Algorithm
+10.1 Acquisition
+• Proposed temperature sampling interval: Δ𝑡= 1.0 second.
+• DS18B20 12-bit conversion is initiated asynchronously (750 ms max). The scratchpad register is read only after 
+conversion completion.
+• Each sample record contains the float temperature value, validity boolean, monotonic timestamp, and CRC error 
+status.
+• Corrupted or invalid samples are discarded and never enter the trend estimation buffer.
+10.2 Digital Filtering
+Raw sensor noise is filtered using an Exponential Moving Average (EMA):
+𝑇𝑓(𝑘) = 𝛼𝑇(𝑘) + (1 −𝛼)𝑇𝑓(𝑘−1)
+• Proposed baseline filter coefficient: 𝛼= 0.2.
+• The filter is initialized directly from the first verified valid measurement.
+• Protection Invariant: Filtered temperature 𝑇𝑓 is used strictly for trend projection and fan demand modulation. 
+Unfiltered raw readings 𝑇(𝑘) are supervised concurrently by the protection loop to guarantee zero trip latency 
+during sudden thermal excursions.
+10.3 Trend Estimation
+The temperature-rise rate 𝑟 (in °
+C
+second) is estimated over a rolling 30-second window (𝑁= 30 valid samples) using an 
+unweighted least-squares linear regression:
+𝑟=
+∑𝑁
+𝑖=1(𝑡𝑖−𝑡̄)(𝑇𝑓,𝑖−𝑇̄𝑓)
+∑𝑁
+𝑖=1 (𝑡𝑖−𝑡̄)
+2
+Where 𝑡̄ is the mean timestamp and 𝑇̄𝑓 is the mean filtered temperature across the active trend window.
+10.4 Forward Temperature Projection
+The algorithm projects the estimated transformer surface temperature forward across a fixed predictive horizon 𝐻:
+𝑇𝑝= 𝑇𝑓+ 𝐻⋅max(0, 𝑟)
+• Proposed predictive horizon: 𝐻= 30 seconds.
+• If the trend slope is negative or zero (𝑟≤0), cooling demand relies directly on 𝑇𝑓 without downward projection bias.
+• During initial boot warm-up (buffer samples < 30), forward prediction is marked invalid and fan modulation defaults 
+strictly to 𝑇𝑓.
+10.5 Fan-Demand Calculation
+A piecewise continuous mapping 𝑔(𝑇) defines requested fan command duty (0 to 100%):
+• For 𝑇< 𝑇ramp,start: Maintain minimum reliable duty 𝐷min (≈30% to prevent acoustic motor stall).
+• For 𝑇ramp,start ≤𝑇≤𝑇full: Linearly ramp duty from 𝐷min to 100%.
+• For 𝑇> 𝑇full: Request full 100% cooling command.
+The automatic cooling duty demand is evaluated as the maximum of current and projected thermal demands:
+𝐷auto = max(𝑔(𝑇𝑓), 𝑔(𝑇𝑝))
+Actuation Dynamic: Increases in cooling demand execute immediately without lag. Decreases in cooling demand are 
+slew-rate limited (≤1
+%
+second) to prevent rapid thermal cycling and acoustic hunting.
+10.6 Ambient Inlet-Air Reference
+Δ𝑇= 𝑇surface −𝑇inlet
+Temperature rise above inlet air (Δ𝑇) is computed continuously to provide comparative thermal resistance metrics 
+under varying laboratory ambient temperatures. Primary supervisory trip boundaries remain anchored to absolute 
+surface temperature.
+10.7 Algorithm Scope and Limitations
+The prediction algorithm is a short-horizon numerical trend extrapolator. It does not model internal transformer 
+winding hot spots, core flux saturation, or thermal insulation aging.
+Hardware & Firmware Systems Architecture Baseline
+Page 11 of 26
+
+--- PAGE 12 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+Async Read
+Filtered 𝑇𝑓
+Rate 𝑟
+Projected 𝑇𝑝
+Slew Limit
+Bridge Drive
+Raw Temp 𝑇1(𝑘)
+(1 s Rate)
+EMA Filter
+(𝛼= 0.2)
+Rolling 30 s Buffer
+Least-Squares 𝑟
+Forward 
+Projec­
+tion
+𝑇𝑝= 𝑇𝑓+ 𝐻𝑟
+Demand Function
+𝐷= max(𝑔𝑓, 𝑔𝑝)
+Rate-Limited 
+PWM
+25 kHz 
+Modula­
+tion
+TB6612FNG 
+Bridge
+Two-Wire 
+Cool­
+ing Fan
+Figure 7: Predictive Thermal-Management Closed-Loop Execution Pipeline
+Hardware & Firmware Systems Architecture Baseline
+Page 12 of 26
+
+--- PAGE 13 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+11. Protection Logic
+11.1 Thermal Supervision Progression
+𝑇≥𝑇warn
+𝑇≥𝑇full
+𝑇≥𝑇trip
+Normal State
+(𝑇< 𝑇warn)
+Thermal Warning
+(Log Event & Pre-
+Cool)
+Full-Cooling Stage
+(100% Duty Boost)
+Confirmed Trip
+(De-assert 
+PS_ON#)
+Figure 8: Supervisory Thermal Protection and Escalation Sequence
+Trip thresholds and persistence confirmation windows shall be determined through experimental bench loading rather 
+than copied from arbitrary defaults.
+11.2 Electrical Supervision Matrix
+Monitored Rail
+Warning Current
+Trip Current (𝐼trip)
+Voltage Trip Window
+12 V External Rail
+2.5 A (Proposed)
+3.15 A (Fast Trip)
+10.8 V to 13.2 V (±10%)
+Native 5 V Rail
+0.5 A (Unloaded)
+1.0 A (Overcurrent)
+4.50 V to 5.50 V (±10%)
+Native 3.3 V Rail
+0.5 A (Unloaded)
+1.0 A (Overcurrent)
+2.97 V to 3.63 V (±10%)
+• Overcurrent Action: If measured current exceeds 𝐼trip for ≥250 ms, GPIO32 is immediately pulled LOW (< 5 ms), 
+de-asserting PS_ON# and latching ELECTRICAL_LOCKOUT.
+• Voltage Boundary Anomaly: If rail voltage leaves the permissible window following startup, an electrical fault is 
+declared.
+• I2C Bus Communication Loss: Telemetry timeout > 500 ms triggers immediate supervisory shutdown 
+(SENSOR_LOCKOUT).
+11.3 State-Aware Supervision and Inrush Blanking
+• During intentional OFF (STANDBY_OFF), low voltage on main switched rails is expected and must not generate nuisance 
+undervoltage faults.
+• Upon assertion of PS_ON# (startup), an inrush blanking window (500 ms) inhibits false undervoltage/overcurrent 
+trips while output decoupling capacitors charge. Gross short circuits (𝐼> 200%𝐼trip) remain actionable immediately.
+11.4 Shutdown Verification Gate
+When a supervisory trip occurs:
+1. De-assert GPIO32 (releasing PS_ON# to pull high).
+2. Record shutdown timestamp, active fault flag, and all sensor readings.
+3. Observe all monitored rail voltages decay below configured threshold (< 1.0 V) within 500 ms.
+4. If rail voltage fails to collapse, declare a CONTROL_PATH_FAILURE and alert the operator.
+12. Recovery and Power-State Control
+12.1 Operational State Machine
+START Req
+Rails OK
+OFF Cmd
+𝐼> 𝐼trip
+Bus Fail
+𝑇≥𝑇trip
+Cooled
+Stable
+Retrip
+Manual Reset
+STANDBY_OFF
+PS_ON# Rel.
+STARTING
+Inrush Blank
+RUNNING
+Normal Op
+MANUAL_OFF
+Switch/Remote
+ELEC_LOCKOUT
+Latched O/C
+BUS_LOCKOUT
+Bus Timeout
+THERMAL_COOL
+Passive Cooldown
+RECOVERY_TEST
+Supervised Run
+THERMAL_LOCK
+Max Retries
+Hardware & Firmware Systems Architecture Baseline
+Page 13 of 26
+
+--- PAGE 14 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+Figure 9: Main-Output Operational and Protective State Machine (Planar Orthogonal Layout)
+12.2 Qualified Thermal Automatic Recovery Rules
+Automatic re-energization after a thermal shutdown is strictly conditional and permitted only when:
+1. Connected loads are verified safe for unattended re-energization.
+2. The initial trip was caused exclusively by a recoverable thermal event (not electrical overcurrent).
+3. All temperature and rail sensors report valid, fresh measurements.
+4. Transformer surface temperature has dropped below a separate restart threshold: 𝑇≤𝑇restart.
+5. Measured temperature is stable or decreasing over a verified observation period (≥300 seconds).
+6. Minimum cooling dwell time (≥600 seconds) has fully elapsed.
+7. No manual OFF switch assertion or remote emergency stop inhibit is active.
+8. Remaining automatic retry allowance is available (𝑁retry > 0). Default policy: 1 retry per incident.
+12.3 Mandatory Restart Restrictions
+• Electrical trips never restart automatically. Manual bench inspection is mandatory.
+• An authorized remote OFF command immediately cancels any pending automatic thermal recovery.
+• Network reconnection or cloud sync events never trigger an automatic startup sequence.
+• A maintained physical ON switch position does not bypass fault lockouts.
+• Controller MCU resets always default main outputs to disabled (STANDBY_OFF).
+Hardware & Firmware Systems Architecture Baseline
+Page 14 of 26
+
+--- PAGE 15 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+13. Maintenance-Advisory Function
+Condition Indicator
+Explainable Maintenance Advisory
+Repeated thermal trips within short run 
+periods
+Inspect fan filter, check heatsink thermal grease bonding, verify enclosure 
+airflow clearance.
+Persistent temperature elevation under 
+identical current load
+Inspect transformer core aging, check for elevated ambient temperature 
+or partial fan degradation.
+Continuous temperature rise while fan 
+is commanded to 100%
+Cooling capacity is overwhelmed; inspect fan motor impedance, check for 
+thermal runaway or duct blockage.
+Repeated overcurrent or voltage sag 
+anomalies on 12 V rail
+Inspect 12 V downstream wiring harness, check USB converter efficiency, 
+test LED strip for partial shorts.
+Insufficient operating history or missing 
+calibration
+Baseline unavailable; collect 8 hours of stable run history before relying 
+on advisory flags.
+CONDITION-BASED MAINTENANCE PRINCIPLE
+Maintenance advisories provide condition-based guidance derived directly from empirical physical measurements and 
+operating history. They do not generate speculative or unsupported percentage-based component remaining useful 
+life (RUL) projections.
+14. Local Dashboard and Setup
+14.1 Local Setup Flow
+Failed
+Success
+Apply AC Mains Power
+ESP32 Starts Cold from +5VSB
+(PS_ON# High / Outputs Dis­
+abled)
+Launch Setup SoftAP
+(SSID: 
+ESP32-TMS-SETUP 
+| 
+IP: 
+192.168.4.1)
+User Enters Local Router Creden­
+tials
+& Selects Telemetry Mode
+Execute 
+Wi-Fi 
+Association 
+Test
+Revert to Setup AP;
+Display Diagnostic
+Commit to NVS;
+Resume Monitoring
+Figure 10: First-Time User Commissioning and SoftAP Provisioning Flowchart
+14.2 Local Embedded Dashboard Features
+• Hardware Independence: All HTML, CSS, JavaScript, and charting assets are stored in ESP32 internal flash via LittleFS. 
+The offline dashboard functions without internet access or external CDN scripts.
+• Real-Time Telemetry: Renders live temperatures (𝑇1, 𝑇2, Δ𝑇), rail voltages, currents, power, projected temperature 
+(𝑇𝑝), fan PWM duty (0 to 100%), operational state, and active trip flags.
+• Local Diagnostics: Displays Wi-Fi RSSI signal strength, NVS error registers, and direct hardware restart controls.
+Hardware & Firmware Systems Architecture Baseline
+Page 15 of 26
+
+--- PAGE 16 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+15. Internet Deployment and Full Data Flow
+15.1 Cloud Deployment Roles
+Cloud Subsystem
+Architectural Role & Service Allocation
+Firebase Hosting
+Static asset hosting for the internet Single-Page Application (SPA) dashboard.
+Firebase RTDB
+Authenticated real-time cloud data storage, historical arrays, and remote 
+command queues.
+Cloudflare Worker
+Serverless execution engine for asynchronous alert dispatch and scheduled 
+heartbeat auditing.
+Brevo Service
+Authenticated transactional email API for urgent operator fault notifications.
+HTTPS PUT
+WebSocket Sync
+Async Commit
+HTTPS Trigger
+Signed Token (30 s)
+Poll <= 5 s
+ESP32 Controller
+Shared RAM Snap­
+shot
+Firebase RTDB:
+/devices/{id}/
+latest
+Operator Browser
+SPA (Firebase Hosting)
+Declared Fault Trip
+(Hardware 
+Latch 
+OFF)
+Firebase Events:
+/devices/{id}/
+events
+Cloudflare Worker
+Invokes Brevo API
+Authorized User
+Confirms OFF in UI
+Firebase Queue:
+/commands/{id}
+ESP32 Ingestion:
+Releases PS_ON#
+Figure 11: End-to-End Internet Telemetry, Alert Notification, and Remote Command Pipelines
+15.2 Telemetry Ingestion (Flow 1)
+Every 10 seconds, the ESP32 pushes a lightweight authenticated JSON telemetry payload to Firebase Realtime Database 
+at /devices/{deviceId}/latest. Connected operator browsers synchronize instantly via WebSockets. Firebase Hosting 
+serves static files only and is never an intermediary in sensor telemetry transfer.
+15.3 Alert Notification Pipeline (Flow 2)
+Upon confirming an overcurrent or thermal trip, the ESP32 records an event in /devices/{deviceId}/events and 
+notifies the Cloudflare Worker via authenticated HTTPS. The Worker verifies the event record in Firebase and issues 
+an authorized API call to Brevo to dispatch transactional emails to registered maintenance personnel.
+15.4 Time-Bounded Remote Emergency OFF (Flow 3)
+The internet dashboard supports a cryptographically authorized remote emergency shutdown command:
+1. Operator confirms shutdown in the web UI. A signed command is published to /commands/{deviceId} with a strict 
+30-second Time-To-Live (TTL).
+2. The ESP32 polls the command queue every 5 seconds.
+3. Upon ingestion, the controller verifies command ID uniqueness and expiry, de-asserts GPIO32, releases PS_ON#, 
+confirms rail voltage decay, and writes an execution acknowledgment record.
+4. Safety Delimitation: Remote re-energization (Remote ON) is explicitly prohibited within this baseline design.
+16. Data Model and Update Timing
+16.1 Update Cadence Matrix
+Subsystem Activity
+Target Interval
+Operational Trigger & Condition
+Sensor ADC & 1-Wire Read
+1.0 s
+Internal hardware timer interrupt (Core 1 non-
+blocking).
+Thermal Filtering & Trend
+1.0 s
+Synchronized with completion of new sensor 
+sample frame.
+Hardware & Firmware Systems Architecture Baseline
+Page 16 of 26
+
+--- PAGE 17 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+Subsystem Activity
+Target Interval
+Operational Trigger & Condition
+Fan PWM Update
+1.0 s
+Immediate execution on rising demand; slew-
+rate limited on falling.
+Fault Protection Sweep
+<= 50 ms
+Deterministic continuous safety loop check.
+Local Web Dashboard (WS)
+1.0 s
+Pushed to connected browser sessions via Web­
+Socket/SSE.
+Firebase Latest Upload
+10.0 s
+HTTPS REST PUT to /devices/{deviceId}/latest.
+Historical Summary Ingest
+60.0 s
+60-second reduced mean/peak frame written 
+to /history.
+Remote Command Polling
+5.0 s
+HTTPS REST GET to /commands/{deviceId} for 
+active tokens.
+Cloudflare Heartbeat Audit
+60.0 s
+Serverless Cron Trigger querying Firebase time­
+stamp freshness.
+16.2 Realtime Database Hierarchical Schema
+/devices/
+  /{deviceId}/
+    /metadata/
+      hardware_rev: "3.0"
+      firmware_ver: "1.0.4"
+      commissioned_epoch: 1793364000
+    /latest/
+      timestamp: 1793371200
+      status: "RUNNING"
+      power_state: "MAIN_ON"
+      temperatures:
+        t1_transformer_c: 48.6
+        t2_inlet_c: 29.4
+        delta_t_c: 19.2
+        t_predicted_c: 52.1
+        trend_c_per_sec: 0.117
+      rails:
+        v12: { voltage_v: 12.04, current_a: 1.42, power_w: 17.10 }
+        v5:  { voltage_v: 5.08,  current_a: 0.02, power_w: 0.10  }
+        v33: { voltage_v: 3.32,  current_a: 0.01, power_w: 0.03  }
+      fan:
+        duty_pct: 65
+        mode: "AUTO"
+        stall_boost_active: false
+      health:
+        uptime_s: 14820
+        free_heap_bytes: 184512
+        wifi_rssi_dbm: -58
+    /history/
+      /{minute_key}/
+        timestamp: 1793371200
+        t1_avg: 48.4
+        t1_max: 48.8
+        t2_avg: 29.4
+        i12_avg: 1.41
+        p_total_avg: 17.23
+        fan_duty_avg: 64
+    /events/
+      /{eventId}/
+        timestamp: 1793371845
+        event_type: "THERMAL_WARNING"
+        severity: "WARNING"
+        detail: "Transformer surface exceeded 55.0 C (measured 55.2 C)"
+        snapshot_t1: 55.2
+        snapshot_i12: 1.58
+/commands/
+  /{deviceId}/
+    command_id: "cmd_982341"
+    action: "SHUTDOWN"
+    issued_epoch: 1793372000
+    expires_epoch: 1793372030
+Hardware & Firmware Systems Architecture Baseline
+Page 17 of 26
+
+--- PAGE 18 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+    signature: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    acknowledged: false
+17. Buffering and Historical Retention
+17.1 Rolling Circular RAM Buffer
+The ESP32 firmware dedicates a 32 KB static heap allocation to an in-memory circular ring buffer holding up to 120 
+minutes of 60-second summary telemetry frames (120 records):
+• Each record packs timestamp (4 bytes), 1-minute averaged temperatures (8 bytes), peak temperatures (4 bytes), 3-
+rail electrical means (12 bytes), and system status bitflags (2 bytes).
+• Total record footprint: 30 bytes per minute (3.6 KB per 120-minute retention cycle).
+• During active Wi-Fi or cloud outages, telemetry records accumulate sequentially without packet loss.
+• If an outage exceeds 120 minutes, the oldest records are dropped using a First-In-First-Out (FIFO) queue policy, 
+preserving uninterrupted operational safety without risking heap exhaustion.
+17.2 Network Backfill and Exponential Backoff
+Upon verified Wi-Fi reconnection and Firebase token re-authorization:
+1. The ESP32 enters BACKFILL_DRAIN mode on background Core 0.
+2. Buffered records are dispatched in chronological batches of 5 records per HTTPS POST to /history.
+3. An exponential backoff retry policy (1 s →2 s →4 s →8 s →16 s) handles transient HTTP 429 (Rate Limit) or 503 
+(Service Unavailable) responses.
+4. Live real-time streaming to /latest takes immediate precedence over backfill uploads to ensure operator visibility 
+of current machine status.
+17.3 Cloud Storage Pruning Lifecycle
+To operate continuously within the Firebase Spark free-tier limit (1 GB total storage, 10
+GB
+month outbound transfer):
+• Telemetry at /latest is overwritten in place (zero incremental storage growth).
+• 1-minute historical frames at /history are retained for a rolling 30-day window.
+• A Cloudflare Worker scheduled task executes weekly at 00:00 UTC to prune records older than 30 days via Firebase 
+REST API authentication.
+18. Heartbeat Supervision and Email Notifications
+18.1 Architecture and Cron Audit
+To eliminate single-point monitoring failures, supervisory health auditing runs entirely independent of the ESP32 
+hardware via a Cloudflare Worker triggered by an automated 1-minute Cron schedule (* * * * *).
+10 s Telemetry
+Fetch Timestamp
+Δ𝑡> 180 s
+JSON Payload
+SMTP Relay
+ESP32 Controller 
+Core
+Standby Running
+Firebase RTDB:
+/latest/
+timestamp
+Cloudflare 
+Worker
+Cron 
+Audit 
+(1 
+min)
+Heartbeat Failure 
+Declared
+COMM_LOSS_ALERT
+Brevo API Gate­
+way
+Auth API Key
+Registered Engi­
+neer
+Urgent Email In­
+box
+Figure 12: Independent Cloud Heartbeat Supervision and Automated Email Alert Sequence
+18.2 Distinct Failure Classification
+The supervision engine explicitly differentiates between distinct system failure modes:
+1. SMPS Mains Power Loss: Switched rails drop to 0 V and +5VSB collapses; ESP32 stops transmitting; Cloudflare 
+Worker declares POWER_SUPPLY_OFFLINE after 180 seconds.
+2. Local Wi-Fi / Gateway Outage: +5VSB remains healthy; ESP32 logs locally to LittleFS; Cloudflare Worker flags 
+COMMUNICATION_LOSS; ESP32 backfills upon Wi-Fi restoration.
+3. Cloudflare or Firebase Service Degradation: ESP32 continues autonomous local closed-loop monitoring and 
+protection without disturbance.
+Hardware & Firmware Systems Architecture Baseline
+Page 18 of 26
+
+--- PAGE 19 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+18.3 Transactional Alert Rules
+Brevo transactional email alerts are dispatched immediately upon:
+• Unhandled thermal trip (𝑇1 ≥𝑇trip).
+• Electrical overcurrent trip on 12 V, 5 V, or 3.3 V rails.
+• Voltage sag or rail short-circuit collapse.
+• Persistent sensor communication failure (SENSOR_LOCKOUT).
+• Cloud heartbeat expiration (> 180 seconds without valid telemetry update).
+Spam Prevention: Alert emails are rate-limited to a maximum of one email per unique fault event with a mandatory 
+15-minute re-notification suppression cooldown.
+Hardware & Firmware Systems Architecture Baseline
+Page 19 of 26
+
+--- PAGE 20 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+19. Security and Privacy
+1. Zero Plaintext Transmission: All external communications between ESP32, Firebase, Cloudflare, and browser clients 
+utilize mandatory TLS 1.3 transport encryption.
+2. Database Access Rules: Firebase Realtime Database Security Rules enforce granular read/write authorization. 
+Public anonymous clients possess read-only rights to /latest and /history; write operations to /latest and /events 
+require pre-shared ESP32 database secret tokens.
+3. Remote Command Authorization: The /commands node requires administrative authentication. Remote OFF 
+instructions must include a SHA-256 HMAC signature verified by the ESP32 before execution.
+4. Strict Time-To-Live (TTL): All remote control tokens carry a 30-second TTL. Stale or delayed commands received 
+after expiry are rejected and logged as security anomalies.
+5. Uni-Directional Remote Control Boundary: The remote interface supports only supervisory shutdown (Remote 
+OFF). Under no circumstances is remote re-energization (Remote ON) permitted over the internet.
+6. Credentials Isolation: Wi-Fi SSID, WPA2 passphrases, and Firebase API keys are stored in encrypted ESP32 Non-
+Volatile Storage (NVS) partitions and are never exposed via HTTP responses.
+7. Local AP Security: The commissioning SoftAP defaults to WPA2-PSK encryption with a unique factory PIN printed 
+on the controller enclosure. SoftAP radio is automatically disabled 10 minutes post-boot during normal operation.
+8. Data Minimization: Telemetry records contain strictly physical engineering metrics (volts, amperes, degrees Celsius, 
+duty cycle). No Personally Identifiable Information (PII), MAC addresses, or location data are stored.
+9. CORS & Content Security: Firebase Hosting web dashboard serves strict Content-Security-Policy (CSP) headers 
+disallowing unauthorized external scripts or telemetry exfiltration.
+10. Tamper Audit Logging: All local configuration updates, manual switch overrides, and failed authentication 
+attempts are logged persistently to the /events audit trail.
+20. Architecture Justification
+Design Choice
+Selected Solution
+Rejected Alternative & Justifica­
+tion
+Telemetry Protocol
+HTTPS REST + WebSockets (Firebase)
+MQTT Broker (Self-hosted): High 
+maintenance 
+overhead, 
+requires 
+dedicated static IP / VPS, firewall 
+traversal issues on institutional Wi-
+Fi.
+Cloud Storage Platform
+Firebase RTDB (Spark Plan)
+AWS IoT Core / InfluxDB: InfluxDB 
+requires managed cloud hosting 
+fees; Firebase provides zero-cost 
+generous 
+quotas 
+and 
+real-time 
+browser WebSockets.
+Alert Dispatch Engine
+Cloudflare Worker + Brevo API
+Direct ESP32 SMTP Client: Direct 
+SMTP from ESP32 is memory-heavy, 
+vulnerable to Wi-Fi drops, and fre­
+quently blocked by residential ISP 
+port 25 filters.
+Web Hosting Tier
+Firebase Hosting (Static SPA)
+Local ESP32 Web Server Only: Limits 
+global remote monitoring; GitHub 
+Pages provides globally distributed 
+zero-cost CDN hosting with zero 
+maintenance.
+Fan Speed Modulation
+TB6612FNG Dual H-Bridge
+Single 
+Low-Side 
+N-MOSFET: 
+TB6612FNG 
+integrates 
+shoot-
+through protection, reverse flyback 
+diodes, 
+thermal 
+shutdown, 
+and 
+logic-level 3.3 V gates.
+Hardware & Firmware Systems Architecture Baseline
+Page 20 of 26
+
+--- PAGE 21 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+Design Choice
+Selected Solution
+Rejected Alternative & Justifica­
+tion
+Supervisory Inhibit
+Active-Low NPN Switch on PS_ON#
+Direct Mechanical AC Relay: AC 
+switching introduces dangerous in­
+ductive arcs and requires high coil 
+drive power; PS_ON# is native, low-
+power, and safe.
+21. Future Independent Branch / Rail Switching
+21.1 Architectural Scope Delimitation
+In the baseline Version 3.0 implementation, supervisory shutdown acts globally via the ATX PS_ON# line, which disables 
+all switched DC outputs (12 V, 5 V, 3.3 V) simultaneously. While effective, a localized overcurrent event on a single 
+branch (such as an LED strip short) currently interrupts all operational rails.
+21.2 Proposed Solid-State eFuse Architecture
+For post-baseline evolution, an external multi-channel solid-state switching module utilizing high-side P-channel 
+MOSFETs or integrated intelligent eFuse ICs (e.g., Texas Instruments TPS2594x) is proposed.
+Branch A
+Inhibit A
+Gated 12 V
+Branch B
+Inhibit B
+Gated 12 V
+Main 12 V Infeed
+& INA219 Shunt
+ESP32 
+Digital 
+Logic
+(Dual Branch In­
+hibit)
+High-Side P-MOS­
+FET
+eFuse Switch 1
+12 V LED Strip
+(Load Branch 1)
+High-Side P-MOS­
+FET
+eFuse Switch 2
+Dual-USB 
+Step-
+Down
+(Load Branch 2)
+Figure 13: Future Independent External Load Switching via Solid-State eFuses (Orthogonal Planar Layout)
+This enhancement enables surgical load shedding: the controller can isolate a faulted external branch within < 10𝜇s 
+while keeping the primary transformer and remaining rails online.
+Hardware & Firmware Systems Architecture Baseline
+Page 21 of 26
+
+--- PAGE 22 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+22. Testing and Acceptance Criteria
+Test Phase
+Objective & Test Method
+Quantitative Acceptance Criteria
+Status
+Phase 1: Sensor Cali­
+bration
+Verify INA219 and DS18B20 accu­
+racy against calibrated lab bench 
+instruments.
+Voltage error ≤±1%, Current error ≤
+±2%, Temp error ≤±0.5°C.
+PASS
+Phase 2: Standby Do­
+main Verification
+Measure +5VSB voltage stability, 
+AMS1117 3.3 V output, and ESP32 
+boot behavior.
+Continuous 4.95 V ≤𝑉SB ≤5.25 V; zero 
+brownout during Wi-Fi burst transmis­
+sion.
+PASS
+Phase 3: PS_ON# Gat­
+ing Interface
+Verify BC547 transistor switching 
+and SMPS main rail startup and 
+shutdown response.
+GPIO32 HIGH asserts PS_ON# (< 0.4 V); 
+GPIO32 LOW releases PS_ON# (> 4.5 V).
+PASS
+Phase 4: Fan Modula­
+tion & Dynamics
+Test 
+PWM 
+duty 
+modulation 
+(30% to 100%) and verify stall-pre­
+vention boost.
+Smooth linear duty ramp; zero acoustic 
+stall; slew-rate limited deceleration ver­
+ified.
+PASS
+Phase 5: Electrical Trip 
+Response
+Simulate overcurrent condition on 
+12 V load branch exceeding 3.15 A.
+Supervisory shutdown executed within 
+≤250 ms; ELECTRICAL_LOCKOUT latched.
+PASS
+Phase 
+6: 
+Thermal 
+Ramp & Prediction
+Apply controlled resistive thermal 
+load to simulate transformer heat 
+rise.
+Predictor calculates valid slope 𝑟; fan 
+duty increases ahead of raw threshold 
+breaches.
+PASS
+Phase 7: Network Out­
+age Resilience
+Sever Wi-Fi access for 45 min­
+utes during active thermal/electri­
+cal loading.
+Zero disturbance to local protection 
+loop; 100% telemetry backfilled upon 
+reconnection.
+PASS
+Phase 
+8: 
+Heartbeat 
+Cloud Audit
+Simulate total controller discon­
+nection by removing ESP32 power 
+supply.
+Cloudflare Worker detects timeout >
+180 s and dispatches Brevo email alert.
+PASS
+23. Safety Precautions and Commissioning Checklist
+MANDATORY ELECTRICAL SAFETY DIRECTIVE
+High-voltage alternating current (115 V / 230 V AC) is present within the interior enclosure of the ATX power supply. 
+The SMPS protective chassis shall remain completely sealed throughout all installation and operational testing. All 
+experimental instrumentation, shunts, sensors, and actuators shall interface strictly to the exposed low-voltage DC 
+breakout terminals (<= 12 V DC).
+23.1 Pre-Energization Commissioning Checklist
+Before connecting the ATX power supply AC line cord to utility mains power, the commissioning engineer must execute 
+and verify each sequential gate:
+1. Chassis Ground Continuity: Verify low-resistance path (𝑅< 0.2Ω) between SMPS external metal casing and AC 
+utility earth pin.
+2. Polarity Verification: Confirm positive infeed of all three INA219 channels connects to the intended voltage source 
+and VIN- connects to the load side.
+3. I2C Bus Addressing Verification: Verify distinct hardware solder jumpers: INA219 1 (0x40), INA219 2 (0x41), INA219 
+3 (0x44), LCD (0x27 or 0x3F).
+4. DS18B20 Probe Binding: Ensure transformer surface probe (CH1) and ambient inlet probe (CH2) are properly 
+registered by their respective 64-bit ROM IDs.
+5. Single-Point Star Ground: Verify that all logic grounds, driver power grounds, and sensor grounds converge at a 
+single common reference terminal.
+6. Inline Protection Fusing: Verify that fast-acting fuses are installed in series with the +5VSB line (1.0 A) and the 12 
+V load branch (3.15 A).
+Hardware & Firmware Systems Architecture Baseline
+Page 22 of 26
+
+--- PAGE 23 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+7. Default-Safe Pin State: Verify that ESP32 firmware initializes GPIO32 (PS_ON# drive) to LOW / High-Z prior to 
+executing any peripheral configuration.
+8. Thermal Coupling Quality: Ensure transformer surface sensor is securely adhered with high-temperature Kapton 
+tape and thermal conductive compound.
+Hardware & Firmware Systems Architecture Baseline
+Page 23 of 26
+
+--- PAGE 24 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+24. Final Deliverables and Engineering Sign-Off
+24.1 Functional Information Routing Architecture
+1-Wire Bus
+I2C Bus
++5VSB Line
+Reg. 5V / 3.3V
+PWM / GPIO32
+HTTPS PUT (10 s)
+HTTP / WS
+Direct SDK
+Cron Query
+Auth API
+DS18B20 
+Temp 
+Sensors
+(𝑇1 Surface, 𝑇2 In­
+let)
+INA219 Rail Mon­
+itors
+(12 V, 5 V, 3.3 V 
+Rails)
+ATX 
++5VSB 
+Standby
+Power Infeed Rail
+ESP32 Controller Core
+(Acq, Filter, Trend,
+Trip Logic, State Ma­
+chine)
+LittleFS Web Server
+(Embedded 
+Offline 
+SPA)
+TB6612 Fan Driver
+BC547 
+PS_ON# 
+Switch
+Firebase RTDB
+(/latest, /events)
+Local User Termi­
+nal
+(PC/Phone 
+via 
+SoftAP)
+Internet 
+Dash­
+board
+(GitHub 
+Pages 
+SPA)
+Cloudflare Worker
+(Cron & Alert API)
+Brevo Email Ser­
+vice
+(Transactional API)
+Figure 14: Functional Information Routing and Inter-Module Boundaries (Orthogonal Collision-Free Layout)
+Hardware & Firmware Systems Architecture Baseline
+Page 24 of 26
+
+--- PAGE 25 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+24.2 Master Low-Voltage Wiring Interconnect Schematic
++5VSB Line
+Filtered 5 V
+Pull-Down
+GPIO32 Inhibit
+I2C Bus
+Shunts
+PWM / STBY
+AO1 / AO2
+ATX Breakout
+(XH-M229 
+Termi­
+nal)
+Fuse 1.0 A & Filter
+(100𝜇F 
+Decou­
+pled)
+ESP32 DevKitC
+(Pin 5V / COM)
+SMPS PS_ON# Pin
+(Green Wire Pin 
+16)
+BC547 NPN Switch
+(4.7 kΩ / 100 kΩ)
+ESP32 I2C Core
+(GPIO21 / GPIO22)
+INA219 Cluster (×
+3)
+Addr 
+0x40, 
+0x41, 
+0x44
+Main 
+Switched 
+Rails
+(12 V, 5 V, 3.3 V)
+ESP32 PWM Core
+(GPIO25 / 26 / 33)
+TB6612FNG Driver
+(Motor VM = Main 
+12 V)
+Two-Wire 12 V Fan
+(Cooling Infeed)
+Figure 15: Master Low-Voltage Bench Wiring Interconnect Schematic
+24.3 Project Handover Deliverables Register
+Item
+Deliverable Title
+Delivered Artifact Format & Repository 
+Path
+D-01
+Engineering Specification Baseline
+Formal 
+Typst 
+document (transformer_cbm_spec.pdf).
+D-02
+Hardware Schematic & Interconnect Guide
+Full low-voltage connection diagrams (Fig­
+ures 1-6, 13-15).
+D-03
+Embedded Firmware Source Package
+ESP-IDF / Arduino C++ project with FreeR­
+TOS multitasking.
+D-04
+Local LittleFS Web Dashboard
+Self-contained HTML5/CSS/JavaScript sin­
+gle-page application.
+D-05
+Cloud Single-Page Application (SPA)
+Production-ready web dashboard hosted on 
+Firebase Hosting.
+D-06
+Cloudflare Worker Supervisory Script
+TypeScript/JavaScript worker handling cron 
+audits and Brevo API.
+D-07
+Firebase Security Rules & Data Schema
+Declarative security rule definition and in­
+dexing configuration.
+D-08
+Component Procurement & Cost Ledger
+Itemized procurement tracker with active 
+vendor purchase orders.
+D-09
+Commissioning & Acceptance Procedure
+Step-by-step 8-stage pre-energization verifi­
+cation protocol.
+D-10
+Operator Quick-Start Field Guide
+Single-page SoftAP setup and emergency 
+response reference sheet.
+D-11
+Bench Prototype Assembly
+Commissioned small-scale demonstration 
+testbench.
+Hardware & Firmware Systems Architecture Baseline
+Page 25 of 26
+
+--- PAGE 26 ---
+Transformer Condition Monitoring & Predictive Thermal Manage­
+ment
+Engineering Specification Baseline – Rev 3.0
+24.4 Formal Engineering Sign-Off and Baselining
+HARDWARE SYSTEMS DESIGN APPROVAL
+Role: Lead Systems & Embedded Hardware Engineer
+Discipline: Power Electronics & Embedded Systems
+Scope: Circuit Interfaces, Power Isolation, Wiring 
+Topology
+Baseline Status: Approved for Prototype Assembly
+Date: October 30, 2026
+FIRMWARE & CLOUD SUPERVISION APPROVAL
+Role: Senior Embedded Firmware & Cloud Architect
+Discipline: Real-Time Control & Distributed IoT Sys­
+tems
+Scope: Predictive Algorithms, Protection Logic, 
+Cloud APIs
+Baseline Status: Approved for Firmware Release 1.0
+Date: October 30, 2026
+FINAL CONSOLIDATED DESIGN STATEMENT
+This document represents the complete, frozen technical design baseline (Revision 3.0) for the small-scale IoT-Based 
+Transformer Condition Monitoring and Predictive Thermal Management System. All functional modules, circuit inter­
+connections, firmware task responsibilities, data models, and safety boundaries documented herein are formally verified 
+against engineering requirements and approved for prototype execution.
+Hardware & Firmware Systems Architecture Baseline
+Page 26 of 26

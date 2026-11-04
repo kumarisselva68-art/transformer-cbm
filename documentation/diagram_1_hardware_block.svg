@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000">
+  <defs>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="110%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 2 L 11 6 L 1 10 z" fill="#1e293b"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 2 L 11 6 L 1 10 z" fill="#15803d"/>
+    </marker>
+  </defs>
+
+  <style>
+    text {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+    .wire {
+      fill: none;
+      stroke: #1e293b;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .wire-green {
+      fill: none;
+      stroke: #15803d;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .title-main {
+      font-size: 28px;
+      font-weight: 800;
+      fill: #0f172a;
+      letter-spacing: 0.5px;
+    }
+    .title-sub {
+      font-size: 15px;
+      font-weight: 500;
+      fill: #64748b;
+    }
+    .box-title-lg {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .box-title-md {
+      font-size: 21px;
+      font-weight: 700;
+    }
+    .box-sub {
+      font-size: 15px;
+      font-weight: 500;
+    }
+  </style>
+
+  <!-- Background -->
+  <rect width="1600" height="1000" fill="#ffffff"/>
+
+  <!-- Main Header -->
+  <text x="800.0" y="45" class="title-main">HARDWARE CIRCUIT BLOCK DIAGRAM</text>
+  <text x="800.0" y="75" class="title-sub">Power Transformer Condition-Based Monitoring System</text>
+
+  <!-- ==================== CENTER: MICROCONTROLLER ==================== -->
+  <!-- Box: 280 x 190 at (660, 370) -->
+  <g transform="translate(660, 370)" filter="url(#shadow)">
+    <rect width="280" height="190" rx="16" fill="#bbf7d0" stroke="#16a34a" stroke-width="2.5"/>
+    <text x="140" y="80" class="box-title-lg" fill="#14532d">ESP32</text>
+    <text x="140" y="115" class="box-title-lg" fill="#14532d">Microcontroller</text>
+  </g>
+
+  <!-- ==================== TOP: LCD DISPLAY ==================== -->
+  <!-- Box: 240 x 100 at (680, 150) -->
+  <g transform="translate(680, 150)" filter="url(#shadow)">
+    <rect width="240" height="100" rx="12" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
+    <text x="120" y="40" class="box-title-md" fill="#0369a1">LCD Display</text>
+    <text x="120" y="68" class="box-sub" fill="#0284c7">16×2 Screen</text>
+  </g>
+  <!-- Wire: ESP32 top (800, 370) -> LCD bottom (800, 250) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 800 370 L 800 250"/>
+
+
+  <!-- ==================== LEFT TOP: TEMPERATURE SENSORS ==================== -->
+  <!-- Box: 250 x 110 at (160, 300) -->
+  <g transform="translate(160, 300)" filter="url(#shadow)">
+    <rect width="250" height="110" rx="12" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
+    <text x="125" y="44" class="box-title-md" fill="#0369a1">Temperature Sensors</text>
+    <text x="125" y="74" class="box-sub" fill="#0284c7">DS18B20 Probes</text>
+  </g>
+  <!-- Wire: Sensors right (410, 355) -> ESP32 left (660, 420) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 410 355 L 535 355 L 535 420 L 660 420"/>
+
+
+  <!-- ==================== LEFT MID: OPERATOR SWITCHES ==================== -->
+  <!-- Box: 250 x 110 at (160, 490) -->
+  <g transform="translate(160, 490)" filter="url(#shadow)">
+    <rect width="250" height="110" rx="12" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
+    <text x="125" y="44" class="box-title-md" fill="#0369a1">Operator Switches</text>
+    <text x="125" y="74" class="box-sub" fill="#0284c7">Run &amp; SoftAP Inputs</text>
+  </g>
+  <!-- Wire: Switches right (410, 545) -> ESP32 left (660, 500) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 410 545 L 535 545 L 535 500 L 660 500"/>
+
+
+  <!-- ==================== RIGHT TOP: FAN DRIVER & COOLING FAN ==================== -->
+  <!-- Box: Fan Driver 240 x 100 at (1040, 260) -->
+  <g transform="translate(1040, 260)" filter="url(#shadow)">
+    <rect width="240" height="100" rx="12" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
+    <text x="120" y="40" class="box-title-md" fill="#0369a1">Fan Driver</text>
+    <text x="120" y="68" class="box-sub" fill="#0284c7">PWM Motor Driver</text>
+  </g>
+  <!-- Wire: ESP32 right (940, 410) -> Fan Driver left (1040, 310) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 940 410 L 990 410 L 990 310 L 1040 310"/>
+
+  <!-- Box: Cooling Fan 220 x 100 at (1330, 260) -->
+  <g transform="translate(1330, 260)" filter="url(#shadow)">
+    <rect width="220" height="100" rx="12" fill="#f0f9ff" stroke="#38bdf8" stroke-width="2"/>
+    <text x="110" y="40" class="box-title-md" fill="#0369a1">Cooling Fan</text>
+    <text x="110" y="68" class="box-sub" fill="#0284c7">12V DC Airflow</text>
+  </g>
+  <!-- Wire: Fan Driver right (1280, 310) -> Cooling Fan left (1330, 310) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 1280 310 L 1330 310"/>
+
+
+  <!-- ==================== RIGHT MID: CUTOFF SWITCH ==================== -->
+  <!-- Box: Cutoff Switch 240 x 100 at (1040, 460) -->
+  <g transform="translate(1040, 460)" filter="url(#shadow)">
+    <rect width="240" height="100" rx="12" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
+    <text x="120" y="40" class="box-title-md" fill="#0369a1">Cutoff Switch</text>
+    <text x="120" y="68" class="box-sub" fill="#0284c7">Relay Interlock</text>
+  </g>
+  <!-- Wire: ESP32 right (940, 475) -> Cutoff Switch left (1040, 510) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 940 475 L 990 475 L 990 510 L 1040 510"/>
+
+
+  <!-- ==================== BOTTOM ROW: POWER ARCHITECTURE ==================== -->
+  <!-- Box: Power Supply (Bottom Right) 240 x 120 at (1040, 690) -->
+  <g transform="translate(1040, 690)" filter="url(#shadow)">
+    <rect width="240" height="120" rx="12" fill="#f0f9ff" stroke="#38bdf8" stroke-width="2"/>
+    <text x="120" y="48" class="box-title-md" fill="#0369a1">Power Supply</text>
+    <text x="120" y="80" class="box-sub" fill="#0284c7">ATX Multi-Rail</text>
+  </g>
+  <!-- Wire: Cutoff Switch bottom (1160, 560) -> Power Supply top (1160, 690) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 1160 560 L 1160 690"/>
+
+  <!-- Standby Power Wire: Power Supply top (1070, 690) -> UP to 625 -> LEFT to 965 -> UP to 535 -> ESP32 right (940, 535) -->
+  <path class="wire-green" marker-end="url(#arrow-green)" d="M 1070 690 L 1070 625 L 965 625 L 965 535 L 940 535"/>
+
+  <!-- Box: Power Monitors (Bottom Center) 260 x 120 at (670, 690) -->
+  <g transform="translate(670, 690)" filter="url(#shadow)">
+    <rect width="260" height="120" rx="12" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
+    <text x="130" y="48" class="box-title-md" fill="#0369a1">Power Monitors</text>
+    <text x="130" y="80" class="box-sub" fill="#0284c7">INA219 Sensors</text>
+  </g>
+  <!-- Wire: Power Supply left (1040, 750) -> Power Monitors right (930, 750) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 1040 750 L 930 750"/>
+
+  <!-- Wire: Power Monitors top (800, 690) -> ESP32 bottom (800, 560) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 800 690 L 800 560"/>
+
+  <!-- Box: Electrical Loads (Bottom Left) 260 x 120 at (270, 690) -->
+  <g transform="translate(270, 690)" filter="url(#shadow)">
+    <rect width="260" height="120" rx="12" fill="#f0f9ff" stroke="#38bdf8" stroke-width="2"/>
+    <text x="130" y="48" class="box-title-md" fill="#0369a1">Electrical Loads</text>
+    <text x="130" y="80" class="box-sub" fill="#0284c7">Multi-Rail Dynamic Loads</text>
+  </g>
+  <!-- Wire: Power Monitors left (670, 750) -> Electrical Loads right (530, 750) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 670 750 L 530 750"/>
+
+</svg>

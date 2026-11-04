@@ -1,0 +1,1032 @@
+
+--- PAGE 1 ---
+IEEE TRANSACTIONS ON INSTRUMENTATION AND MEASUREMENT, VOL. 72, 2023
+7002511
+Evaluation of Power Transformer Thermal
+Performance and Optical Sensor Positioning Using
+CFD Simulations and Temperature Rise Test
+Tales F. Rodrigues , Leonardo H. Medeiros , Micael M. Oliveira , Gabriel C. Nogueira ,
+Vitor C. Bender , Member, IEEE, Tiago Bandeira Marchesan , Member, IEEE,
+Carlos Eduardo Guex Falcão , and Marco Antônio Marin
+Abstract— The internal temperatures and the ability to dissi-
+pate the heat from active part influence the windings’ insulation
+deterioration and determine how long power transformers are
+able to remain in operation. Due to the great importance
+of this equipment for the electrical system, studies to avoid
+failures and early aging are needed. This article presents an
+evaluation of thermal performance of power transformers and the
+optical fiber sensor positioning to temperature monitoring. For
+this, an experimental and numerical methodology is performed,
+comparing the measurements during the temperature rise test
+of single-phase prototype power transformer, under oil directed
+and air natural (ODAN) cooling system conditions equipped with
+20 optical fiber sensors along its windings, to the obtained results
+of computational fluid dynamics (CFD) simulations performed
+in ANSYS Fluent software. It was verified that the punctual
+temperature measured by optical sensors may not accurately
+represent the critical temperatures along transformers’ windings,
+and the windings’ arrangements impact on oil flow and tempera-
+ture distribution, as the number and positioning of block washers
+being necessary to be considered in previous studies for a better
+positioning of the sensors and temperature monitoring.
+Index Terms— Computational fluid dynamics (CFD) simula-
+tion, optical fiber sensor, power transformer, temperature rise
+test, thermal performance.
+I. INTRODUCTION
+P
+OWER transformers are one of the most important and
+expensive equipment on electrical systems, as they are
+responsible for supplying the electric energy at required volt-
+age levels to consumers [1], [2], [3]. However, being highly
+efficient machines, a small fraction of the transferred power is
+lost in the form of heat mainly in the windings as Joule losses
+[4], [5]. This heat causes a temperature rise in the transformer’s
+Manuscript received 29 September 2022; revised 23 January 2023;
+accepted 10 February 2023. Date of publication 28 February 2023; date of
+current version 8 March 2023. This work was supported in part by the Coor-
+denação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES/PROEX),
+Brazil, under Finance Code 001; and in part by the Companhia Paranaense
+de Energia under Project PD-06491-0421/2016. The Associate Editor coordi-
+nating the review process was Dr. Hamed Hamzehbahmani. (Corresponding
+author: Leonardo H. Medeiros.)
+Tales
+F.
+Rodrigues,
+Leonardo
+H.
+Medeiros,
+Micael
+M.
+Oliveira,
+Gabriel C. Nogueira, Vitor C. Bender, Tiago Bandeira Marchesan, and Carlos
+Eduardo Guex Falcão are with the Smart Grids Institute, Federal University
+of Santa Maria, Santa Maria, Rio Grande do Sul 97105-900, Brazil (e-mail:
+leohm.29@gmail.com).
+Marco Antônio Marin is with Companhia Paranaense de Energia, Curitiba,
+Parana 81200-240, Brazil.
+Digital Object Identifier 10.1109/TIM.2023.3250244
+internal structures, such as its insulation system which consists
+of combination of oil with cellulose-based materials, e.g., kraft
+paper. The oil impregnated kraft papers gradually increase in
+age due to its normal temperature operation. The occurrence
+of thermal stress accelerates its degradation and leads to a
+reduction in the paper’s mechanical strength, compromising its
+insulation. Once the replacement of solid winding insulation is
+unfeasible, the life span of the transformers is mainly dictated
+by the integrity of their solid insulation system [3], [6], [7], [8].
+Currently, two techniques are commonly used during the
+design to predict oil flow and temperature distribution at
+the windings [9], [10]: computational fluid dynamics (CFD)
+and thermal hydraulic network models (THNMs). Different
+thermal models have been developed to determine the tem-
+perature distribution of power transformers with different
+modelings [11], [12], [13]. Likewise, several studies using
+CFD simulations have been made to investigate the thermal
+performance of power transformers [4], [14], [15], [16], [17].
+Both techniques have shown good results estimating the
+operational conditions of power transformers. In [4] and [18],
+the two methods are compared, and the CFD technique is
+proven to be more precise, as in THNM the flow profile
+is not solved; therefore, phenomena such as hot streaks or
+flow inversions cannot be easily observed. However, THNM
+techniques are more attractive for design purposes due to
+reduced time-to-solution and due to its easier integration
+with other proprietary algorithms [4], [9], [11], [15], [19].
+Nevertheless, the use and development of both techniques are
+essential to develop optimal designs for power transformers.
+The hotspot temperature is one of the most important
+parameters to determine the aging and the loading of power
+transformers [1], [5], [20]. Due to its importance, optical fiber
+sensors are placed inside the transformers to monitor specific
+temperatures under real loading conditions. These data are
+used to monitor the transformer operation, insulation aging,
+risk of bubble formation, and partial discharges.
+An optical fiber sensor works without electric and magnetic
+interference; however, it is not made of conducting materials,
+being very useful to measure the temperatures inside the
+windings. However, these sensors measure only punctual tem-
+peratures, and the hotspot does not have an exact position to
+place the sensor there. Thus, a bigger number of probes along
+1557-9662 © 2023 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:36:23 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 2 ---
+7002511
+IEEE TRANSACTIONS ON INSTRUMENTATION AND MEASUREMENT, VOL. 72, 2023
+windings will improve the accuracy of temperature distribu-
+tion and, consequently, the hotspot location and monitoring.
+A disadvantage of this technology is its high cost, so the instal-
+lation of too many probes will increase the total cost of the
+transformer [21], [22]. In addition, the sensor positioning along
+the channel between two disks also impacts the measurements,
+once the higher temperatures are not always at its center, where
+the sensor is positioned. Therefore, a precise positioning of
+these sensors is essential to evaluate satisfactorily the thermal
+performance of power transformers [20].
+In this way, this article brings a thermal performance
+analysis and an evaluation of the optical fiber sensor posi-
+tioning along power transformer windings. For this purpose,
+an experimental and numerical study is performed. CFD
+simulations and temperature rise test are performed on an
+oil directed and air natural (ODAN) prototype transformer.
+The simulations were performed using ANSYS1 Fluent soft-
+ware, and the experimental data were collected by a set
+of 20 optical fiber sensors along the prototype high-voltage
+(HV) windings for temperature measurement. The measured
+punctual temperatures from the sensors are compared to the
+complete temperature distribution obtained from the simula-
+tions. It is observed that the oil flow along the channels must
+be considered to the optimal sensor positioning, which leads
+to higher temperatures at the channels’ entrances and exits.
+Also, the positioning of block washers impacts the oil flow
+distribution and may lead to hotspots that cannot be monitored
+by sensors’ punctual measurements. The obtained results help
+to optimize the sensor positioning and, consequently, to a
+better temperature monitoring.
+II. THERMAL STUDY OF POWER TRANSFORMERS
+A. Heating and Heat Transfer Modes
+Once power transformer is in operation, the heat generated
+by the windings and the core increases the oil temperature.
+In this equipment, three modes of heat transfer are present:
+conduction, convection, and radiation. The heat generated by
+the windings is transferred to the fluid due to convection. The
+thermosiphon cooling is what coordinates the heat transfer and
+the oil flow in smaller transformers, which do not need a high
+rate of heat transfer and natural convection is enough [5].
+However, in larger transformers which work with high
+power processing, a pump is installed to increase the flow of
+fluid inside the winding, thus increasing the heat dissipation
+rate. Nevertheless, the oil flow is governed by the least
+resistance path and may not go equally through the windings’
+channels. To solve this issue, large rating transformers have
+predetermined paths that direct the oil to the windings and
+core, hence increasing effectiveness of the cooling system [5].
+The use of washers also improves the heat transfer at the
+windings by distributing fluid flow through radial and axial
+channels.
+B. Cooling Systems
+Liquid-immersed transformers are classified according to
+their cooling method, by a four-letter code, which describes
+1Registered trademark.
+the cooling mediums of the transformers and their circulation
+mechanisms [23]. The oil can circulate through windings
+in three different modes, having different effects during the
+heating process. The natural-oil (ON) mode consists in the
+circulation by fluid natural convection. Using a hydraulic
+pump, this circulation can be by forced-oil (OF), when the
+pump forces the oil flow to inside the tank, or directed-oil
+(OD), with the oil flow forced by the pump and directed to
+inside the windings by structures at the bottom of the active
+part. In general, ON mode has a worse thermal performance
+in relation to OF and OD ones; however, it is more reliable
+and economic, once it do not use pumps. Other important
+characteristic of the internal cooling modes is the gradient
+temperature between the bottom and top of the windings. The
+OD mode results in a small variation, while ON and OF modes
+result in bigger ones, which must be considered to analyze
+the equipment’s lifespan [5], [14]. In relation to the external
+cooling, the air can also circulate in a natural mode (AN),
+due to its natural convection process, or with the help of
+fans coupled to radiators to force the air circulation (AF) and
+increase the thermal transfer. Thus, a tradeoff between costs
+and thermal performance is observed, once the use of pumps
+and fans represents more costs with acquisition and monitoring
+of these equipment and this also leads to a better thermal
+performance [5], [14]. In this way, a thermal analysis must
+be done to decide the better cooling system configuration to
+each application. This article analyzes an ODAN transformer;
+thus, the oil is pumped through predetermined paths along
+the windings, and the oil transfers its heat to outside ambient
+without any forced air flow.
+C. Temperatures in Power Transformers
+During operation, power transformers are constantly suffer-
+ing thermal stress. The degradation process of oil impregnated
+kraft papers can be related to the temperature through the
+Arrhenius equations, whereas the temperature rise beyond the
+normal operating conditions of the equipment results in an
+exponential acceleration of its aging. Thus, a limit of 65 ◦C
+for the top oil temperature rising is stipulated, in order to avoid
+the transformer’s early aging [24], [25].
+Therefore, the monitoring of internal temperatures along
+windings, focusing in top oil and hotspot, is essential for
+maintaining the integrity and increasing the transformer life
+span [22]. PT100 sensors [26] and thermocouple sensors are
+used to measure temperatures along the windings [16], [17],
+[27]. However, due to their characteristics, optical fiber sensors
+are allocated along windings and provide a reliable way to
+collect the data to monitor and predict the thermal performance
+and life expectancy of the transformer [22]. On the other hand,
+optical sensors are too vulnerable to mechanical damages,
+so the transformer production with these technology needs to
+follow some guidelines to ensure the correct operation [21],
+[22]. In general, the sensor is centrally positioned along
+the radial channel between two disks, facing the upper one,
+inserted in a paper spacer, as illustrated in Fig. 1.
+As aforementioned, the optical sensor measures only the
+temperature of the local where it is fixed. The goal is
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:36:23 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 3 ---
+RODRIGUES et al.: EVALUATION OF POWER TRANSFORMER THERMAL PERFORMANCE AND OPTICAL SENSOR POSITIONING
+7002511
+Fig. 1.
+Example of fixation slots for optical fibers inside the windings.
+to monitor the hotspot temperature, so the probe must be
+fixed as closer to the hotspot point as possible. However,
+the hotspot location is difficult to predict, and to a more
+detailed temperature distribution, more probes are needed.
+It leads to an increase in the transformer total cost, so a
+previous thermal analysis is needed to optimize the sensor
+positioning, to increase the measurement precision, and to
+avoid unnecessary financial expenses.
+III. ANALYSIS METHODOLOGY
+This article uses an experimental and computational coupled
+methodology in order to analyze power transformer thermal
+performance and to evaluate the optical sensor positioning.
+The methodology diagram is illustrated in Fig. 2. Temperature
+rise test is performed on a transformer prototype and, using
+a complete experimental setup and a temperature measure-
+ment system based on optical fiber sensors, the temperature
+distribution reached at steady state along the windings is
+obtained. In parallel, CFD simulations are performed, with
+preprocessing, processing, and post-processing stages.
+During the preprocessing, the transformer constructive
+dimensions and materials from the experimental test are the
+input data for the modeling step. Once the geometry is
+properly modeled, the mesh step is performed. In sequence,
+the simulation setup is configured with input data from the heat
+run test, such as the windings’ thermal losses, the pumped oil
+flow, and the ambient temperature. The simulations are solved
+during the processing stage, and the complete temperature
+distribution along windings is obtained and analyzed at the
+post-processing, when they are finalized.
+To ensure the quality of the results, a grid-dependent
+study is done, refining the mesh after each simulation until
+controlling parameters do not vary or present a negligible
+variation. At this point, the temperature distributions obtained
+from experimental and computational analysis are compared,
+analyzed, and validated. The experimental and computational
+details are explained in Sections IV and V.
+IV. EXPERIMENTAL SETUP AND TEMPERATURE RISE TEST
+The thermal performance of power transformers is evaluated
+through a temperature rise test, also called as heat run test,
+performed on a prototype transformer, shown in Fig. 3. On the
+Fig. 2.
+Diagram of experimental and computational analysis.
+Fig. 3.
+Prototype transformer.
+one hand, it is very costly to the industry to install a lot
+of probes inside a transformer for a detailed temperature
+monitoring; on the other hand, it is also impracticable to
+develop real-scale prototypes in the research scenario. In this
+way, a reduced scale prototype was designed and manufactured
+as part of a Research and Development Project, exclusively for
+thermal analysis to obtain conclusions to improve the thermal
+design of power transformers.
+To keep the characteristics of real-scale transformers, the
+prototype is single-phase with two HV disk type windings
+in two columns of magnetic core, both built with aluminum,
+isolated with thermally upgraded kraft paper, and composed
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:36:23 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 4 ---
+7002511
+IEEE TRANSACTIONS ON INSTRUMENTATION AND MEASUREMENT, VOL. 72, 2023
+Fig. 4.
+HV windings’ dimensions (in millimeters).
+Fig. 5.
+Positioning of optical fiber sensors and washers in (a) HV—Col-
+umn 1 and (b) HV—Column 2.
+of 60 disks each. Its dimensions are shown in Fig. 4. The
+insulation oil used is Hyvolt II1 insulating naphthenic [28].
+To allow different thermal analyses through practical experi-
+ments, the prototype has four radiators of elliptical tubes and
+two fans, which can be positioned in different configurations to
+operate under AN or AF conditions. In relation to the internal
+cooling mode, structures at the bottom of windings make the
+prototype originally an OD transformer. These structures can
+be removed; then, the prototype is able to operate under ON
+or OF conditions. It should be noted that this article analyzes
+and presents results only of ODAN cooling mode.
+Fig. 5 shows the positions of block washers. As already
+mentioned, these structures guide the oil flow through axial
+and radial channels to improve the heat transfer and the
+transformer thermal performance. Thus, it is important to
+know their positioning to correctly interpret the temperature
+distribution obtained. It is noted that the different numbers and
+positionings of washers guide the oil flow among channels
+between the columns. The HV of Column 1 has four washers,
+while that of Column 2 has eight washers.
+Regarding the temperature measurement system, taking
+into account the complexity of installing optical tempera-
+ture sensors along the windings of a transformer and the
+budget allocated to acquiring the sensors, a set of 20 T22
+Fiber Optic Temperature Probe of Qualitrol1 Neoptix were
+positioned inside the HV windings’ wedges along the columns,
+2Trademarked.
+TABLE I
+PROTOTYPE TRANSFORMER AND EXPERIMENTAL
+TEST CHARACTERISTICS
+Fig. 6.
+Optical fiber sensor. (a) Used sensor. (b) Winding with installed
+sensors.
+ten in each column, as illustrated in Fig. 5. The temperature
+measurements are used for comparison and posterior valida-
+tion of computational simulations. The main features of the
+prototype and experimental test are shown in Table I.
+The optical fiber sensors are based on the Fiber Bragg Grat-
+ing technology and Gallium Arsenide measurement principle.
+Sensors are developed to work inside transformers with oil
+impregnate, in a measurement range of −80 ◦C to 250 ◦C and
+250 ms response [29]. The optical fiber sensors installed in
+the prototype transformer are shown in Fig. 6. According to
+the manufacturer, oil pressure variations or mechanical stress
+do not have significant effects on measurement system, taking
+into account the ±1 ◦C measurement system accuracy. The
+sensors are centrally positioned along the radial channels [see
+Fig. 6(a)], in a way that the underside of the disks is in contact
+with the sensor, making the measurements taken compatible
+with the winding temperature. Fig. 6(b) shows a picture of
+one column with the ten sensors properly installed. In addition,
+three other sensors were positioned, forming a triangle, around
+the prototype to measure the ambient temperature in according
+to ABNT NBR 5356 recommendation [30].
+The complete experimental setup is shown in Fig. 7.
+Besides the prototype and ambient temperature sensors already
+mentioned, the experimental setup is also composed of the
+Qualitrol Omniflex optical fiber sensor analyzer, the hydraulic
+pump, current and potential transformers to collect the electri-
+cal signals, and the cooling system switchboard. Flow meters
+allocated at the pump and radiator outlets provide the total
+oil flow monitoring, which allows to use in the simulation the
+real value observed during the practical experiment. As seen in
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:36:23 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 5 ---
+RODRIGUES et al.: EVALUATION OF POWER TRANSFORMER THERMAL PERFORMANCE AND OPTICAL SENSOR POSITIONING
+7002511
+Fig. 7.
+Experimental setup.
+Fig. 8.
+Schematic of the experimental setup.
+Fig. 7 and Table I, and aforementioned, the prototype has fans
+for an air-forced cooling mode; however, this article analyzes
+only the air natural cooling mode. In addition, a Flir1 A6753sc
+thermal camera is used to monitor the temperatures during the
+heat run tests.
+The transformer was tested under ODAN cooling system
+conditions presented in Table I, according to ABNT NBR
+5356-2 (2007) [30] and IEC 60076-2 (2011) [31]. The heat
+run test consists in applying constant losses in the transformer
+active part until it reaches the steady state, when all the
+measure points do not vary more than 1 ◦C during the last 3 h.
+For this, the setup also includes a three-phase power supply,
+with the possibility of controlling the output voltage per phase,
+a capacitor’s bank, and the instrumentation that provides the
+electrical measurements to the power analyzer Yokogawa1
+WT3000 (current channels ICH and voltage channels VCH). The
+schematic of the experimental setup is shown in Fig. 8. The
+internal electrical connections of the prototype transformer are
+detailed in Fig. 9, which was constructed in a way that is
+Fig. 9.
+Diagram of transformer prototype electrical connections.
+Fig. 10.
+Thermal image for ODAN heat run test.
+possible to supply core losses and winding losses separately.
+Thus, at the end of the test, the steady state was reached
+and the HV thermal losses and oil flow were measured,
+as presented in Table I. The temperatures are collected and
+compared to the CFD simulation results. Fig. 10 shows a
+thermal image from ODAN test at the steady state.
+V. COMPUTATIONAL FLUID DYNAMICS
+In order to complement the thermal analysis provided by the
+heat run test, CFD simulations were performed. This section
+details the CFD methodology used to compute the flow and
+temperature distributions in power transformer, following the
+steps in Fig. 2. This technique solves the governing equations
+of fluid flow and heat transfer, state mass, momentum, and
+energy equations.
+A. Modeling
+As shown in Fig. 2, a precise model of the transformer
+prototype HV windings is built, receiving the constructive
+dimensions and characteristics, presented in Figs. 4 and 5,
+and materials data from the experiment. To a time processing
+reduction, only the oil domain was modeled, where the heat
+transfer properly happens and the results need to be evaluated.
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:36:23 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 6 ---
+7002511
+IEEE TRANSACTIONS ON INSTRUMENTATION AND MEASUREMENT, VOL. 72, 2023
+Fig. 11.
+Initial mesh at the Column 1 entrance (disks 1 and 2). (a) 7 476 984.
+(b) Temperature contour.
+Fig. 12.
+Final mesh at the Column 1 entrance (disks 1 and 2).
+(a) 15 989 990 elements. (b) Temperature contour.
+B. Meshing
+The modeled windings are divided into finite volumes,
+forming a mesh. In order to eliminate errors due to a
+low-quality mesh and to ensure reliable results, a grid
+dependence study is made. It consists of a procedure of
+successive refinement of an initial coarse grid until certain
+controlling parameters do not change, making the simula-
+tion grid-independent. Thus, a systematic search for grid-
+independent results forms an essential part of all high-quality
+CFD studies [32].
+In this way, a grid-refinement study was performed in this
+work. An initial mesh, already with good quality elements,
+and its temperature distribution at the Column 1 entrance are
+illustrated in Fig. 11, while Fig. 12 shows the final mesh
+and its temperature distribution. It is possible to observe the
+convergence of the results in face of mesh refinement.
+Optimal meshes are often nonuniform: finer in areas where
+large variations occur from point to point and coarser in
+regions with relatively little change [32]. Thus, a refinement
+was done near the faces of the disks, in order to evaluate more
+precisely the temperatures at these regions.
+C. Simulation Setup
+The density (ρ f ), thermal conductivity (k f ), specific heat
+(cpf), and viscosity (µ f ) of the oil employed in the experi-
+mental test and used in the simulation are presented in (1)–(4),
+respectively. To ensure reliable results of heat transfer, these
+parameters are considered dependents of operation tempera-
+ture Toil
+ρ f = 1064 −0.623 · Toil
+[kg/m3]
+(1)
+k f = 0.145 −6.5 · 10−5 · Toil
+[W/(m · K)]
+(2)
+cpf = 588 + 4.34 · Toil
+[J/kg · K]
+(3)
+µ f = 7.085247 −0.06097287 · Toil + 0.00017478 · T 2
+oil
+−1.668228 · 10−7 · T 3
+oil
+[kg/m · s].
+(4)
+TABLE II
+THERMAL LOSSES FOR CFD SIMULATION
+The losses, responsible for the transformer heating, are
+inserted in simulations according to the values obtained from
+temperature rise test, as shown in Table I. As the disk domains
+were not modeled, the losses are set as density at the oil faces
+which correspond to the disk faces, as presented in Table II.
+It adopted a uniform distribution of losses along windings’
+disks.
+As the cooling system of the transformer is ODAN, a mass
+flow rate and an initial temperature for the oil, from the heat
+run test, are set at the inlet, as presented in the following
+equation:
+˙moil = 0.00074666665 [m3/s] · 858.77 [kg/m3]
+(5)
+Tin = 329.41 K.
+(6)
+At the outlet, a uniform pressure is considered as follows:
+p = 0 Pa.
+(7)
+VI. RESULTS AND DISCUSSION
+As shown in Fig. 2, with the experiment and simulations
+done, the obtained temperature distributions are analyzed.
+From CFD simulations, the temperature contours along HV
+windings are illustrated in 2-D cuts in Figs. 13 and 14, for
+Columns 1 and 2, respectively. To facilitate the visualization,
+the windings’ plots were partitioned in four parts, each one
+with 15 disks. In general, the oil temperature increases from
+bottom to top of windings, entering with 329 K (56 ◦C) and
+exiting about 335 K (62 ◦C). This small difference when
+compared to the absolute values of the entire windings is
+expected, due to the characteristic of OD mode, as mentioned
+in Section II-B. Also, the washers’ positioning is observed,
+where the oil cannot flow, and some differences, as a hotspot
+in the first radial channels in Column 1, are not observed in
+Column 2.
+In order to investigate the hottest point of Column 1,
+Figs. 15 and 16 show with detail the temperature and flow
+vector distributions, respectively, at the two first radial chan-
+nels from Columns 1 and 2. It is noted that the constructive
+difference between the columns leads to different oil flow and
+temperature fields. The washer presence at the entrance of
+external axial channel in Column 2 forces the oil to enter
+totally through internal axial channel and, due the hydraulic
+resistances of winding, results in a more intense flow at the
+initial radial channels [see Fig. 16(b)]. On the other hand,
+Column 1 does not have washer at the inlet; then the oil
+enters divided through internal and external axial channels.
+Consequently, the oil flow at the initial radial channels is too
+low, almost stagnated, reducing the heat transfer ratio and
+increasing the local temperature [see Fig. 16(a)].
+In addition, Fig. 15 shows that the hottest temperature is
+not exactly at the middle of the radial channel and its location
+is governed by the dynamic of the oil flow. Complementing,
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:36:23 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 7 ---
+RODRIGUES et al.: EVALUATION OF POWER TRANSFORMER THERMAL PERFORMANCE AND OPTICAL SENSOR POSITIONING
+7002511
+Fig. 13.
+Temperature distribution along HV winding—Column 1: disks.
+(a) 1–15, (b) 16–30, (c) 31–45, and (d) 46–60.
+Fig. 14.
+Temperature distribution along HV winding—Column 2: disks.
+(a) 1–15, (b) 16–30, (c) 31–45, and (d) 46–60.
+Fig. 15.
+Temperature distribution of (a) Column 1 and (b) Column 2.
+due to opposite positioning of washers along windings, the
+oil flow is guided from one side to another and, passing by a
+washer, has its orientation inverted. This process is repeated
+every pass of disks between two washers.
+To evaluate and compare simulation results to experimental
+measurements, the temperatures of radial channels correspond-
+ing to the optical sensors’ location, according to Fig. 5, were
+collected at the inner side, center, and outer side of these
+channels. For each position, five verification points in a vertical
+line were collected, as illustrated in Fig. 17.
+Fig. 16.
+Velocity vectors of (a) Column 1 and (b) Column 2.
+Fig. 17.
+Verification points in the radial channels.
+Fig. 18.
+Vertical temperature distribution—Column 1—bottom (radial
+channel between disks 1 and 2).
+Fig. 19.
+Vertical temperature distribution—Column 1—middle (radial
+channel between disks 29 and 30).
+Figs. 18–20 present the temperature distribution along the
+vertical verification points in radial channels of three different
+winding positions for Column 1, respectively: 1) bottom—
+between disks 1 and 2; 2) middle—between disks 29 and 30;
+and 3) top—between disks 59 and 60. A temperature differ-
+ence along the channel height is observed for the three curves.
+At the bottom radial channel, the hottest temperatures are in
+the center curve, exactly where the hotspot aforementioned
+is located and the temperature difference reaches about 15 ◦C
+along the whole channel. In the middle and top radial channels,
+where the radial oil flow is developed due the near washers,
+the outer curves present higher temperatures than the center
+and inner ones, and the difference temperature is lower, about
+4 ◦C.
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:36:23 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 8 ---
+7002511
+IEEE TRANSACTIONS ON INSTRUMENTATION AND MEASUREMENT, VOL. 72, 2023
+Fig. 20.
+Vertical temperature distribution—Column 1—top (radial channel
+between disks 59 and 60).
+Fig. 21.
+Vertical temperature distribution—Column 2—bottom (radial
+channel between disks 1 and 2).
+Fig. 22.
+Vertical temperature distribution—Column 2—middle (radial
+channel between disks 29 and 30).
+Likewise, the same radial channels were evaluated for
+Column 2, as shown in Figs. 21–23. Different from Column 1,
+the oil flow is developed in the bottom radial channel of
+Column 2; thus, the hottest temperatures are in the outer curve.
+The same occurs at the top radial channel, while at the middle
+one, the inner curve presents the highest temperatures. In the
+three radial channels, the observed temperature difference was
+approximately 4 ◦C.
+Therefore, it was observed that the temperature varies
+along the radial channels, in the horizontal and vertical ways.
+In general, the temperatures are hotter near the upper and lower
+disk faces (verification points 1 and 5 in Fig. 17), and colder
+at the center of the channel (verification point 3 in Fig. 17).
+It happens due to the oil flow dynamics, where the velocities
+tend to be null at the disk faces and maximum at the center.
+The oil flow velocity also impacts on hotspot position. As seen
+at the bottom radial channel of Column 1 (see Fig. 19), the
+oil flow too low leads to an undesired hotspot and a great
+temperature difference along the channel, which is observed
+neither in the other channels nor in Column 2.
+Fig. 23.
+Vertical temperature distribution—Column 2—top (radial channel
+between disks 59 and 60).
+Fig. 24.
+Measured and CFD model temperatures—Column 1.
+Fig. 25.
+Measured and CFD model temperatures—Column 2.
+Once optical measurements represent a punctual temper-
+ature along the whole channel, an average of these five
+verification points in inner, center, and outer positions was
+calculated. Thus, it is possible to compare the measurement to
+three different positions from CFD model. The comparisons
+between measured and computed temperatures for Columns
+1 and 2 are presented in Figs. 24 and 25, respectively, where
+the Y-axis correspond to the disks with optical sensors in
+Fig. 5. In the experimental measurements, the uncertainty bars
+of ±1 ◦C are represented.
+It is verified that both the experiment and simulation
+resulted in similar thermal patterns along the windings. The
+simulation results were close to the experimental heat run
+test measurements, presenting an average deviation of 1.59%
+for Column 1 and 1.89% for Column 2. These differences
+are expected and could be explained by simplifications made
+during the simulation modeling, like the uniform distribu-
+tion of thermal losses, and uncertainties and restrictions of
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:36:23 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 9 ---
+RODRIGUES et al.: EVALUATION OF POWER TRANSFORMER THERMAL PERFORMANCE AND OPTICAL SENSOR POSITIONING
+7002511
+Fig. 26.
+Measured and CFD verification points’ averages temperature—Col-
+umn 1.
+transformer manufacturing process, which cannot be predicted
+and reproduced by the CFD model. In addition, the simula-
+tions’ accuracy is directly associated with the model detail-
+ing, which leads to a higher computational efforts and time
+processing. Therefore, the more computational resources and
+processing time are available, the more accurate the modeling
+can be to obtain results closer to practice.
+The computed temperatures for Column 2 are lower than
+the experimental ones. The same occurred with Column 1,
+with the exception of the first measurement point. As already
+observed in previous analysis, the simulation showed a hotspot
+at the radial channel between disks 01 and 02, not detected by
+optical sensor. It is important to highlight that the measurement
+corresponds to the face disk temperature, with an equipment
+uncertainty of ±1 ◦C, where the sensor is fixed, while the
+CFD simulation computes the oil temperature. Therefore, due
+the characteristics of disk material, it is expected that disks
+are hotter than the surrounding oil.
+Comparing both the columns, Column 2 presented higher
+temperatures than Column 1, indicating that the simple alloca-
+tion of more block washers does not imply in a better thermal
+performance. The average temperature computed for inner and
+outer positions along windings alternate every pass of disks
+between two washers, corroborating the results observed by
+verification points and the oil flow dynamics, showing that the
+hottest point is not necessarily in the middle of the channel.
+In a similar way, the punctual temperature measurements
+were compared to the average of the verification points in
+the vertical direction. The average temperature of all number
+1 verification points, then all number 2 and successively
+till all the number 5, in the radial channels corresponding
+to the sensor positioning, was calculated. Figs. 26 and 27
+show comparisons between experimental data and the CFD
+verification points, average for Columns 1 and 2, respectively.
+The average temperature of verification points is called “VP”
+in the graphs. In both the columns, it is observed that the
+verification points 1 and 5 averages, which correspond to the
+oil in contact with the faces of lower and upper disks, present
+higher temperatures than the other points, getting closer to the
+measured temperatures obtained from the heat run test.
+Therefore, the complete and detailed temperature distribu-
+tions obtained from CFD simulations showed a considerable
+temperature variation along the radial channels, in horizontal
+Fig. 27.
+Measured and CFD verification points’ averages temperature—Col-
+umn 2.
+and vertical directions. Comparing the verification points,
+it was concluded that, according to the oil flow dynamic and
+distribution, in general, the higher temperatures are at the
+entrances and exits of channels, and closer to the lower and
+upper disk faces. Also, the constructive arrangement may lead
+to temperature peaks in not expected locals. Thus, these issues
+and conclusions must be considered during the transformer
+design and sensors’ allocation stage to a better monitoring of
+its thermal performance.
+Another aspect is the operation in overload conditions of
+power transformers, whose thermal design must be considered.
+In these situations, maintaining the cooling conditions, the
+thermal behavior will not change; however, the thermal loss
+increment leads to a temperature increase, demanding attention
+to the standards and guides limits. Therefore, taking the
+prototype transformer of this study, maintaining the ODAN
+conditions, and increasing its thermal losses, a temperature
+increase is expected, with the same temperature distribution
+pattern. Modifying the cooling conditions or analyzing other
+transformer with different characteristics, the thermal perfor-
+mance and temperature distribution vary, being necessary to
+make new thermal analysis, and the presented methodology
+can be applied.
+VII. CONCLUSION
+In order to understand the thermal performance of power
+transformers and to contribute to better optical sensor posi-
+tioning designs, this article presented a thermal analysis of HV
+windings under ODAN conditions through CFD simulation.
+The computed data were compared through a temperature rise
+test results of a prototype transformer equipped with 20 optical
+sensors along its windings. The simulations showed good
+accuracy in determining the prototype transformer tempera-
+tures, presenting low deviation, and validating the employed
+methodology.
+The CFD simulation allowed to observe details that are not
+detected by the optical instrumentation, being a great tool
+to transformer design. It was observed that the number and
+positioning of washers influence the oil flow distribution and
+orientation at the radial channels, which, in turn, influences
+the temperature distribution along the windings. In addition,
+the temperature distribution shows that the absence of block
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:36:23 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 10 ---
+7002511
+IEEE TRANSACTIONS ON INSTRUMENTATION AND MEASUREMENT, VOL. 72, 2023
+washer to guide the oil flow may result in hotter points along
+radial channels, needing studies in previous design stages to
+decide the quantity and position of washers to a better thermal
+performance. Thus, the punctual temperature measurement is
+not necessarily the hottest one along the channel, and the
+optical sensors’ installation also needs previous analysis to
+monitor correctly the critical temperatures during the trans-
+former operation.
+Knowing the previous oil flow and temperature distributions
+from CFD simulations or THNM analysis, it is possible to
+allocate the sensors in a better way. Taking the transformer
+analyzed in this article as an example, the optical fiber sensors
+should be allocated near the entrance or the exit of radial
+channels, according to the oil flow along the windings. Thus,
+the sensor allocation must be flexible, allowing to be fixed in
+different positions in the horizontal and vertical ways along
+the radial channels for a better monitoring of transformers
+temperatures.
+In relation to the differences found between simulations and
+experimental results, it could be explained by some reasons.
+One of them is the uniform distribution of thermal losses
+applied along the windings, which is known that in practice
+it could be different. Also, the transformer manufacturing
+process has uncertainties and restrictions, which cannot be
+predicted and reproduced by the CFD model. Therefore, once
+validated, this CFD methodology can be used to analyze
+constructive and material variations during design stages,
+including the distribution and positioning of block washers
+and optical sensors, looking for an optimal design of windings,
+and contributing for transformer industry. Finally, this study
+will be extended to other cooling systems, as OF and ON,
+to investigate the related issues, through CFD simulations and
+heat run tests.
+ACKNOWLEDGMENT
+The authors would like to thank the technical support of
+Companhia Paranaense de Energia, Curitiba, Brazil, the Fed-
+eral University of Santa Maria (UFSM), Santa Maria, Brazil,
+the Electrical Engineering Post Graduate Program (PPGEE),
+and the National Institute of Science and Technology (INCT)–
+Distributed Generation of UFSM and the Smart Grids Institute,
+UFSM.
+REFERENCES
+[1] L. Raeisian, P. Werle, H. Niazmand, and E. Ebrahimnia-Bajestan,
+“Prediction of oil hotspot temperature in a distribution transformer
+by CFD method,” in Proc. VDE High Voltage Technol., ETG-Symp.,
+Nov. 2018, pp. 1–6.
+[2] J. Lin, J. Ma, J. G. Zhu, and Y. Cui, “A transfer ensemble learning
+method for evaluating power transformer health conditions with limited
+measurement data,” IEEE Trans. Instrum. Meas., vol. 71, pp. 1–10,
+2022.
+[3] J. Liu, Q. Wang, X. Fan, Y. Zhang, and H. H. Goh, “Effects of tem-
+perature gradient induced aging and moisture distribution on dielectric
+response measurement for transformer insulation,” IEEE Trans. Instrum.
+Meas., vol. 71, pp. 1–10, 2022.
+[4] A. Santisteban, A. Piquero, F. Ortiz, F. Delgado, and A. Ortiz, “Thermal
+modelling of a power transformer disc type winding immersed in mineral
+and ester-based oils using network models and CFD,” IEEE Access,
+vol. 7, pp. 174651–174661, 2019.
+[5] S. V. Kulkarni and S. A. Khaparde, Transformer Engineering: Design
+and Practice. New York, NY, USA: CRC Press, 2004.
+[6] I.
+Fernández
+et
+al.,
+“Thermal
+degradation
+assessment
+of
+Kraft
+paper in power transformers insulated with natural esters,” Appl.
+Therm. Eng., vol. 104, pp. 129–138, Jul. 2016. [Online]. Available:
+https://www.sciencedirect.com/science/article/pii/S135943111630672X
+[7] N. A. M. Ishak, N. A. M. Jamail, and N. A. Othman, “High voltage
+characteristics of Kraft paper insulator with effect of palm oil and
+coconut oil,” in Proc. 4th IET Clean Energy Technol. Conf. (CEAT),
+2016, pp. 1–8.
+[8] N. Baruah, S. K. Nayak, and S. K. Pratihar, “Quantitative effect of aging
+duration on dielectric parameters based on frequency response,” IEEE
+Trans. Instrum. Meas., vol. 71, pp. 1–9, 2022.
+[9] Transformer Thermal Modelling, document CIGRE WG A2.38, CIGRE,
+Jun. 2016.
+[10] C. Chi, F. Yang, C. Xu, L. Cheng, and C. Yang, “A multi-scale
+thermal-fluid coupling model for ONAN transformer considering entire
+circulating oil systems,” Int. J. Electr. Power Energy Syst., vol. 135,
+Feb. 2022, Art. no. 107614.
+[11] Z. R. Radakovic and M. S. Sorgic, “Basics of detailed thermal-hydraulic
+model for thermal design of oil power transformers,” IEEE Trans. Power
+Del., vol. 25, no. 2, pp. 790–802, Apr. 2010.
+[12] G. Swift, T. S. Molinski, and W. Lehn, “A fundamental approach to
+transformer thermal modeling. I. Theory and equivalent circuit,” IEEE
+Trans. Power Del., vol. 16, no. 2, pp. 171–175, Apr. 2001.
+[13] G. Swift, T. S. Molinski, R. Bray, and R. Menzies, “A fundamental
+approach to transformer thermal modeling. II. Field verification,” IEEE
+Trans. Power Del., vol. 16, no. 2, pp. 176–180, Apr. 2001.
+[14] G. C. Nogueira et al., “Thermal analysis of power transformers with dif-
+ferent cooling systems using computational fluid dynamics,” J. Control,
+Autom. Electr. Syst., vol. 33, pp. 359–368, Feb. 2022.
+[15] X. Zhang, Z. Wang, Q. Liu, P. Jarman, and M. Negro, “Numerical inves-
+tigation of oil flow and temperature distributions for ON transformer
+windings,” Appl. Thermal Eng., vol. 130, pp. 1–9, Feb. 2018.
+[16] G. Liu, Z. Zheng, X. Ma, S. Rong, W. Wu, and L. Li, “Numerical and
+experimental investigation of temperature distribution for oil-immersed
+transformer winding based on dimensionless least-squares and upwind
+finite element method,” IEEE Access, vol. 7, pp. 119110–119120, 2019.
+[17] F. Torriano, H. Campelo, M. Quintela, P. Labbé, and P. Picher, “Numer-
+ical and experimental thermofluid investigation of different disc-type
+power transformer winding arrangements,” Int. J. Heat Fluid Flow,
+vol. 69, pp. 62–72, Feb. 2018.
+[18] H. M. R. Campelo, M. A. Quintela, F. Torriano, P. Labbe, and P. Picher,
+“Numerical thermofluid analysis of a power transformer disc-type wind-
+ing,” in Proc. IEEE Electr. Insul. Conf. (EIC), Jun. 2016, pp. 362–365.
+[19] F. Yuan et al., “Thermal optimization research of oil-immersed trans-
+former winding based on the support machine response surface,” Ther-
+mal Sci., vol. 26, no. 4, pp. 3427–3440, 2021.
+[20] E.
+G.
+P.
+Ediriweera,
+K.
+Wickramasinghe,
+K.
+R.
+I.
+Sithmini,
+E. A. A. G. Ekanayaka, R. Samarasinghe, and J. R. Lucas, “Localizing
+hotspot in an oil immersed distribution transformer using finite ele-
+ment analysis,” in Proc. IEEE Electric Power Energy Conf. (EPEC),
+Nov. 2020, pp. 1–6.
+[21] Thermal Performance of Transformers, document CIGRE WG A2.24,
+CIGRE, Oct. 2009.
+[22] J. Jiang and G. Ma, Optical Sensing in Power Transformers. Hoboken,
+NJ, USA: Wiley, 2021.
+[23] IEEE Standard for General Requirements for Liquid-Immersed Distri-
+bution, Power, and Regulating Transformers, Standard C57.12.00-2021
+(Revision of IEEE Std C57.12.00-2015), 2022, pp. 1–74.
+[24] IEEE Guide for Loading Mineral-Oil-Immersed Transformers and Step-
+Voltage Regulators, Standard C57.91-2011 (Revision of IEEE Std
+C57.91-1995), 2012, pp. 1–123.
+[25] J. Lin, J. Ma, and J. Zhu, “Hierarchical federated learning for power
+transformer fault diagnosis,” IEEE Trans. Instrum. Meas., vol. 71,
+pp. 1–11, 2022.
+[26] E. Rahimpour, M. Barati, and M. Schäfer, “An investigation of parame-
+ters affecting the temperature rise in windings with zigzag cooling flow
+path,” Appl. Therm. Eng., vol. 27, nos. 11–12, pp. 1923–1930, 2007.
+[27] M.
+Daghrah,
+X.
+Zhang,
+Z.
+Wang,
+Q.
+Liu,
+P.
+Jarman,
+and
+D. Walker, “Flow and temperature distributions in a disc type
+winding—Part I: Forced and directed cooling modes,” Appl. Ther-
+mal Eng., vol. 165, Jan. 2020, Art. no. 114653. [Online]. Available:
+https://www.sciencedirect.com/science/article/pii/S1359431119349543
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:36:23 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 11 ---
+RODRIGUES et al.: EVALUATION OF POWER TRANSFORMER THERMAL PERFORMANCE AND OPTICAL SENSOR POSITIONING
+7002511
+[28] A. L. Specialties. (2021). Advantage Hyvolt II Electrical Insulation
+Oil. [Online]. Available: https://advancedlubes.com/product/advantage-
+hyvolt-ii-electrical-insulating-oil
+[29] Qualitrol.
+(2019).
+Qualitrol
+T2
+Fiber
+Optic
+Temperature
+Probe.
+[Online].
+Available:
+https://qualitrolcorp.wpenginepowered.com/wp-
+content/uploads/2020/04/AP-M09-12L-06E-1903-T2S-
+Standard_and_Disk.pdf
+[30] Power transformers—Part 2: Temperature Rise, Standard ABNT Std.
+NBR 5356, 2007.
+[31] Power Transformers—Part 2: Temperature Rise for Liquid-Immersed
+Transformers, Standard IEC 60 076-2, 2011.
+[32] H. K. Versteeg and W. Malalasekera, An Introduction to Computational
+Fluid Dynamics. London, U.K.: Pearson Education, 2007.
+Tales F. Rodrigues was born in Cuiabá, Brazil,
+in 2000. He is currently pursuing the bachelor’s
+degree in mechanical engineering with the Federal
+University of Santa Maria (UFSM), Santa Maria,
+Brazil.
+Since 2022, he has been a Researcher with the
+Smart Grids Institute (INRI), UFSM, where he
+currently works at the Computer-Aided Engineer-
+ing Laboratory. He has been involved in model-
+ing and simulation of cooling systems of power
+transformers.
+Leonardo H. Medeiros was born in Santa Maria,
+Brazil, in 1995. He received the B.S. and M.Sc.
+degrees in electrical engineering from the Federal
+University of Santa Maria (UFSM), Santa Maria, in
+2018 and 2020, respectively, where he is currently
+pursuing the Ph.D. degree.
+Since 2017, he has been a Researcher with the
+Smart Grids Institute (INRI), UFSM, where he
+is currently the Manager of the Computer-Aided
+Engineering Laboratory. His current research inter-
+ests include thermal model and design, high-voltage
+equipment, power transformers, distribution transformers, and computer-aided
+engineering.
+Micael M. Oliveira was born in Mairinque, Brazil,
+in 1990. He received the B.S. degree in electrical
+engineering from the Federal University of Pampa
+(UNIPAMPA), Alegrete, Brazil, in 2019, and the
+M.Sc. degree in electrical engineering from the
+Federal University of Santa Maria (UFSM), Santa
+Maria, Brazil, in 2021, where he is currently pursu-
+ing the Ph.D. degree.
+Since 2019, he has been a Researcher with the
+Smart Grids Institute (INRI), UFSM, where he is
+currently the Manager of the High Voltage Labo-
+ratory, conducting tests on distribution and power transformers. His current
+research interests include thermal modeling, aging, and assessment of power
+transformers.
+Gabriel C. Nogueira received the B.S. degree
+in electrical engineering from the Federal Univer-
+sity of Santa Maria (UFSM), Santa Maria, Brazil,
+in 2022.
+During his professional career, he has worked as
+a Researcher with the Computer-Aided Engineering
+Laboratory (LabCAE), Smart Grids Institute (INRI),
+UFSM. He currently works as an Engineer with the
+multinational company WEG Electric Equipment,
+Jaraguá do Sul, Brazil. Throughout his career, he has
+been involved in the field of research, development,
+and innovation (RDI), applying computer-aided engineering (CAE) with a
+focus on electromagnetic analysis of power and distribution transformers.
+Vitor C. Bender (Member, IEEE) was born in
+Panambi, Brazil, in 1987. He received the B.S.
+degree in electrical engineering from the Regional
+University of Northwestern Rio Grande do Sul, Ijui,
+Brazil, in 2011, and the M.Sc. and Ph.D. degrees
+from the Federal University of Santa Maria (UFSM),
+Santa Maria, Brazil, in 2012 and 2015, respectively.
+In 2014, he has performed a Ph.D. intern-
+ship at the Universidad de Oviedo, Gijón, Spain.
+From 2015 to 2017, he was a Professor with the
+Federal University of Pampa, Alegrete, Brazil. Since
+2018, he has been a Professor with the Electronics and Computing Depart-
+ment, UFSM. He is currently a Researcher with the Smart Grids Institute
+(INRI), UFSM, where he is also the Manager of the High-Voltage Laboratory.
+He is a coauthor of more than ten journal articles and more than 50 conference
+papers, and is the holder of one Brazilian patent. His current research interests
+include lighting systems, thermal model and design, high-voltage equipment,
+power transformers, and computer-aided engineering.
+Tiago
+Bandeira
+Marchesan
+(Member,
+IEEE)
+received the B.S. (Hons.) and Ph.D. degrees in
+electrical engineering from the Federal University of
+Santa Maria, Santa Maria, Brazil, in 2003 and 2008,
+respectively.
+From 2009 to 2011, he was a Research and
+Development Engineer with the Power Transformer
+Group, WEG Electric Corporation, Jaraguá do Sul,
+Brazil, and a Professor with Sinos River Valley Uni-
+versity, São Leopoldo, Rio Grande do Sul, Brazil.
+Since 2011, he has been a Professor of the Electri-
+cal Engineering Postgraduate Program, Federal University of Santa Maria.
+He currently works in several projects with the industry. Since 2017, he has
+been the Director of the Technology Center, Federal University of Santa Maria.
+Carlos Eduardo Guex Falcão received the degree
+in mechanical engineering from the Universidade
+Federal do Rio Grande do Sul, Porto Alegre, Brazil,
+in cooperation with the Universidade Federal Flumi-
+nense, Niterói, Brazil, in 2013.
+He is currently a Professor of mechanical engineer-
+ing with the Universidade Federal de Santa Maria.
+Since 2017, he has been involved with modeling
+and simulation of power transformers. His research
+interests also include study of numerical methods
+to solve compressible flow, hypersonic flows, and
+generation of base states for stability analyses.
+Marco Antônio Marin was born in São Paulo,
+Brazil, in 1971. He received the B.S. degree in elec-
+trical engineering from the Federal Technological
+University of Paraná, Curitiba, Brazil, in 2000, and
+the M.Sc. degree in electric energy systems from the
+Federal University of Santa Catarina, Florianópolis,
+Brazil, in 2004.
+He was a Specialist in planning, operation, and
+marketing at electrical energy industry from the
+Federal University of Paraná, Curitiba, in 2003,
+and in maintenance management from the Federal
+Technological University of Paraná in 2008. He was the Division Manager
+of maintenance engineering for transmission lines and substation equipment
+at COPEL GeT S. A., Companhia Paranaense de Energia, Curitiba, Brazil,
+from 2017 to 2022, where he is currently a Sector Supervisor in high-voltage
+substation equipment engineering.
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:36:23 UTC from IEEE Xplore.  Restrictions apply. 

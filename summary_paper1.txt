@@ -1,0 +1,1236 @@
+
+--- PAGE 1 ---
+4726
+IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 66, NO. 6, JUNE 2019
+Adaptive Power Transformer Lifetime Predictions
+Through Machine Learning and Uncertainty
+Modeling in Nuclear Power Plants
+Jose Ignacio Aizpurua
+, Member, IEEE, Stephen D. J. McArthur
+, Fellow, IEEE,
+Brian G. Stewart
+, Member, IEEE, Brandon Lambert, James G. Cross, Senior Member, IEEE,
+and Victoria M. Catterson
+, Senior Member, IEEE
+Abstract—The remaining useful life (RUL) of transformer
+insulation paper is largely determined by the winding hot-
+spot temperature (HST). Frequently the HST is not directly
+monitored and it is inferred from other measurements. How-
+ever, measurement errors affect prediction models and if
+uncertain variables are not taken into account this can lead
+to incorrect maintenance decisions. Additionally, existing
+analytic models for HST calculation are not always accurate
+because they cannot generalize the properties of trans-
+formers operating in different contexts. In this context, this
+paper presents a novel transformer condition assessment
+approach integrating uncertainty modeling, data-driven
+forecasting models, and model-based experimental models
+to increase the prediction accuracy and handle uncertainty.
+The proposed approach quantiﬁes the effect of measure-
+ment errors on transformer RUL predictions and conﬁrms
+that temperature and load measurement errors affect
+the RUL estimation. Forecasting results show that the
+extreme gradient boosting (XGB) algorithm best captures
+the nonlinearities of the thermal model and improves
+the prediction accuracy among a number of forecasting
+approaches. Accordingly, the XGB model is integrated
+with experimental models in a particle ﬁltering framework
+to improve thermal modeling and RUL prediction tasks.
+Models are tested and validated using a real dataset from
+a power transformer operating in a nuclear power plant.
+Index Terms—Condition assessment, forecasting, prog-
+nostics
+and
+health
+management
+(PHM),
+sensitivity,
+transformers.
+Manuscript received January 15, 2018; revised April 4, 2018, May 4,
+2018, and June 13, 2018; accepted July 3, 2018. Date of publication
+August 1, 2018; date of current version January 31, 2019. This work
+was supported by Bruce Power, Babcock International, EDF Energy,
+and Kinectrics through the Advanced Nuclear Research Centre at the
+University of Strathclyde. (Corresponding author: Jose I. Aizpurua.)
+J. I. Aizpurua, S. D. J. McArthur, B. G. Stewart, and V. M. Catterson
+are with the Institute of Energy and Environment, University of Strath-
+clyde, Glasgow G1 1XQ, U.K. (e-mail: jose.aizpurua@strath.ac.uk;
+s.mcarthur@strath.ac.uk;
+brian.stewart.100@strath.ac.uk;
+vic@ieee.
+org).
+B. G. Lambert is with Bruce Power, Tiverton, ON N0G 2T0, Canada
+(e-mail: brandon.lambert@brucepower.com).
+J. G. Cross is with Kinectrics Inc., Etobicoke, ON M8Z 5G5, Canada
+(e-mail: james.cross@kinectrics.com).
+Color versions of one or more of the ﬁgures in this paper are available
+online at http://ieeexplore.ieee.org.
+Digital Object Identiﬁer 10.1109/TIE.2018.2860532
+I. INTRODUCTION
+P
+OWER transformers are critical assets in the power
+grid. Condition monitoring and maintenance planning of
+transformers are crucial because their failure can lead to lack of
+export capability or even to catastrophic failures [1], [2]. With
+the increase of monitored parameters, prognostics and health
+management (PHM) strategies have emerged as effective so-
+lutions to identify the early indicators of anomalies, diagnose
+faults, and predict the remaining useful life (RUL) of power
+assets [3]. The operation context of different transformers de-
+termines the best PHM strategy for monitoring their health [4].
+This paper focuses on nuclear power plants (NPPs) and the
+aging of transformers in this context is affected by the NPP
+operation.
+Transformer loading capability and the RUL depend on the
+thermal conditions, and at the same time, thermal conditions
+depend on the load, environmental conditions, and transformer
+parameters [5]. The winding hot-spot temperature (HST) is the
+main factor that determines the RUL of the insulation paper.
+The paper is comprised of polymers, in which the number of
+monomers, also known as degree of polymerization (DP), de-
+termines the strength and the RUL of the paper [6]. A DP value
+of 200 is considered the end of life (EOL) condition of the
+solid paper [7]. The calculation of the HST is complex and
+it can be affected by other accelerating factors such as mois-
+ture, furans, carbon dioxide, or carbon monoxide [8]. For in-
+stance, the presence of moisture under high loading conditions
+can lead to bubble formation and potential catastrophic fail-
+ure [8], [9]. Underestimated HST may lead to reduced cool-
+ing system operation and the transformer could be running
+hotter with an accelerating aging rate and signiﬁcant reduced
+lifetime.
+The IEEE C57.91 standard presents an analytic model to cal-
+culate the HST [7]. However, this model may not be generally
+applicable for all transformers operating in different contexts
+[10]–[12], and accordingly there have been proposed different
+machine learning (ML) methods which create ﬁt-for-purpose
+thermal prediction models such as artiﬁcial neural networks
+(ANN) [13], the C57.91 model with error correction via ANN
+[14], fuzzy logic with ANN [15], an evolving Gaussian fuzzy
+system [16], genetic programming [10], and ensemble of
+0278-0046 © 2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See http://www.ieee.org/publications standards/publications/rights/index.html for more information.
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:44:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 2 ---
+AIZPURUA et al.: ADAPTIVE POWER TRANSFORMER LIFETIME PREDICTIONS THROUGH ML AND UNCERTAINTY MODELING
+4727
+quantile regression models [17]. Temperature predictions can
+refer to different time horizons including short (few minutes),
+medium (few hours), or long term (few days) and the prediction
+error increases with the prediction horizon [14], [17]. The
+models mentioned above focus on short-to-medium-term
+predictions. This paper focuses on medium-to-long-term
+predictions because the proposed framework is planned to
+operate in an NPP and the decision window needs to be long
+enough to adopt timely decisions.
+Additionally, none of these models go beyond thermal mod-
+eling to quantify the transformer RUL. Among those that model
+transformer RUL, some authors have used statistical distribu-
+tions, e.g., Perk’s model [18], Weibull distribution [19], or log-
+normal distribution [20], while others have used experimental
+models such as the Arrhenius equation in C57.91 for trans-
+former utilization improvement through dynamic rating [21]
+or RUL predictions [22]. The focus of this paper is on the
+second group due to the interest in insulation paper. Among
+those that consider experimental models and inspection data,
+there is no consideration of improved thermal models, and de-
+fault thermal equations in C57.91 are used for transformer RUL
+calculation.
+The estimation of transformer aging parameters is complex
+and nondeterministic because the heat transfer process is dis-
+tributed over different surfaces in the winding and insulation
+structures and there may be measurement errors. Accordingly,
+uncertainty modeling is critical for well-informed predictions.
+For instance, Jauregui-Rivera et al. [23] used bootstrapping
+methods to quantify conﬁdence intervals (CIs) for thermal pa-
+rameters. Some of the reviewed models consider uncertainties
+corresponding to different measured values [8], [17], [20], [22]
+and there are others which integrate different transformer health
+assessment parameters through an uncertainty-aware evidential
+reasoning framework [24]. However, to the best of our knowl-
+edge, there is no approach which integrates data-driven ther-
+mal forecasting models with model-based lifetime experimental
+models to increase the prediction accuracy and handle uncer-
+tainty. This would help engineers in decision making with error
+measurements and predicting the effect of future scenarios with
+varying conditions on RUL with more accurate results than ex-
+perimental models.
+Accordingly, this paper presents a Bayesian inference frame-
+work to quantify the uncertainty-informed RUL and analyze
+the effect of measurement errors on the RUL estimation. Build-
+ing on this framework, an improved transformer RUL predic-
+tion approach is proposed integrating ML and experimental
+models in the Bayesian framework. Therefore, the contribu-
+tions of this paper are the evaluation of the sensitivity of the
+effect of measurement errors on transformer RUL estimation,
+and adaptive prognostics predictions through the integration of
+uncertainty modeling, forecasting models, and IEEE lifetime
+models.
+The rest of this paper is organized as follows. Section II
+presents the IEEE thermal and lifetime models and analyzes the
+uncertainty sources. Section III presents the proposed approach
+for uncertainty-aware predictive modeling. Section IV presents
+case study results, and ﬁnally, Section V concludes.
+II. TRANSFORMER THERMAL AND LIFETIME MODELLING
+The IEEE C57.91 standard deﬁnes the insulation paper aging
+acceleration factor at time t FAA(t) as [7]
+FAA(t) = e
+1 5 0 0 0
+3 8 3 −
+1 5 0 0 0
+2 7 3 + Θ H ( t )
+(1)
+where ΘH(t) is the transformer winding’s HST at time t in
+Celsius, which can be calculated from other measurements [7]
+ΘH(t) = ΘTO(t) + ΔΘTO,H(t)
+= ΘA(t) + ΔΘA,TO(t) + ΔΘTO,H(t)
+(2)
+where ΘA(t) and ΘTO(t) are the ambient temperature and top-
+oil temperature (TOT) at time instant t and ΔΘA,TO(t) and
+ΔTO,H(t) are the TOT and HST rise over ambient temperature
+and TOT respectively at time t calculated through
+ΔΘA,TO(t) = (ΔΘA,TOu (t) −ΔΘA,TOi (t))(1 −e−Δ t
+τ T O )
++ ΔΘA,TOi (t)
+ΔΘTO,H(t) = (ΔΘTO,Hu (t) −ΔΘTO,Hi (t))(1 −e−Δ t
+τ H )
++ ΔΘTO,Hi (t)
+(3)
+where τTO and τH are oil and winding time constants, Δt is
+the loading time interval, ΔΘA,TOi (t) and ΔΘTO,Hi (t) are the
+initial TOT and HST rise over ambient and TOT respectively
+at time t, and ΔΘA,TOu (t) and ΔΘTO,Hu (t) are the ultimate
+TOT and HST rise over ambient and TOT respectively at time
+t, deﬁned as
+ΔΘA,TOu (t) = ΔΘTO,R.[((i(t)/ir)2γ + 1)/(γ + 1)]n
+ΔΘTO,Hu (t) = ΔΘH,R. (i(t)/ir)2m
+(4)
+where γ is the ratio of load loss at rated load to loss at zero
+load, i(t) is the transformer load at time t, ir is the rated load,
+ΔΘTO,R and ΔΘH,R are the TOT and HST rise at rated load, re-
+spectively, and m and n are transformer parameters determined
+through a lookup table depending on the cooling system of the
+transformer [7].
+In order to determine the RUL at time t, RUL(t) (1) can be
+converted into a Markovian recurrence relation form, where the
+insulation paper health state depends only on its previous state
+and current conditions
+RUL(t) = RUL(t −1) −FAA(t)
+= RUL(t −1) −e
+
+1 5 0 0 0
+3 8 3
+−
+1 5 0 0 0
+2 7 3 + Θ H ( t )
+
+.
+(5)
+At instant t = 0, RUL(t −1) equals to the initial lifetime
+estimation RUL0. In subsequent iterations, RUL0 is updated
+with the most up-to-date RUL estimation to reﬂect the previous
+state at t −1. Equation (5) relates the insulation paper RUL with
+temperature and load measurements and it guides the loading
+capability of the transformer by examining the effect of different
+load proﬁles on the transformer RUL. However, the application
+of (5) gives a single RUL value at time t and it does not consider
+the effect of different uncertainties such as measurement errors
+that affect the RUL estimation.
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:44:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 3 ---
+4728
+IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 66, NO. 6, JUNE 2019
+Fig. 1.
+Transformer insulation paper PHM framework.
+A. Sources of Uncertainty
+The HST is inferred from indirect measurements [cf., (2)].
+Assuming that the TOT is measured, then HST calculated from
+TOT measurements may include measurement errors of TOT
+and load sensors. Additionally, the initial health state and the
+paper consumption process [cf., (5)] may not be accurate due
+to lack of knowledge and other factors involved in the paper
+degradation process.
+If these uncertainty-surrounded values are not considered, the
+HST estimation may lead to erroneous results. Therefore, the ef-
+fect of measurement errors requires to be explicitly considered.
+Accordingly, (2) including measurement errors and assuming
+steady state [Δt = 0 in (3)] is converted into
+ΘH(t) = (ΘTO(t) + ϕTO) + ΔΘH,R.[(i(t) + ϕi)/ir]2m (6)
+where ϕTO denotes the top-oil measurement error and ϕi des-
+ignates the load measurement error.
+Similarly, the paper degradation process in (5) is not a deter-
+ministic process, and it also needs to integrate the uncertainty
+information corresponding to this process [22]
+RUL(t)=RUL(t −1)+wRULt −1 −e(15 000+w t )(
+1
+3 8 3 −
+1
+2 7 3 + Θ H ( t ) )
+(7)
+where wRULt −1 denotes the uncertainty of the lifetime estima-
+tion at t −1, wt denotes the degradation process uncertainty,
+and ΘH(t) is deﬁned in (6). Initially wRULt −1 will denote the
+initial lifetime estimation error wRUL0 , which will be propa-
+gated in subsequent iterations through the recurrence relation
+form of (7). Comparing (5) with (7), it is possible to see that the
+different uncertainty sources may affect the HST and RUL pre-
+dictions. The proposed framework below effectively integrates
+these sources of uncertainty.
+III. PROPOSED APPROACH FOR ANALYTICS-UPDATED AND
+UNCERTAINTY-AWARE LIFETIME ANALYSIS
+The goal of the proposed framework is to estimate the cur-
+rent transformer insulation health state given inspection data
+up to now (diagnostics) and predict the likely future remaining
+lifetime given hypothetical future proﬁles (prognostics). Fig. 1
+shows the PHM analysis framework, where {z1,. . . ,zi,. . . ,zk}
+is the inspection data up to the current time instant tk and EOLi
+denotes EOL due to the ith degradation trajectory.
+The generalization and accuracy of the HST model in (2) can
+be enhanced by complementing the equation with forecasting
+models. The analytic equations used to quantify ΘTO(t) are not
+always accurate [10], [14] because it is difﬁcult to generalize
+with an analytic relation the properties of different transform-
+Fig. 2.
+Proposed remaining paper lifetime framework.
+ers operating in different contexts and this affects transformer
+lifetime estimation. Accordingly, a novel RUL prediction frame-
+work is proposed as shown in Fig. 2.
+The inspection data are not directly processable because it
+may include outliers and noisy measurements. The data pre-
+processing step denoises and ﬁlters the data. Subsequently, the
+segmentation step divides the time series into different equidis-
+tant time periods. The preprocessed and segmented data are
+then connected with a feature extraction step so that a num-
+ber of time-domain features are extracted. Finally, this stage is
+completed by selecting the most representative features for sub-
+sequent thermal and lifetime modeling steps (see Section III-A).
+The thermal modeling approach is comprised of top-oil and
+HST calculations. For a number of utilities, it is common not to
+have HST measurements because the required sensors are not
+cost effective. Accordingly, ML techniques have been used to
+learn a predictive model which is able to predict the TOT ˆΘTO
+given a number of input parameters (see also Section III-B).
+Then, this model is used along with the IEEE experimental
+model to estimate the HST
+ˆΘH(t) = ˆΘTO(t) + ΔΘTO,H(t).
+(8)
+The only difference between (8) and (2) is that the TOT is
+predicted using ML models and not using analytic equations.
+After implementing the HST prediction model, it is possible
+to embed it into the lifetime modeling framework through the PF
+approach for a more accurate lifetime estimation which includes
+different uncertainty criteria (see Section III-C).
+A. Data Preprocessing and Feature Selection
+After denoising and ﬁltering the measurements performed on-
+site (see Section IV), Fig. 3 shows the correlation of the TOT
+(vertical axis) with cooling water temperature, load, and ambient
+temperature (horizontal axis), where the gray points are the
+actual data samples. The higher the density (plotted in red) the
+more likely is the correlation and vice versa (plotted in green).
+For instance, the most likely condition for water temperature
+versus TOT (Fig. 3 left) is that for water temperature between
+0 and 5 ◦C, the TOT is concentrated at 25 ◦C with a probability
+density value of 0.015. As the water temperature increases up
+to 10 ◦C, the TOT ﬂuctuates between 20 and 35 ◦C with a
+probability density value of 0.001 (green area in Fig. 3 left).
+It can be seen in Fig. 3 that there is a nonlinear relationship
+among the measured variables and the TOT. This indicates that
+these variables may be good predictors for TOT because they
+add new information to the forecasting model. This conﬁrms
+expert knowledge [7] which states that for water-cooled trans-
+formers, the relevant parameters to estimate TOT are cooling
+water temperature, ambient temperature, and load.
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:44:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 4 ---
+AIZPURUA et al.: ADAPTIVE POWER TRANSFORMER LIFETIME PREDICTIONS THROUGH ML AND UNCERTAINTY MODELING
+4729
+Fig. 3.
+TOT correlated with cooling water temperature, load, and ambient temperature.
+TABLE I
+TIME-DOMAIN FEATURES OF THE kTH SEGMENT OF THE INPUT DATA
+CONTAINING A TOTAL OF N DATA SAMPLES xi,k PER SEGMENT k
+In order to improve the prediction capability of forecasting
+models, it is possible to infer additional time-domain features
+from water temperature, ambient temperature, and load time-
+series. To this end, ﬁrst the time series is divided into segments,
+and then features are inferred. Different state-of-the-art features
+have been extracted (see Table I [25], [26]), which results in a
+total of 18 features plus the three time series.
+The thermal properties of the oil suggest that there may be a
+delay in the heat transfer process and accordingly lagged signals
+may be useful to improve the accuracy of predictions. However,
+in this case, the use of lagged signals for each of these temper-
+atures does not improve the accuracy of TOT predictions. The
+prediction tasks of this paper are focused on a long-term horizon
+with highly nonlinear signals (see Section IV-B2). Then, the use
+of, e.g., a top-oil lagged signal involves feeding back the top-oil
+predictions. This recursive mechanism has a negative effect over
+a long-term prediction window by accumulating and propagat-
+ing the prediction errors and worsening the ﬁnal prediction. In
+any case, one of the implemented ML models explicitly takes
+into account lagged signals and their effect on the prediction
+(see LSTM models in Section III-B4).
+The
+feature
+selection
+process
+is
+implemented
+in
+Section IV-B1 using the case study datasets. Accordingly, the
+design of the subsequently introduced ML algorithms are based
+on these datasets and extracted features.
+B. Thermal Modeling Through ML Methods
+So as to forecast the TOT, different ML models have been
+designed and tested including random forests (RF) [27], artiﬁ-
+cial neural networks (ANN) [28], and support vector regression
+(SVR) [29], and also improved versions of RF (Extreme Gra-
+dient Boosted Regression Tree, XGB [30]) and ANN (Long
+Short-Term Memory, LSTM [31]). The rationale for choosing
+these models is to compare the predictive power of XGB and
+LSTM with their counterpart models (RF, ANN) and other clas-
+sical models (SVR).
+1) Random Forests (RF): RF is an ensemble of recursive
+trees [27]. Each tree is generated from a bootstrapped sample
+and a random subset of descriptors is used at the branching of
+each node in the tree. RF creates a large number of trees by
+repeatedly resampling training data and averaging differences
+through voting.
+The RF model has been implemented through the random-
+Forest package in R. The hyperparameters include the num-
+ber of trees (ntree) and the number of variables randomly sam-
+pled as candidates at each split (mtry). These parameters have
+been optimized through a ten repeated ﬁvefold cross-validation
+(CV) process searching the best parameters from a predeﬁned
+grid of parameters (see Section IV-B2 for more details of the
+CV process): ntree = [100, 500, 1000, 1500] and mtry = [1:15].
+Best results were obtained with ntree = 500 and mtry = 2.
+2) Extreme Gradient Boosted Regression Tree (XGB):
+XGB [30] is a faster and more efﬁcient implementation of
+gradient boosting [32], which creates an accurate learner by
+combining many regression trees. The objective of training an
+XGB model is to minimize the training loss and avoid over-
+ﬁtting through regularization terms. This process is based on
+additive training implemented through a second-order gradient
+algorithm [30].
+The XGB model has been implemented through the xgb-
+tree package in R. The hyperparameters include the maximum
+depth of the tree (max_depth) and learning rate (η). The more
+complex the tree, the more complicated patterns it will learn,
+but it will be more prone to overﬁtting. The learning rate mod-
+els the error generalization. These hyperparameters have been
+optimized through a ten repeated ﬁvefold CV process search-
+ing the optimal parameters from a predeﬁned grid of param-
+eters: η = [0.001, 0.003, 0.01, 0.1, 0.3], max_depth = [1, 2,
+4, 6, 10]. The best parameters for this paper are η = 0.3 and
+max_depth = 2.
+3) Artiﬁcial Neural Network: ANNs are widely used for
+classiﬁcation and regression tasks [28]. The multilayer percep-
+tron (MLP) feedforward model was used in this paper. The MLP
+is a three-layer network (input, hidden, output) comprised of
+fully connected neurons. Each neuron performs a weighted sum
+of its inputs and passes the results through an activation func-
+tion. All the designed ANN models use a sigmoid activation
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:44:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 5 ---
+4730
+IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 66, NO. 6, JUNE 2019
+function for the hidden layer and linear activation function for
+output nodes.
+Model training is performed using a backpropagation algo-
+rithm. The goal is to learn the neuron weights to generate the
+network output from the sample input, which minimizes the er-
+ror with respect to the target output. Ten repeated ﬁvefold CV
+was used to select an optimal number of hidden nodes. A num-
+ber of networks were trained for each fold varying the number
+of hidden nodes from 1 up to 30. Of the trained networks, the
+one with the highest accuracy was selected and was comprised
+of 13 hidden nodes. The ANN was implemented using the nnet
+R package.
+4) Long Short-Term Memory: It is a type of recurrent neu-
+ral network which can capture correlations among signals which
+involve long- or short-term time lags [31]. An LSTM model is
+comprised of one input layer, one or more recurrent hidden lay-
+ers, and one output layer. The recurrence loop allows layers to
+store information. Instead of using nodes for the hidden layer
+as in ANN models, the basic units of LSTM models are cells,
+which can perform complex logic operations (sometimes resem-
+bling ﬁnite state machines). The LSTM model is trained through
+backpropagation of errors using stochastic gradient descent.
+The LSTM model has been implemented through the Keras
+package in Python. The hyperparameter tuning process consists
+of selecting the next parameters: number of layers, number of
+LSTM units, batch size, learning rate, and number of epochs.
+Batch size denotes the subset size of the training data. The
+LSTM model is not trained in a single trial, but takes subsets of
+the data and learning correlations between subsets. Each batch
+trains a network in successive order taking into account the
+updated weights coming from the previous batch. Number of
+epochs is the number of forward and backward passes of all the
+training data.
+The number of hidden layers was ﬁxed to a maximum of three
+layers and a number of different conﬁgurations with different
+hyperparameters were tested through ten repeated ﬁvefold CV
+and grid search with parameters deﬁned in the following ranges:
+batch size = [5, 10, 15, 30, 45, 90], number of cells = [1:30],
+epochs = [10, 1000, 2000, 4000, 5000, 10 000], activation func-
+tions = [softmax, relu, linear, tanh, sigmoid, softsign, softplus],
+learning rate = [1e−4, 1.5e−4, 2e−4, 3e−4, 4e−4, 5e−4,
+1e−3, 2e−3]. Best results were obtained with two layers with
+7 cells in each layer, batch size of 15, 5000 epochs, learning rate
+of 1.5e−4, and softmax activation function.
+5) Support Vector Regression (SVR): The SVR maps in-
+put data into an m-dimensional feature space using a kernel
+function [29]. The kernel translates a nonlinearly separable
+problem into a feature space, which is linearly separable by
+a hyperplane. The SVR deﬁnes a ϵ loss function that ignores the
+errors situated within a certain distance of the true value.
+The SVR is parametrized through the choice of kernel func-
+tion. For a nonlinear problem, the RBF kernel is recommended:
+k(x, x′) = exp(γ||x −x′||2), where γ is the RBF width, x and
+x′ are training and testing data samples, and ||d|| is the Euclidean
+norm. The SVR solves an optimization problem maximizing the
+distance from the hyperplane to the nearest training point. SVR
+penalizes the loss function with a cost variable c. SVR training
+Fig. 4.
+PF framework for transformer insulation paper analysis.
+consists of calculating the hyperparameters c and γ. Model train-
+ing was performed using the R kernlab and MLR packages
+and grid search was used to optimize c and γ within c = [2−8,
+2−4, 2−2, 1] and γ = [2−8:2:24]. Of the trained SVRs, the one
+with the highest accuracy was selected which had ϵ = 0.1, γ =
+0.25, and c = 1.
+C. Lifetime Modeling Through Particle Filtering (PF)
+PF is a Monte Carlo-based Bayesian ﬁltering method. PF
+enables the integration of multiple measurements in a single
+degradation model f(·) and ﬁlters the true state of the system
+xt, taking into account multiple sources of uncertainty [33]. A
+two-step method is implemented when the PF is used for PHM
+[34]. First, the system state estimation is performed
+xk = f(xk−1, wk−1)
+(9)
+zk = h(xk, ϕk)
+(10)
+where f(·) is the state degradation function, wk is a state noise
+vector wk = ⟨wt, wRULt ⟩, h(·) is the measurement function,
+and ϕk is a measurement noise vector ϕk = ⟨ϕTO, ϕi⟩.
+Fig. 4 shows the application of (9) and (10) in the transformer
+paper RUL estimation process. The measurement function de-
+ﬁned in (6) integrates load (i) and TOT (ΘTO) along with their
+measurement errors (ϕi and ϕTO) and other transformer pa-
+rameters, and computes the HST ΘH. The degradation function
+deﬁned in (7) integrates the process noise wt and calculates the
+RUL from the HST and initial health state. The initial health
+state is then iteratively updated with the actual state.
+The state estimation xk given measurements zk up to the
+time instant k is deﬁned in terms of probability density func-
+tion (PDF) p(xk|z0:k). The initial state p(x0) is assumed to be
+known (see diagnostics in Fig. 1). There are different methods to
+estimate the transformer’s initial health state such as the experi-
+mental analysis of the degree of polymerization of the insulation
+paper, or if the paper is new, the initial health state may be as-
+sumed to be of 180 000 h under the conditions stated in IEEE
+C57.91 [7]. The prior PDF of the state xk from the distribution
+p(xk−1|z0:k−1) is determined by
+p(xk|z0:k−1) =
+
+p(xk|xk−1, z0:k−1)p(xk−1|z0:k−1)dxk−1
+=
+
+p(xk|xk−1)p(xk−1|z0:k−1)dxk−1
+(11)
+where the state-transition distribution function p(xk|xk−1) is
+deﬁned by the recurrence relation form in (9). In order to update
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:44:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 6 ---
+AIZPURUA et al.: ADAPTIVE POWER TRANSFORMER LIFETIME PREDICTIONS THROUGH ML AND UNCERTAINTY MODELING
+4731
+the prior PDF, a new measurement is collected at time k; zk,
+and the posterior PDF is obtained using the Bayes rule
+p(xk|z0:k) = p(xk|z0:k−1)p(zk|xk)
+p(zk|z0:k−1)
+.
+(12)
+The analytic solution of (12) is complex. Thus, the PF was
+proposed based on iterative application of prediction, up-
+date, and resampling steps at each time instant k [33].
+Prediction: Assuming at time k −1, Np random sam-
+ples (particles) of the system state are available, {xi
+k−1}Np
+i=1, as
+a realization of the posterior distribution p(xk−1|z0:k−1), the
+prediction at k is performed by sampling the probability dis-
+tribution of the system noise wk−1 and simulating the system
+dynamics according to (9) to generate new samples xi
+k which
+are the realizations of the predicted distribution p(xk|z0:k−1).
+Update: Each sampled particle is assigned a weight based
+on the likelihoods of observations zk collected at time k
+wi
+k =
+p(zk|xi
+k)
+Np
+j=1 p(zk|xj
+k)
+.
+(13)
+An approximation of the posterior PDF p(xk|z0:k) is then
+obtained from the weighted samples {xi
+k, wi
+k}Np
+i=1.
+Resampling: As the PF evolves in time, weight degener-
+acy phenomena occurs where all but one particle have negligible
+weights [33]. To avoid this problem, a degeneracy condition is
+deﬁned based on the effective size
+ˆNeﬀ= 1
+ Np
+
+i=1
+wi
+k.
+(14)
+If ˆNeﬀfalls below a threshold NT (NT = Np/2 in this paper),
+a systematic resampling step is applied [33].
+Algorithm 1 below is a variant of the PF framework and
+deﬁnes the model implemented in this paper for transformer
+paper lifetime modeling as deﬁned in Fig. 2.
+IV. CASE STUDY
+The health of transformers is critical for the NPP. The pa-
+rameters of the main output transformer analyzed in this section
+are reported in Table II. It is assumed that a Normal distribu-
+tion models the uncertainty-related variables (cf., Algorithm 1,
+line 6). For conﬁdentiality reasons, it is assumed that the
+initial state of the insulation paper is equal to a new pa-
+per with 180 000 h of life and an uncertainty of 500 h, i.e.,
+RUL0 ∼N(180 000,500) [7] and the process noise is assumed
+to be rk ∼N(0, 20). However, note that the PF framework is
+ﬂexible and it enables the integration of non-Normal distribu-
+tions, too.
+A. Diagnostics and Sensitivity Analysis
+1) Diagnostics: Using the proposed framework in Fig. 2,
+it is possible to estimate the actual health state of the insulation
+paper by replacing line 5 of Algorithm 1 with real ΘTO(t)
+measurements and scoping the prediction horizon into the length
+of the available data.
+Algorithm 1: PF framework for paper lifetime prediction.
+1: {RULk−1, xi
+k−1, wi
+k−1}Np
+i=1 ▷Results from instant k −1
+2: for k = 1:Δt:Pred.Horizon do
+▷Iterate Δt
+timestep
+until horizon
+3:
+Read and preprocess measurements
+4:
+Segment data, extract, and select features at k: {xk}
+5:
+Forecast ˆΘH(k) from (8)
+6:
+Sample error variables: rTO ∼N(ˆΘTO,ϕTO),
+ri ∼N(i, ϕi), rRULk −1 ∼N(RULk−1, wRULk −1 ),
+rk ∼N(0, wk)
+7:
+for i = 1 : Np do
+▷State prediction step
+8:
+Propagate xi
+k using (9), (10), RULk−1 and ˆΘTO(k)
+9:
+Compute {wi
+k}Np
+i=1, using (13)
+▷Update
+10:
+if ˆNeﬀ< NT then
+▷Resampling cf., (14)
+11:
+Update xi
+k and wi
+k via systematic resampling
+12:
+RUL[k] ←{xi
+k, wi
+k}Np
+i=1
+▷Store particle results
+at time k
+13:
+RULk−1 = RUL[k]
+▷Update for the next iteration
+14: return RUL ▷All particles & weights in the prediction
+horizon
+TABLE II
+TRANSFORMER PARAMETERS
+Fig. 5.
+Tested load and temperature proﬁles (November 2012–
+September 2016).
+Assuming that the initial health state corresponds to
+November 2012, the health state after three years and ten months
+is evaluated, i.e., at September 2016. Accordingly, the available
+datasets for top-oil and load for the same period are processed
+so as to ﬁrst calculate the HST [cf., (6)] and then estimate the
+RUL at September 2016. Fig. 5 shows the preprocessed load
+and TOT data.
+In order to calculate the health state of the transformer as of
+September 2016, it is assumed that the temperature error is ϕTO
+= 5 ◦C and the load error is ϕi = 1 kA. The datasets in Fig. 5
+are applied to the PF framework in Algorithm 1 as follows.
+1) line 1: initial state: RUL0 ∼N(180 000, 500).
+2) line 5: calculate the HST from (2) using the collected
+TOT data in Fig. 5.
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:44:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 7 ---
+4732
+IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 66, NO. 6, JUNE 2019
+Fig. 6.
+Transformer diagnostics results for November 2012–September
+2016.
+Fig. 7.
+RUL at initial and ﬁnal time instants (inferred from Fig. 6).
+3) line 6: draw random numbers corresponding to the
+selected error variables.
+4) lines 7-13: calculate the PDF of the RUL at t.
+This process is repeated for the selected prediction horizon
+(line 2) with a Δt = 1 h timestep, and ﬁnally the PDF
+of the RUL is obtained after processing all the available data
+(line 14). There is no need to extract features and predict the
+TOT because the TOT is available until September 2016 and the
+goal is to diagnose the health state at this time instant.
+Fig. 6 shows transformer lifetime diagnostics results. The op-
+erating time axis denotes the processed data (November 2012–
+September 2016), the RUL axis denotes the degradation of the
+health state starting from the initial state, and the density axis
+denotes the PDF value.
+Fig. 7 shows the health state of the transformer at the initial
+and ﬁnal time instants directly taken from Fig. 6.
+An important result is that the initial assumptions about the
+Normal distribution of the errors (cf., Fig. 7 left) change as
+the PF framework propagates the measurements and associated
+errors. By the end of the diagnostics process (cf., Fig. 7 right),
+Normality cannot be assumed and therefore, when inferring the
+CIs, standard percentile values are not applicable. Namely, the
+ﬁnal health state is distributed into two nodes located at 169 300
+and 170 200 h. Accordingly, it is necessary to calculate the area
+under the curve so as to ensure that it covers the desired CI area.
+Fig. 8.
+About 95% CIs [95−CI, 95+ CI].
+Fig. 9.
+Transformer diagnostics, 95% CI of Fig. 6.
+Fig. 8 shows the 95% CI quantiﬁcation concept for non-Normal
+distributions bounded into [95−CI, 95+ CI].
+The inference of the CIs facilitates the decision-making pro-
+cess because it enables the engineers to adopt an uncertainty-
+informed decision with intuitive lower and upper limits on the
+estimated parameters. Accordingly, Fig. 9 shows the maximum
+likelihood and 95% CI of the predictions in Fig. 6.
+Fig. 9 shows the maximum likelihood and 95% CI for the
+PDFs shown in Fig. 6. The degradation is almost exponential
+as determined by the ageing acceleration factor in (1), but this
+is affected by the deenergized periods of the transformer which
+are reﬂected in the load and TOT. For example, the transformer
+was shut down in mid-2016 which resulted in zero load, de-
+creased TOT, and accordingly almost negligible RUL decrease.
+The uncertainty propagation is dependent on the assumed er-
+ror variables and processed data as discussed in the following
+section.
+2) Sensitivity Analysis: In order to evaluate the effect of
+error variables on the RUL estimation, a sensitivity analysis has
+been performed examining the effect of the change of load and
+temperature measurement errors. Note that this information is
+lost with existing lifetime estimation models.
+The HST in (6) deﬁnes the effect of load and temperature
+measurements errors. For this case study (cf., Table II), this
+equation is parametrized as follows (i(t), ϕi are in kiloampere
+units):
+ΘH(t) =ΘTO(t)+ϕTO + [ΔH,R/i2
+r].[i(t)2 +ϕ2
+i +2.i(t).ϕi]
+=ΘTO(t)+ϕTO +0.13.i(t)2 +0.13.ϕ2
+i +0.13.i(t).ϕi.
+(15)
+It is possible to see that the effect of temperature measurement
+errors is added as absolute values. In contrast, for small load
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:44:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 8 ---
+AIZPURUA et al.: ADAPTIVE POWER TRANSFORMER LIFETIME PREDICTIONS THROUGH ML AND UNCERTAINTY MODELING
+4733
+Fig. 10.
+Load error sensitivity analysis—3-D representation.
+Fig. 11.
+Load error sensitivity analysis with 95% CIs.
+variations, the effect of load measurement errors on the HST
+is not relevant. However, if ϕi >
+
+(1/0.13) ∼2.78 then the
+effect starts increasing rapidly due to the factor 0.13.ϕ2
+i and the
+exponential degradation in (7). The term 0.13.i(t).ϕi depends
+on the speciﬁc transformer loading.
+The effects of different load and temperature errors have been
+analyzed using monitored data. For computational efﬁciency,
+the data have been limited to a year (November 2012–November
+2013). Fig. 10 shows the effect of different load measurement
+errors on lifetime estimation assuming constant temperature
+measurement error [N(ΘTO, 5)] and process noise [N(0, 20)].
+It is apparent from Fig. 10 that different load measurement
+errors play a different role on the lifetime estimation. Fig. 11
+shows the maximum likelihood and 95% CI for the load error
+sensitivity analysis inferred from Fig. 10.
+As the load measurement error magnitude increases in Fig. 11,
+the uncertainty bounds increase and the maximum likelihood
+value decreases. The zoomed view of the interval [0.01–1] kA
+shows that the error bounds are around 2000 h and they are fairly
+constant in this zone. However, around the elbow point identiﬁed
+in (15) the maximum likelihood value starts decreasing rapidly
+Fig. 12.
+Temperature error sensitivity analysis.
+and the 95% conﬁdence intervals widen due to the increased
+effect of the error values. Owing to the stochastic nature of the
+PF algorithm, the 95% CIs vary according to the nature of the
+PDF (see PDFs in Fig. 10).
+In order to evaluate the effect of temperature errors, the load
+measurement error (N(i(t), 1)) and process noise (N(0, 20))
+have been assumed constants. Fig. 12 shows the 95% CI for the
+effect of error measurements in this situation.
+In Fig. 12, one can see that for temperature measurement
+error values below 5 ◦C, the effect of temperature measurement
+errors on the RUL estimation is unstable. That is, the maximum
+likelihood value of the PDF of the RUL value ﬂuctuates around
+RUL0 = N(180 000, 500) minus the ageing after one year.
+Depending on the initial state which is randomly sampled from
+RUL0, the ﬁnal health state varies. There are some cases where
+the initial RUL is located around 180 500 h and therefore, after
+a year with a degradation lower than 500 h, the ﬁnal health state
+is above 180 000 h.
+On the other hand, above a temperature error of 5 ◦C the effect
+of the temperature error becomes nonnegligible and it directly
+affects the health state. Additionally, it is possible to see that for
+temperature measurement error values below 2 ◦C the CIs are
+very narrow, but as the error increases these bounds widen. This
+is because for low-temperature errors, the model is conﬁdent that
+the ﬁnal health state is the maximum likelihood value because
+there is no temperature error. However, as the temperature error
+increases, the CIs widen and the ﬁnal evaluation of the health
+state is more uncertain.
+When the load error is zero and the temperature measurement
+error is 5 ◦C (see Fig. 11), the variation of the RUL estimation
+is caused by the term ϕTO in (15). In contrast, when the tem-
+perature measurement error is zero in Fig. 12, but the load error
+is kept at 1 kA, it can be seen that the variation due to the term
+ϕi in (15) is almost negligible, which conﬁrms that the effect of
+temperature errors are more sensitive than load errors for low
+loading conditions.
+B. Prognostics
+In order to predict the future health state of the transformer,
+the approach shown in Fig. 2 is adopted. First, an appropriate
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:44:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 9 ---
+4734
+IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 66, NO. 6, JUNE 2019
+Fig. 13.
+Feature selection and segment size.
+predictive model is designed which is able to estimate the HST,
+given hypothetical load and temperature proﬁles. This estima-
+tion can then be directly connected with the PF framework to
+propagate uncertainties and estimate the lifetime. The adopted
+temperature error is ϕTO = 5 ◦C and load error ϕi = 1 kA.
+1) Feature Processing and Selection: The length of the
+segment determines the validity of features and the ﬁnal predic-
+tion error. According to the performed experiments, best results
+were obtained with a length of ﬁve days. With a segment length
+longer than this, the features lost representativeness and the error
+increases (see Fig. 13).
+Subsequently, all the features (cf., Table I) along with the
+preprocessed variables have been processed through a recursive
+feature elimination (RFE) procedure and grid search [35]. This
+step selects the most representative features which minimize the
+prediction error. RFE was implemented for RF, XGB, and SVR
+using the Caret R package and grid search was implemented
+for ANN and LSTM models. The error is quantiﬁed through ten
+repeated ﬁvefold CV using the normalized root-mean-squared
+error (RMSE)
+RMSE=
+RMSE
+max{RMSEi}N
+i=1
+; RMSE=
+	
+
+
+
+N
+i=1
+
+ˆΘTO −ΘTO
+2
+N
+(16)
+where N is the number of predicted data samples.
+Fig. 13 shows the feature selection results with best features
+for different segment sizes for XGB and RF models. Best results
+were obtained with the listed 12 features in Fig. 13.
+Best results for SVR were obtained with three features (water
+temperature, mean ambient temperature, load), nine for ANN
+models (water temperature, mean ambient temperature, mean
+load, rms water temperature, mean water temperature, skewness
+water temperature, rms load, kurtosis ambient temperature, IF
+ambient temperature) and six for LSTM models (water temper-
+ature, mean ambient temperature, load, rms load, mean load,
+mean water temperature) all with a segment size of ﬁve days.
+After the feature extraction step, all the forecasting models have
+been designed and trained according to the process outlined in
+Sections III-B1–III-B5.
+2) Thermal Modeling: The ﬁrst step is to learn a predictive
+model so as to predict the TOT. Figs. 5 and 14 show load,
+Fig. 14.
+Water and ambient temperature data (November 2012–
+September 2016).
+ambient, water, and top-oil measurements hourly sampled for a
+period of three years and ten months.
+It can be seen that the TOT proﬁle is highly nonlinear due to
+the speciﬁc operational constraints of NPPs. Namely, the plant
+is shut down for maintenance activities and this affects the load
+and TOT values. Additionally, depending on the harshness of
+the winter, load conditions, and applied water temperature, the
+oil temperature can drop below zero degrees, e.g., winter 2016.
+The learning process includes a ten repeated ﬁvefold CV
+procedure to estimate the parameters and generalize the predic-
+tion results. That is, the top-oil time series is divided into ﬁve
+equidistant folds (see Fig. 5). Then, a number of ML models
+are trained (see Section III-B) for the ﬁrst fold and tested with
+the second fold, subsequently the same models are trained with
+the ﬁrst twofolds and then tested with the third fold and the
+validation continues until the last step, where the models are
+trained with the ﬁrst four folds and tested on the last fold. This
+process is repeated ten times to deal with the stochastic behavior
+of some models and generate repeatable results. For the error
+calculation, the RMSE has been used. Note that there are dif-
+ferent alternatives to validate the results such as the stratiﬁed
+double CV scheme [26].
+In total, after preprocessing the data and removing invalid
+samples, there are 32 440 samples so each fold has 6488 sam-
+ples. Accordingly, at each fold, the models predict up to 6488 h
+ahead (∼271 days). Table III displays the mean RMSE and the
+standard deviation for various models for all the folds estimated
+through the ten repeated ﬁvefold CV procedure.
+From the prediction results in Table III, it can be seen that the
+XGB predicts best the TOT value. The mean performance of the
+LSTM is practically the same, but in the worst-case scenario the
+maximum error is greater than the XGB, i.e., etestX G B = 8.4 <
+etestL S T M = 8.67. Additionally, an important advantage of XGB
+over LSTM is that XGB models are easier and faster to train and
+test. Accordingly, the XGB model is used for lifetime modeling
+and the RUL estimation. Fig. 15 shows the last fold prediction
+for XGB and LSTM, where ground truth denotes the measured
+TOT data.
+RF also shows a good performance, but the problem is that
+the RF overﬁts the model as shown by the low training error.
+Also note that the different trials of SVR models generate same
+results because of the ﬁxed decision boundaries.
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:44:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 10 ---
+AIZPURUA et al.: ADAPTIVE POWER TRANSFORMER LIFETIME PREDICTIONS THROUGH ML AND UNCERTAINTY MODELING
+4735
+TABLE III
+RMSE OF ML MODELS FOR TOT FORECASTING
+Fig. 15.
+TOT forecasting results for the last fold (see TOT and folds in
+Fig. 5).
+In contrast, the thermal model deﬁned in the IEEE C57.91
+standard has the poorest performance and highlights that the
+IEEE analytic model may not perform accurately for every trans-
+former operating in different contexts.
+3) Lifetime Modeling: The lifetime prediction model uses
+the most accurate thermal model within the framework in Fig. 2.
+Given hypothetical ambient temperature, load and water tem-
+perature variables, ﬁrst the selected features are inferred (cf.,
+Fig. 13), and then the XGB model predicts the TOT. Subse-
+quently, the IEEE model is used to estimate the HST from the
+predicted TOT, and ﬁnally, this is used to predict the paper RUL
+using the PF framework deﬁned in Algorithm 1.
+To test the approach with different hypothetical proﬁles, one
+year’s worth top-oil and ambient temperature data have been
+taken from Fig. 14 as a representative reference for yearly
+temperature patterns. Then, user-deﬁned load proﬁles are used
+to predict the TOT under different loading conditions. Fig. 16
+shows tested load and temperature patterns.
+These patterns have been repeatedly applied to the PF frame-
+work in Algorithm 1 for two different prediction horizons of
+ﬁve and ten years:
+1) line 1: initial state: RUL0 ∼N(180 000, 500).
+Fig. 16.
+Tested future load and temperature proﬁles.
+Fig. 17.
+Predicted RUL with the scenarios in Fig. 16.
+TABLE IV
+RUL STATISTICS IN FIG. 17
+2) line 4: infer selected features from load, ambient tem-
+perature, and water temperature proﬁles in Fig. 16.
+3) line 5: using the designed XGB model, ﬁrst forecast
+the TOT and then calculate the HST.
+4) line 6: draw random numbers corresponding to the
+assumed error variables.
+5) lines 7-13: calculate the PDF of the RUL at time
+instant t.
+This process is repeated for the selected prediction horizon
+(line 2) with a Δt = 1 h timestep, and ﬁnally the PDF of the
+RUL is obtained after processing the data up until the prediction
+horizon (line 14). Fig. 17 shows the RUL predictions after
+ﬁve and ten years.
+The initial state statistics in Fig. 17 are mean = 179 800, 95+
+= 180 900, 95−= 178 900 (all in hours). Table IV displays
+RUL statistics corresponding to different proﬁles.
+The predicted RUL values are consistent with the applied
+proﬁles. That is, C shows the most severe degradation followed
+by B, and the application of A results in a higher RUL.
+V. CONCLUSION
+This paper presented a novel transformer condition assess-
+ment approach integrating model-based experimental models,
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:44:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 11 ---
+4736
+IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 66, NO. 6, JUNE 2019
+forecasting models, and uncertainty modeling concepts in a
+Bayesian particle ﬁltering framework.
+Error propagation and sensitivity analysis were key activi-
+ties for decision-making under uncertainty. The implemented
+sensitivity analysis evaluated the effect of load and temperature
+measurement errors on the transformer lifetime and it showed
+that for low load measurement errors the effect of temperature
+errors are more critical. However, the load measurement error
+increased rapidly above an elbow value which was formulated
+analytically.
+It was demonstrated that the integration of ML models with
+experimental models improved transformer lifetime estima-
+tions. Among the tested ML models for thermal modeling, the
+eXtreme Gradient Boosting (XGB) showed the best prediction
+performance. Accordingly, the transformer RUL was exam-
+ined with different operational proﬁles using the XGB-based
+temperature prediction model, IEEE-based lifetime model,
+and uncertainty information of collected measurements and
+stochastic processes. The predicted RUL values were consis-
+tent with the applied operational proﬁles and this demonstrated
+the validity of the proposed approach for adaptive lifetime
+predictions.
+As NPPs age, the aging of transformers is becoming increas-
+ingly critical because they are crucial assets to export energy
+from the NPP. The proposed approach enables the modeling of
+these dynamic contexts accurately while accounting for uncer-
+tainties. Future work may focus on integrating other degradation
+accelerating factors in the proposed approach such as the mois-
+ture and other chemical factors.
+REFERENCES
+[1] W. H. Tang and Q. Wu, Condition Monitoring and Assessment of Power
+Transformers Using Computational Intelligence. London, U.K.: Springer,
+2011.
+[2] M. Liserre, G. Buticchi, M. Andresen, G. Carne, L. Costa, and Z. Zou, “The
+smart transformer: Impact on the electric grid and technology challenges,”
+IEEE Ind. Electron. Mag., vol. 10, no. 2, pp. 46–58, Jun. 2016.
+[3] H. Ma, T. K. Saha, C. Ekanayake, and D. Martin, “Smart transformer for
+smart grid—Intelligent framework and techniques for power transformer
+asset management,” IEEE Trans. Smart Grid, vol. 6, no. 2, pp. 1026–1034,
+Mar. 2015.
+[4] J. Aizpurua et al., “Determining appropriate data analytics for transformer
+health monitoring,” in Proc. 10th Int. Topical Meeting Nuclear Plant
+Instrum., Control Human Mach. Interface Technol., 2017, pp. 1–11.
+[5] M. Djamali and S. Tenbohlen, “Hundred years of experience in the dy-
+namic thermal modelling of power transformers,” IET Gener., Transmiss.
+Distrib., vol. 11, no. 11, pp. 2731–2739, 2017.
+[6] A. Teymouri and B. Vahidi, “Co2/CO concentration ratio: A comple-
+mentary method for determining the degree of polymerization of power
+transformer paper insulation,” IEEE Elect. Insul. Mag., vol. 33, no. 1,
+pp. 24–30, Jan./Feb. 2017.
+[7] IEEE PES, “IEEE Guide for Loading Mineral-Oil-Immersed Transformers
+and Step-Voltage Regulators,” IEEE Std. C57.91, 2011.
+[8] R. Medina, A. Romero, E. Mombello, and G. Ratta, “Assessing degrada-
+tion of power transformer solid insulation considering thermal stress and
+moisture variation,” Elect. Power Syst. Res., vol. 151, pp. 1–11, 2017.
+[9] Y. Cui, H. Ma, T. Saha, C. Ekanayake, and D. Martin, “Moisture-dependent
+thermal modelling of power transformer,” IEEE Trans. Power Del., vol. 31,
+no. 5, pp. 2140–2150, Oct. 2016.
+[10] A. Seier, P. D. H. Hines, and J. Frolik, “Data-driven thermal modeling of
+residential service transformers,” IEEE Trans. Smart Grid, vol. 6, no. 2,
+pp. 1019–1025, Mar. 2015.
+[11] E. Pournaras and J. Espejo-Uribe, “Self-repairable smart grids via online
+coordination of smart transformers,” IEEE Trans. Ind. Inf., vol. 13, no. 4,
+pp. 1783–1793, Aug. 2017.
+[12] M. Andresen, V. Raveendran, G. Buticchi, and M. Liserre, “Lifetime-based
+power routing in parallel converters for smart transformer application,”
+IEEE Trans. Ind. Electron., vol. 65, no. 2, pp. 1675–1684, Feb. 2018.
+[13] J. Velasquez, M. Sanz, and S. Galceran, “General asset management model
+in the context of an electric utility: application to power transformers,”
+Elect. Power Syst. Res., vol. 81, no. 11, pp. 2015–2037, 2011.
+[14] D. Villacci, G. Bontempi, A. Vaccaro, and M. Birattari, “The role of
+learning methods in the dynamic assessment of power components load-
+ing capability,” IEEE Trans. Ind. Electron., vol. 52, no. 1, pp. 280–290,
+Feb. 2005.
+[15] M. Hell, P. Costa, and F. Gomide, “Participatory learning in power trans-
+formers thermal modeling,” IEEE Trans. Power Del., vol. 23, no. 4,
+pp. 2058–2067, Oct. 2008.
+[16] L. Souza, A. Lemos, W. Caminhas, and W. Boaventura, “Thermal mod-
+eling of power transformers using evolving fuzzy systems,” Eng. Appl.
+Artif. Intell., vol. 25, no. 5, pp. 980–988, 2012.
+[17] A. Bracale, G. Carpinelli, M. Pagano, and P. D. Falco, “A proba-
+bilistic approach for forecasting the allowable current of oil-immersed
+transformers,” IEEE Trans. Power Del., vol. 33, no. 4, pp. 1825–1834,
+Aug. 2018.
+[18] Q. Chen and D. M. Egan, “A Bayesian method for transformer life esti-
+mation using perks’ hazard function,” IEEE Trans. Power Syst., vol. 21,
+no. 4, pp. 1954–1965, Nov. 2006.
+[19] D. Zhou, Z. Wang, and C. Li, “Data requisites for transformer statistical
+lifetime modelling—Part I: Aging-related failures,” IEEE Trans. Power
+Del., vol. 28, no. 3, pp. 1750–1757, Jul. 2013.
+[20] E. Chiodo, D. Lauria, F. Mottola, and C. Pisani, “Lifetime characteri-
+zation via lognormal distribution of transformers in smart grids: Design
+optimization,” Appl. Energy, vol. 177, pp. 127–135, 2016.
+[21] M. Humayun, M. Z. Degefa, A. Safdarian, and M. Lehtonen, “Utilization
+improvement of transformers using demand response,” IEEE Trans. Power
+Del., vol. 30, no. 1, pp. 202–210, Feb. 2015.
+[22] V. M. Catterson, J. Melone, and M. S. Garcia, “Prognostics of transformer
+paper insulation using statistical particle ﬁltering of on-line data,” IEEE
+Elect. Insul. Mag., vol. 32, no. 1, pp. 28–33, Jan. 2016.
+[23] L. Jauregui-Rivera, X. Mao, and D. Tylavsky, “Improving reliability as-
+sessment of transformer thermal top-oil model parameters estimated from
+measured data,” IEEE Trans. Power Del., vol. 24, no. 1, pp. 169–176,
+Jan. 2009.
+[24] W. H. Tang, K. Spurgeon, Q. H. Wu, and Z. J. Richardson, “An evidential
+reasoning approach to transformer condition assessments,” IEEE Trans.
+Power Del., vol. 19, no. 4, pp. 1696–1703, Oct. 2004.
+[25] T. W. Rauber, F. Boldt, and F. M. Varej˜ao, “Heterogeneous feature models
+and feature selection applied to bearing fault diagnosis,” IEEE Trans. Ind.
+Electron., vol. 62, no. 1, pp. 637–646, Jan. 2015.
+[26] R. Razavi-Far, M. Farajzadeh-Zanjani, and M. Saif, “An integrated class-
+imbalanced learning scheme for diagnosing bearing defects in induc-
+tion motors,” IEEE Trans. Ind. Inf., vol. 13, no. 6, pp. 2758–2769,
+Dec. 2017.
+[27] L. Breiman, “Random forests,” Mach. Learn., vol. 45, no. 1, pp. 5–32,
+Oct. 2001.
+[28] M. R. G. Meireles, P. E. M. Almeida, and M. G. Simoes, “A comprehensive
+review for industrial applicability of artiﬁcial neural networks,” IEEE
+Trans. Ind. Electron., vol. 50, no. 3, pp. 585–601, Jun. 2003.
+[29] A. J. Smola and B. Sch¨olkopf, “A tutorial on support vector regression,”
+Statist. Comput., vol. 14, no. 3, pp. 199–222, Aug. 2004.
+[30] T. Chen and C. Guestrin, “Xgboost: A scalable tree boosting system,” in
+Proc. ACM Knowl. Discov. Data Mining, 2016, pp. 785–794.
+[31] S. Hochreiter and J. Schmidhuber, “Long short-term memory,” Neural
+Comput., vol. 9, no. 8, pp. 1735–1780, 1997.
+[32] J. Friedman, T. Hastie, and R. Tibshirani, “Additive logistic regression:
+A statistical view of boosting,” Ann. Statist., vol. 28, no. 2, pp. 337–407,
+2000.
+[33] M. S. Arulampalam, S. Maskell, N. Gordon, and T. Clapp, “A tutorial
+on particle ﬁlters for online nonlinear/non-Gaussian Bayesian tracking,”
+IEEE Trans. Signal Process., vol. 50, no. 2, pp. 174–188, Feb. 2002.
+[34] B. Saha and K. Goebel, “Model adaptation for prognostics in a particle
+ﬁltering framework,” Int. J. Prognostics Health Manage., vol. 2, no. 6,
+pp. 1–10, 2011.
+[35] M. Kuhn and K. Johnson, An Introduction to Feature Selection. New York,
+NY, USA: Springer, 2013, pp. 487–519.
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:44:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PAGE 12 ---
+AIZPURUA et al.: ADAPTIVE POWER TRANSFORMER LIFETIME PREDICTIONS THROUGH ML AND UNCERTAINTY MODELING
+4737
+Jose Ignacio Aizpurua (M’17) received the
+Eng. degree in telecommunications engineer-
+ing, M.Sc. degree in information and com-
+munication technologies, and Ph.D. degree in
+reliability engineering from Mondragon Univer-
+sity, Mondragon, Spain, in 2010, 2012, and
+2015, respectively.
+He is a Research Associate within the In-
+stitute for Energy and Environment, University
+of Strathclyde, Scotland, U.K. He was a Vis-
+iting Researcher in the Dependable Systems
+Research Group, University of Hull, Hull, U.K., in 2014. His research
+interests include prognostics and health management, reliability, avail-
+ability, maintenance and safety analysis and systems engineering for
+power engineering applications.
+Stephen D. J. McArthur (M’93–SM’07–F’15)
+received the B.Eng. (Hons) in electronic and
+electrical engineering and the Ph.D. degree in
+artiﬁcial intelligence applications in electrical en-
+gineering from the University of Strathclyde,
+Glasgow, U.K., in 1992 and 1996, respectively.
+He
+is
+currently
+a
+Professor
+and
+the
+co-Director of the Institute for Energy and Envi-
+ronment, University of Strathclyde. His research
+interests include intelligent system applications
+in power engineering, covering condition mon-
+itoring, diagnostics and prognostics, active network management, and
+wider smart grid applications.
+Brian G. Stewart (M’08) received the B.Sc. de-
+gree in physics and astronomy and the Ph.D.
+degree in astronomical instrumentation from the
+University of Glasgow in 1981 and 1985, respec-
+tively, and the B.D. (Hons.) degree in theology
+from the University of Aberdeen, Scotland, in
+1994.
+He is a Professor within the Institute of En-
+ergy and Environment, University of Strathclyde,
+Glasgow, Scotland. His research interests are
+focused on high voltage engineering, electrical
+condition monitoring, insulation diagnostics and communication sys-
+tems. He is currently an AdCom Member within the IEEE Dielectrics
+and Electrical Insulation Society.
+Brandon Lambert received the B.Eng. degree
+in electrical engineering from Lakehead Univer-
+sity, Thunder Bay, Canada, in 2012, and the
+P.Eng. degree in electrical engineering from the
+Professional Engineers of Ontario, North York,
+ON, Canada, in 2015.
+He is a Design Engineering Manager within
+Bruce Power, Tiverton, Ontario, Canada. His de-
+sign interests include large power transformers,
+high-voltage transmission systems, as well as
+dielectric and insulating materials.
+James G. Cross (M’79–SM’17) received the
+B.Sc. degree in electrical engineering from the
+University of Manitoba, Winnipeg, Canada, in
+1980.
+He worked for 18 years at Carte International,
+Winnipeg, Canada, as Vice-President Technol-
+ogy. He is currently the Director of Transformer
+Services at Kinectrics, Inc., Toronto, Canada. He
+then worked as a Project Engineer at Pauwels
+Canada, Winnipeg, Canada. Most recently, he
+worked for 18 years at Weidmann Electrical
+Technology, St. Johnsbury, Vermont, USA, serving as a Manager of
+R&D/Innovation and a Manager of Technical Services.
+Victoria M. Catterson (M’06–SM’12) received
+B. Eng. (Hons.) in computer and electronic sys-
+tems and the Ph.D. degree in electrical and
+electronic engineering from the University of
+Strathclyde, Glasgow, U.K., in 2003 and 2007,
+respectively.
+She
+was
+previously
+a
+Senior
+Lecturer
+within the Institute for Energy and Environment,
+University of Strathclyde, Scotland, U.K. Her
+research interests include condition monitoring,
+diagnostics, and prognostics for power engineer-
+ing applications.
+Authorized licensed use limited to: Rajalakshmi Institute of Technology - Chennai. Downloaded on October 27,2026 at 05:44:28 UTC from IEEE Xplore.  Restrictions apply. 

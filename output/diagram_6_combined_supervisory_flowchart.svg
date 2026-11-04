@@ -1,0 +1,218 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1750 1350" width="1750" height="1350">
+  <defs>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="110%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 2 L 11 6 L 1 10 z" fill="#334155"/>
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 2 L 11 6 L 1 10 z" fill="#ef4444"/>
+    </marker>
+  </defs>
+
+  <style>
+    text {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+    .wire {
+      fill: none;
+      stroke: #334155;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .wire-red {
+      fill: none;
+      stroke: #ef4444;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .title-main {
+      font-size: 28px;
+      font-weight: 800;
+      fill: #0f172a;
+      letter-spacing: 0.5px;
+    }
+    .title-sub {
+      font-size: 15px;
+      font-weight: 500;
+      fill: #64748b;
+    }
+    .path-header-blue {
+      font-size: 17px;
+      font-weight: 800;
+      fill: #0369a1;
+      letter-spacing: 0.5px;
+    }
+    .path-header-red {
+      font-size: 17px;
+      font-weight: 800;
+      fill: #b91c1c;
+      letter-spacing: 0.5px;
+    }
+    .node-title {
+      font-size: 19px;
+      font-weight: 700;
+    }
+    .lbl-yes {
+      font-size: 14px;
+      font-weight: 700;
+      fill: #15803d;
+      text-anchor: start;
+    }
+    .lbl-no {
+      font-size: 14px;
+      font-weight: 700;
+      fill: #dc2626;
+      text-anchor: start;
+    }
+  </style>
+
+  <!-- Background -->
+  <rect width="1750" height="1350" fill="#ffffff"/>
+
+  <!-- Main Header -->
+  <text x="875.0" y="40" class="title-main">COMBINED SYSTEM SUPERVISORY FLOWCHART</text>
+  <text x="875.0" y="70" class="title-sub">End-to-End Execution: Predictive Regulation vs. Emergency Cutoff</text>
+
+  <!-- ==================== COMMON TRUNK (CENTER x = 875) ==================== -->
+  <!-- Start Node (Oval) at (735, 110) -->
+  <g transform="translate(735, 110)" filter="url(#shadow)">
+    <rect width="280" height="55" rx="27.5" fill="#ffedd5" stroke="#f97316" stroke-width="2"/>
+    <text x="140" y="27.5" class="node-title" fill="#c2410c">Start Supervision (1 Hz)</text>
+  </g>
+  <path class="wire" marker-end="url(#arrow)" d="M 875 165 L 875 205"/>
+
+  <!-- Acquire Probes & Rails (Parallelogram) -->
+  <g transform="translate(725, 205)" filter="url(#shadow)">
+    <polygon points="30,0 300,0 270,65 0,65" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="150" y="32.5" class="node-title" fill="#0369a1">Acquire Probes &amp; Rails</text>
+  </g>
+  <path class="wire" marker-end="url(#arrow)" d="M 875 270 L 875 310"/>
+
+  <!-- Compute Thermal Model (Rectangle) -->
+  <g transform="translate(725, 310)" filter="url(#shadow)">
+    <rect width="300" height="65" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="150" y="32.5" class="node-title" fill="#0369a1">Compute Thermal Model</text>
+  </g>
+  <path class="wire" marker-end="url(#arrow)" d="M 875 375 L 875 420"/>
+
+  <!-- Decision: Limits OK? (Diamond) at (875, 475) -->
+  <g transform="translate(740, 420)" filter="url(#shadow)">
+    <polygon points="135,0 270,55 135,110 0,55" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="135" y="55" class="node-title" fill="#0369a1">Safety Limits OK?</text>
+  </g>
+
+
+  <!-- ==================== BRANCH HEADERS ==================== -->
+  <text x="430" y="525" class="path-header-blue">PATH A: NORMAL CLOSED-LOOP REGULATION</text>
+  <text x="1320" y="525" class="path-header-red">PATH B: EMERGENCY HARDWARE CUTOFF</text>
+
+
+  <!-- ==================== PATH A: NORMAL REGULATION (LEFT x = 430) ==================== -->
+  <!-- Wire: Limits OK? Yes -> Left to x=430, down to y=560 -->
+  <path class="wire" marker-end="url(#arrow)" d="M 740 475 L 430 475 L 430 560"/>
+  <text x="700" y="462" class="lbl-yes">Yes</text>
+
+  <!-- Step A1: Modulate Cooling Fan (Rectangle) -->
+  <g transform="translate(280, 560)" filter="url(#shadow)">
+    <rect width="300" height="65" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="150" y="32.5" class="node-title" fill="#0369a1">Modulate Cooling Fan</text>
+  </g>
+  <path class="wire" marker-end="url(#arrow)" d="M 430 625 L 430 670"/>
+
+  <!-- Step A2: Refresh LCD Screen (Parallelogram) -->
+  <g transform="translate(280, 670)" filter="url(#shadow)">
+    <polygon points="30,0 300,0 270,65 0,65" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="150" y="32.5" class="node-title" fill="#0369a1">Display on LCD</text>
+  </g>
+  <path class="wire" marker-end="url(#arrow)" d="M 430 735 L 430 780"/>
+
+  <!-- Step A3: Publish Telemetry (Parallelogram) -->
+  <g transform="translate(280, 780)" filter="url(#shadow)">
+    <polygon points="30,0 300,0 270,65 0,65" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="150" y="32.5" class="node-title" fill="#0369a1">Publish to Cloud</text>
+  </g>
+  <path class="wire" marker-end="url(#arrow)" d="M 430 845 L 430 890"/>
+
+  <!-- Step A4: Verify Edge Watchdog (Rectangle) -->
+  <g transform="translate(280, 890)" filter="url(#shadow)">
+    <rect width="300" height="65" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="150" y="32.5" class="node-title" fill="#0369a1">Verify Edge Watchdog</text>
+  </g>
+  <path class="wire" marker-end="url(#arrow)" d="M 430 955 L 430 1000"/>
+
+  <!-- Step A5: Stream to Dashboard (Parallelogram) -->
+  <g transform="translate(280, 1000)" filter="url(#shadow)">
+    <polygon points="30,0 300,0 270,65 0,65" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="150" y="32.5" class="node-title" fill="#0369a1">Stream to Dashboard</text>
+  </g>
+
+  <!-- Path A Return Loop: From bottom of Dashboard (430, 1065) -> down to 1130 -> Far Left (100) -> up to 137.5 -> Start (735) -->
+  <path class="wire" marker-end="url(#arrow)"
+        d="M 430 1065 L 430 1130 L 100 1130 L 100 137.5 L 735 137.5"/>
+
+
+  <!-- ==================== PATH B: EMERGENCY CUTOFF (RIGHT x = 1320) ==================== -->
+  <!-- Wire: Limits OK? No -> Right to x=1320, down to y=560 -->
+  <path class="wire-red" marker-end="url(#arrow-red)" d="M 1010 475 L 1320 475 L 1320 560"/>
+  <text x="1035" y="462" class="lbl-no">No</text>
+
+  <!-- Step B1: Cut Power Rails (Rectangle) -->
+  <g transform="translate(1170, 560)" filter="url(#shadow)">
+    <rect width="300" height="65" rx="10" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+    <text x="150" y="32.5" class="node-title" fill="#991b1b">Cut Power Rails</text>
+  </g>
+  <path class="wire-red" marker-end="url(#arrow-red)" d="M 1320 625 L 1320 670"/>
+
+  <!-- Step B2: Latch Fault in NVS (Rectangle) -->
+  <g transform="translate(1170, 670)" filter="url(#shadow)">
+    <rect width="300" height="65" rx="10" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+    <text x="150" y="32.5" class="node-title" fill="#991b1b">Latch Fault in NVS</text>
+  </g>
+  <path class="wire-red" marker-end="url(#arrow-red)" d="M 1320 735 L 1320 780"/>
+
+  <!-- Step B3: Display Alert on LCD (Parallelogram) -->
+  <g transform="translate(1170, 780)" filter="url(#shadow)">
+    <polygon points="30,0 300,0 270,65 0,65" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+    <text x="150" y="32.5" class="node-title" fill="#991b1b">Display Alert on LCD</text>
+  </g>
+  <path class="wire-red" marker-end="url(#arrow-red)" d="M 1320 845 L 1320 890"/>
+
+  <!-- Step B4: Push Alert to Cloud (Parallelogram) -->
+  <g transform="translate(1170, 890)" filter="url(#shadow)">
+    <polygon points="30,0 300,0 270,65 0,65" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+    <text x="150" y="32.5" class="node-title" fill="#991b1b">Push Alert to Cloud</text>
+  </g>
+  <path class="wire-red" marker-end="url(#arrow-red)" d="M 1320 955 L 1320 1000"/>
+
+  <!-- Step B5: Send Alert Email (Parallelogram) -->
+  <g transform="translate(1170, 1000)" filter="url(#shadow)">
+    <polygon points="30,0 300,0 270,65 0,65" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+    <text x="150" y="32.5" class="node-title" fill="#991b1b">Send Alert Email</text>
+  </g>
+  <path class="wire-red" marker-end="url(#arrow-red)" d="M 1320 1065 L 1320 1105"/>
+
+  <!-- Decision: Reset Granted? (Diamond) at (1320, 1150) -->
+  <g transform="translate(1190, 1105)" filter="url(#shadow)">
+    <polygon points="130,0 260,45 130,90 0,45" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+    <text x="130" y="45" class="node-title" fill="#991b1b">Reset Granted?</text>
+  </g>
+  <!-- Reset Yes -> Far Right corridor (1650) -> up to 137.5 -> Start (1015) -->
+  <path class="wire" marker-end="url(#arrow)"
+        d="M 1450 1150 L 1650 1150 L 1650 137.5 L 1015 137.5"/>
+  <text x="1480" y="1138" class="lbl-yes">Yes</text>
+
+  <!-- Reset No -> Terminal Lockout (Oval) -->
+  <path class="wire-red" marker-end="url(#arrow-red)" d="M 1320 1195 L 1320 1245"/>
+  <text x="1330" y="1220" class="lbl-no">No</text>
+  <g transform="translate(1180, 1245)" filter="url(#shadow)">
+    <rect width="280" height="55" rx="27.5" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+    <text x="140" y="27.5" class="node-title" fill="#991b1b">Lockout System</text>
+  </g>
+
+</svg>

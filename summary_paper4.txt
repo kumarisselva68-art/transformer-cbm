@@ -1,0 +1,1084 @@
+
+--- PAGE 1 ---
+Received 25 December 2022, accepted 5 January 2023, date of publication 11 January 2023, date of current version 20 January 2023.
+Digital Object Identifier 10.1109/ACCESS.2023.3236183
+Tsukamoto Fuzzy Inference System on Internet of
+Things-Based for Room Temperature and
+Humidity Control
+SUNARDI1, ANTON YUDHANA1, (Member, IEEE), AND FURIZAL
+2
+1Department of Electrical Engineering, Universitas Ahmad Dahlan, Yogyakarta 55166, Indonesia
+2Master Program of Informatics, Universitas Ahmad Dahlan, Yogyakarta 55166, Indonesia
+Corresponding author: Furizal (2108048014@webmail.uad.ac.id)
+This work was supported by the Universitas Ahmad Dahlan.
+ABSTRACT The idea of the Internet of Things (IoT) is utilized to increase the advantages of internet
+connectivity. As long as the electrical device is still connected to the internet, IoT can be utilized to operate it.
+This study applies the concept of IoT as a fan control and monitoring of the humidity and room temperature
+through a mobile-based application, so that the room can be controlled remotely using a smartphone before
+use. It is necessary to always keep the room comfortable to use, so that users can increase productivity and
+always avoid potential disease attacks when the temperature is unstable. In addition, the IoT concept also
+makes it easier to turn off the fan if at any time you forget to turn it off. This fan is integrated with the ESP32
+microcontroller which has been equipped with a Wireless Fidelity (WiFi) module to access data changes in
+the Firebase Realtime Database. Room temperature and humidity are measured with a DHT22 sensor and
+processed using Tsukamoto’s Fuzzy Inference System to produce the appropriate fan speed in the Duty Cycle
+unit. Tools and applications can work as predicted based on the findings of the research conducted. However,
+the impact of the fan on a closed room cannot cool the room temperature but the room temperature moves
+up with a change of 0.3 ◦C to 0.5 ◦C within 40-75 minutes. Therefore, in the next study it is recommended
+to use cooling devices such as Exhaust fans or Air Conditioners.
+INDEX TERMS DHT22, duty cycle, ESP32, fan speed, fuzzy inference system Tsukamoto, humidity,
+Internet of Things, room controllers, temperature.
+I. INTRODUCTION
+Room temperature is an aspect that can affect the comfort
+and productivity at work [1]. Hot temperatures can reduce
+the body’s immunity and enthusiasm in activities, especially
+indoor activities. In addition, hot temperatures can also bring
+disease to the body if it is felt for a long time [2]. Therefore,
+this problem must be a concern in an effort to maintain
+quality activities. This hot temperature cannot disappear in
+the absence of auxiliary tools to periodically stabilize it [3].
+At this time, tools that are often used in cooling and
+stabilizing the heat temperature in the room are fans and
+Air Conditioners (AC). But often new problems arise, such
+as manual speed setting, forgetting to turn off and others.
+The associate editor coordinating the review of this manuscript and
+approving it for publication was Renato Ferrero
+.
+Therefore, an efficient alternative is needed to overcome this
+problem [4].
+This study aims to solve the problems that have been
+described. The main tool used is a fan that is integrated with
+the ESP32 microcontroller which has been equipped with a
+WiFi module [5]. Meanwhile, the indicators in this study are
+temperature, humidity and human activity as measured by
+the DHT22 sensor and the Passive InfraRed (PIR) sensor.
+The results of this measurement were processed using the
+Tsukamoto Fuzzy Inference System (FIS) method to produce
+the appropriate fan speed in duty cycle units [6].
+The development of technology in the world is increas-
+ingly progressing until now, including Indonesia. This rapid
+growth brings new breakthroughs that no one had previously
+thought of. IoT is a technology that has been developed for
+a long time, but in Indonesia the use of IoT is still relatively
+VOLUME 11, 2023
+This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/
+6209
+
+--- PAGE 2 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+small and even many Indonesians are still unfamiliar with the
+term IoT.
+IoT is one of the many technologies developed to face the
+digital era like now to make it easier for people to use it and to
+overcome digital-based difficulties. Researchers are always
+developing this technology in order to achieve optimal results
+in helping human needs.
+As the name implies, IoT is the internet that plays an
+important role in carrying out all activities. This proves that
+the internet plays an active role in daily digital activities.
+Basically, IoT is a technological concept that connects other
+devices with internet media and can be controlled remotely.
+IoT is a concept in which technology is integrated into phys-
+ical objects, such as sensors and software, with the aim of
+connecting, communicating, controlling, and sharing data
+while still connected to the internet.
+IoT is one of the technologies that has a close relationship
+with the term machine-to-machine (M2M). M2M is a service
+that enables remote management and control of IT devices
+over IP and IoT networks is a closely related concept. The
+tools used in M2M are able to communicate so they are called
+smart devices. The purpose of creating smart devices is solely
+to help and become a solution to solving various problems
+or affairs and tasks owned by humans. IoT utilization can be
+applied in various areas of life, such as home automation,
+agriculture, health, transportation, and others [7]. There are
+several components in this technology but fundamentally
+there are only four components, namely sensors, connectivity,
+processed data, and user interface (UI).
+A sensor is a tool that serves to retrieve data from an object.
+The data in question can be information such as temperature,
+humidity, sound, movement, and light. This data will be sent
+as information to the user. The process of sending data from
+sensor measurements requires connectivity in the form of an
+internet network as a medium. Many connectivity options
+include cellular networks and Wi-Fi. Each internet source has
+its own advantages and disadvantages. IoT requires a stable
+network connection so that the data exchange process can run
+properly. After going through a shipment that requires con-
+nectivity, the data will then go through a processing process
+before a command occurs. In order for the results of sending
+this data to be seen by users, users are equipped with UI as
+a monitoring and control medium. The UI used can be web,
+mobile, and other platforms.
+The way this IoT technology works is very simple, namely
+by using program instructions. Each command can generate
+interactions on directly connected devices without the pres-
+ence of intervention from the user. It can be said that this
+technology is arranged in such a way as to make it easier
+for users to carry out remote control of a control object.
+The main factor in smooth running is the stabilization of the
+connectivity network, while humans are only the supervisors
+of every activity of the device when it is executing commands.
+Based on the description and comfort that will be obtained
+using IoT technology, this study will implement IoT by
+utilizing a mobile-based application to control and monitor
+room temperature conditions [8]. The application is devel-
+oped using the flutter framework [9]. The WiFi module
+contained in the ESP32 is used to access data changes in
+the database in real time [10]. The database used is Fire-
+base Realtime Database which is a product of the Google
+company.
+The application of IoT in this study aims to make it easier
+for users to overcome the problems that have been described,
+such as making it easier to turn off the fan if at any time they
+forget to turn it off or control the temperature remotely via a
+smartphone before the room is used for activities [11].
+Several IoT-based room temperature and humidity control
+systems have been created in previous studies with different
+utilization functions, some use on server rooms [12], green-
+house [13], thermal [14], and others [15]. The application
+of IoT can provide a great contribution in achieving conve-
+nience for its users. This statement is supported by previous
+researchers who show that the results of IoT implementation
+are very promising because they can improve the security,
+safety, intelligence, and comfort of users [16]
+Other studies have shown that IoT systems are also a
+very suitable concept in providing convenience for digital
+technology users. Any device connected to electricity can
+be controlled by using the concept of IoT. Improved system
+efficiency drastically reduces electrical energy consumption
+by providing central control of the equipment [17].
+The use of the ON/OFF concept in the control system
+can reduce the efficiency of the function of the tool built so
+that alternative control is needed to overcome this problem.
+Control systems with proven methods such as the Fuzzy
+Inference System (FIS) need to be implemented in the system
+and evaluated to improve the control system. This is sup-
+ported by previous research that shows the use of fuzzy logic
+in control systems can provide a more optimal contribution
+when compared to the ON/OFF base [14]. The ON/OFF base
+will only give a value of 1 or 0, while the fuzzy base will give
+values of 0 through 1.
+In other studies, a fan control system has also been built
+with fuzzy logic. The use of fuzzy logic concepts in this study
+is considered to be an energy-saving solution using artificial
+intelligence [18].
+In one of the studies has applied fuzzy and IoT logic
+to web-based server rooms and provides notifications via
+Twitter. In this study, AC was used as a cooling media that
+was controlled using fuzzy logic and IoT. Based on research
+testing conducted through the Matlab application, fuzzy logic
+can be implemented into the microcontroller with the results
+of simulation testing using obtained values that correspond to
+the results on the microcontroller and the average value of AC
+Temperature Set output deviation 0.03500 and the average
+AC Mode Set output deviation 0.01225. Although there are
+differences in some output values, researchers claim that
+the function to control the air conditioner was successfully
+designed as desired [19].
+6210
+VOLUME 11, 2023
+
+--- PAGE 3 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+The use of air conditioning in cooling the room is indeed
+fairly efficient. But basically, not everyone can use air con-
+ditioning due to cost limitations. AC is an electronic device
+that is fairly expensive in initial installation and in the con-
+sumption of electrical power needed in daily use. AC is also a
+modern air conditioner that is often used by the upper middle
+class. Meanwhile, the lower middle class people use fans
+more often because they are considered cheaper so the use
+of fans needs to be optimized with future research.
+Based on the literature review that has been described,
+this study applies a fuzzy logic method to fan speed control
+to cool the room. This research is expected to contribute to
+optimizing fans in controlling temperatures that are a problem
+in tropical countries, one of which is in the country where this
+research was conducted, namely Indonesia.
+II. THE BASIC CONCEPTS
+A. IoT
+IoT is a term that refers to the increasing use of the inter-
+net, the adoption of computing, mobile connectivity, and its
+integration into everyday life [20]. IoT is related to the DoT
+(Disruption of Things) and is used as an illustration of the
+change or conversion of Internet usage from the previous
+Internet of People M2M Internet.
+B. FIS TSUKAMOTO
+Each rule is supported by the same monotonous logic used
+by FIS Tsukamoto [21]. A fuzzy set with monotonous mem-
+bership functions should be used to describe any result of
+the IF-THEN rule [22]. Based on the predicate, the output
+of the inference result of each rule is explicit (Crisp) [23].
+Utilizing defuzzification and the idea of weighted averages,
+aggregation of the rules is carried out, and the results are then
+obtained [24].
+1) FUZZIFICATION
+The fuzzification stage serves to convert the crisp value into a
+fuzzy value using a fuzzy curve [25]. This study applies two
+types of curves, namely the triangle curve and the shoulder
+model.
+a: TRIANGULAR MEMBERSHIP CURVE
+A triangular curve is a combination of linear ascending and
+descending linear delimited by a single point of membership
+value 1 as in Figure 1 [26].
+Based on Figure 1, it can be concluded that the triangle
+curve has four conditions of the value of the agglomerate.
+The four conditions will only result in a membership value
+of 0 to 1. The representation of the triangle curve can be seen
+in Equation 1.
+µ [x] =
+
+
+
+0;
+x ≤a or x ≥c
+(x −a)/(b −a)
+a < x < b
+(b −x)/(c −b)
+b < x < c
+1;
+x = b
+(1)
+FIGURE 1. Triangular curve.
+FIGURE 2. Shoulder membership curve.
+b: SHOULDER MEMBERSHIP CURVE
+The shoulder curve is used to end the variable of a blurred
+area that has its right or left side unchanged. This type
+of curve is divided into two models, namely the left
+shoulder curve and the right shoulder curve as shown in
+Figure 2 [27].
+2) SYSTEM INFERENCE
+At the inference system level, fuzzy rules based on the fuzzy
+set theory and fuzzy rules in the form of IF-THEN statements
+are both used to draw conclusions [22], [28]. Zadeh divides
+into three basic operators, namely AND, OR, and NOT [29].
+The AND is an operator that serves to obtain the minimum
+elements. While the OR operator is used to search for the
+maximum element and the NOT operator is used to subtract
+the value of 1 with the negated fuzzy element [30]. In this
+study was applied the AND operator to every fuzzy rule
+formed. The mathematical narrative of the AND operator as
+shown in Equation 2.
+µA ∩B = min(µA[x], µB[x])
+(2)
+3) DEFUZZIFICATION
+Defuzzification is the final process of converting a fuzzy
+output into a crisp value [31]. The equation applied at this
+stage is the Weighted Average as Equation 3 [32].
+Z =
+P αizi
+P αi
+(3)
+VOLUME 11, 2023
+6211
+
+--- PAGE 4 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+C. ESP32
+The ESP32 is the successor to the ESP8266 and offers sev-
+eral improvements in every way [33]. The ESP32 supports
+Bluetooth Low Energy as well as WiFi connections, making
+the ESP32 more flexible [34]. The ESP32 has 64MB of flash
+memory for storing programs and data [35].
+D. DHT22 SENSOR
+The DHT22 sensor is a digital relative temperature and
+humidity sensor [36]. The DHT22 sensor uses capacitors
+and thermistors to measure ambient air and send signals to
+the data pins [37]. The DHT22 claims to have good read
+quality, judging by its quick response to data collection and its
+minimalist size, as well as its relatively low price compared
+to thermometers [38].
+E. PIR SENSOR
+The PIR sensor is a motion detection sensor [39]. PIR sensors
+are widely used to determine the presence of human move-
+ment in the area that can be reached by PIR sensors [40].
+These sensors are small, inexpensive, require little power, and
+are easy to use. This sensor is also widely used domestically
+and professionally [41].
+F. PWM AC DIMMER
+A dimmer is an electronic circuit that converts the shape of
+a pure AC signal into a truncated signal, which allows the
+output power to be adjusted [42]. AC signal clippings are
+useful for light dimming, motor deceleration, heating control
+and more [43].
+G. FLUTTER
+Flutter is an open-source framework or SDK developed by
+Google to create high-performance app interfaces that can
+be published for Android and iOS platforms from a single
+codebase [44]. The hot reload feature provided by Flutter
+eliminates the need to compile or rebuild all changes to see
+the results [45]. Flutter uses the Dart programming language
+which certainly feels familiar with the Java or Javascript
+programming language [46]. Darts is a popular programming
+language developed by Google [47].
+H. FIREBASE
+Firebase is a service from Google that is used to help
+with application development. Firebase Realtime Database
+enables users to create feature-rich collaborative apps by
+providing secure database access directly from client-side
+code [48]. Firebase provides a responsive experience to
+end users. Data changes occur continuously and in real-
+time offline. The real-time database synchronizes local data
+changes with remote updates that occur when the client is
+offline, so any differences are automatically resolved when
+device connectivity is restored [49].
+FIGURE 3. Research stage.
+FIGURE 4. Basic concepts of data exchange.
+III. RESEARCH STAGE
+This research consists of several steps to produce the desired
+output. The research stage as shown in Figure 3.
+Based on the research stage in Figure 3, broadly speaking,
+there are four stages carried out to produce the expected
+output. In the first stage, the database is designed and built
+using firebase database which is a realtime database service
+from the Google company. This database serves as a data
+center that will be an indicator of data changes from the tools
+and mobile applications to be built. These data changes will
+be accessed reciprocally by tools and mobile applications in
+real time over a network connection. In simple terms, the
+basic concept of data exchange is like Figure 4.
+Based on Figure 4, data exchange does not occur directly
+between a mobile application and a microcontroller, but is
+mediated by a database that acts as a data center. Any changes
+to this database will be accessed by each device, both changes
+by the microcontroller and changes by the mobile application.
+In the second stage, the tool is designed and built by
+utilizing one of the microcontrollers, namely the ESP32.
+The use of this microcontroller is based on the need for
+a network connection so that with its advantages that are
+6212
+VOLUME 11, 2023
+
+--- PAGE 5 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+FIGURE 5. Simulation of expected results.
+already accompanied by a WiFi module, there is no need to
+accompany additional WiFi modules anymore. This will save
+more on the use of the device.
+In the third stage, the mobile application is designed
+and built using the Flutter framework. The flutter frame-
+work is one of the Open Source frameworks that is widely
+used in mobile development. Programmers simply visit,
+download, and install the flutter package from its official
+website. Google has provided documentation to be able to
+use the features that have been provided in this frame-
+work. In addition, the development of this application is
+also assisted by using the Flutter package in Visual Studio
+Code.
+In the fourth stage, the research continued by implementing
+FIS Tsukamoto. This stage starts from discussing variables,
+talking universes, sets, and fuzzy domains. Each variable is
+represented in the form of a fuzzy curve used in the process
+on the Tsukamoto fuzzy.
+Broadly speaking, Tsukamoto fuzzy consists of three
+stages, namely fuzzification, inference engine, and defuzzi-
+fication. These stages are used to produce the output of the
+inputted variable values. The results of this processing are
+expected to be the most efficient value in controlling room
+temperature in the studies conducted.
+After the discussion process is complete, a manual calcula-
+tion process is carried out in the Microsoft Excel application.
+Then the coding or application of the fuzzy method is carried
+out on the built tool. The results of manual calculations
+that have been done will be compared with the results of
+calculations on coding tools. The tool is coded with a pro-
+gramming language with the ino extension using the Arduino
+IDE application.
+After all stages of this research are carried out, the tools and
+applications are tested for feasibility so as to provide optimal
+results as expected. If the test results still have errors, they will
+be reviewed for correction. Based on what has been explained
+VOLUME 11, 2023
+6213
+
+--- PAGE 6 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+FIGURE 6. Firebase Database data schema.
+in the introduction section, the goal to be achieved is a tool
+that can control the temperature and humidity of the room
+using a mobile application by applying the IoT concept. The
+expected simulation as shown Figure 5.
+A clearer decipherment related to the stages of research is
+described as follows:
+A. BUILD FIREBASE DATABASE FOR IoT
+Based on the understanding that has been described, IoT has
+very important benefits for human life in building the concept
+of remote control. This control will also not be separated from
+data storage [50]. There are many ways that can be done, one
+of which is by utilizing the realtime database from firebase
+google [51]. Based on the information on the web firebase
+database, Google only provides 1 GB of storage for the free
+version. If you want to get more storage, Google offers a
+paid version upgrade option. This study only implemented
+the free version of storage. Therefore, this study uses the
+data update method (not insert) to overcome storage restric-
+tions set by Google, so that the data in firebase does not
+increase but only changes the value of each variable field
+created. This will protect the free version of Firebase from
+over-data. The Firebase database data schema is built as in
+Figure 6.
+Figure 6 is a data structure in the firebase database that will
+be an indicator of changes in the action of the built tool. The
+variables listed on the Figure 6 have their own functions as in
+Table 1.
+B. DESIGNING AND BUILD TOOLS
+This research tool is built using the ESP32 which overall
+functions almost the same as other microcontrollers such as
+Arduino, Wemos Mini, and others [52], [53], [54]. The con-
+cept of application as a whole is the same, because Arduino
+code can also be used on ESP32 [55]. In addition, hard tools
+such as sensors can also be used on the ESP32 using the same
+source code [56]. The design of the tool is built as in Figure 7.
+The details of describing the schema of relationships
+between devices are described in Table 2.
+TABLE 1. Firebase data schema explained.
+6214
+VOLUME 11, 2023
+
+--- PAGE 7 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+FIGURE 7. Tool design.
+TABLE 2. Scheme of relationships between devices.
+C. BUILDING MOBILE APP
+The mobile application is an application that can be paired
+and used on a smartphone [57]. Many frameworks and tech-
+nologies can be utilized in building mobile applications,
+including react native, sencha, ionic, flutter and others [58].
+In this study, the mobile application was built using the flutter
+framework. The development cycle starts from collecting and
+analyzing the data needed to be applied to the application.
+After that, the application is designed according to the needs
+needed so that the features in the research can be fulfilled
+in the application to be built. Once the design is complete,
+the application begins to build by coding using the flutter
+framework. The development of this application is adapted
+to the pre-designed design. After the application has been
+developed, then the application is then carried out a testing
+process to ensure that all interfaces and functionalities of the
+application can run properly as expected. Furthermore, the
+application will be deployed and maintained during use. To be
+clear, the lifecycle steps of mobile application development
+are built as in Figure 8.
+This application was created to control and monitor the
+temperature and humidity conditions around the device that
+has been built. This application is integrated with the tool
+through the internet network, so that users can monitor any-
+time and anywhere as long as the tool and smartphone used
+are still connected to the internet. The mobile application
+interface has been built as in Figure 9.
+This built application consists of one interface according
+to the design of the application that has been designed. At the
+time of controlling the tool, the user can choose several
+options, namely:
+1) Enabling the option ’’Turn on the fan without a human
+object?’’ is that the fan can be turned on by ignoring the
+detection of human presence through the PIR sensor.
+Because, if you don’t activate this option, then the fan
+will only turn on when the PIR sensor detects human
+presence.
+2) Selecting the ’’Automatic’’ control option is that the fan
+speed will be set based on the temperature and humidity
+read and processed using fuzzy logic.
+3) Selecting the ’’Manual’’ control option is that the fan
+speed is controlled manually by entering the desired
+speed value.
+D. APPLICATION OF FIS TSUKAMOTO ON THE TOOL
+Fuzzy Tsukamoto has three important stages in producing
+output, namely fuzzification, machine inference, and defuzzi-
+fication. The illustration is like Figure 10.
+The Fuzzy stage in Figure 10 shows that the input in
+the fuzzy system is a crisp value. This crisp value will be
+converted into a fuzzy value in the form of a fuzzy member-
+ship value through the fuzzification stage using Equation 1.
+This fuzzification stage is guided by the membership func-
+tion curve of each input variable, namely the temperature in
+Figure 11 and the humidity in Figure 12. This membership
+function curve will be used to obtain the fuzzy membership
+value of each set.
+After the fuzzification stage is complete, the output of
+this fuzzy membership value will then be processed at the
+machine inference stage. At this machine inference stage,
+fuzzy rules are needed to process the fuzzy membership value
+obtained from the fuzzification stage. The fuzzy rules used
+are already listed in Table 3. These fuzzy rules will be pro-
+cessed using Equation 2. After the machine inference stage
+is complete, the process continues at the last stage, namely
+defuzzification using Equation 3. At this stage of defuzzifi-
+cation, crisp value will be obtained as the final output of the
+process on Fuzzy Tsukamoto.
+Tsukamoto’s fuzzy calculation by applying 25 fuzzy
+rules produces the output as expected [59]. These rules are
+obtained from a combination of two input variables, namely
+VOLUME 11, 2023
+6215
+
+--- PAGE 8 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+FIGURE 8. Mobile application development lifecycle.
+FIGURE 9. Mobile app interface.
+temperature and humidity. These two input variables each
+have five sets. The set of temperature variables is Quite
+Warm, Warm, Quite Hot, Hot, and Very Hot. While the set
+of humidity variables are Dry, Normal, Pretty Wet, Wet, and
+6216
+VOLUME 11, 2023
+
+--- PAGE 9 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+FIGURE 10. Stages of FIS Tsukamoto.
+FIGURE 11. Temperature membership function curve.
+Very Wet. The combination results of these two variables
+produce a fan speed output consisting of three sets, namely
+Slow, Medium and Fast. An example of some of the speed
+outputs produced by this fuzzy calculation can be seen in
+Table 6.
+IV. EXPERIMENTAL RESULT
+A. DHT22 SENSOR CALIBRATION
+In this study, the temperature sensor used was the DHT22 sen-
+sor. However, this sensor is made and designed for measure-
+ment at the location conditions under which it is created that
+will cause deviations in results at other locations. Therefore,
+it must be known how the characteristics of this DHT22
+sensor in tropical Indonesia and need to be calibrated at the
+desired local conditions. Sensor calibration is a feasibility
+test of the sensor to achieve results in accordance with the
+desired indicators, namely accuracy and precision with the
+addition of an equation model, so that this goal is achieved.
+This calibration is done by comparing the temperature and
+humidity values on the sensor with the temperature and
+humidity values obtained from manual measurements from
+the thermometer and hygrometer taken at the same time. The
+comparison tool used in this calibration process is the Digital
+HTC-2 Thermometer Hygrometer as in Figure 13.
+VOLUME 11, 2023
+6217
+
+--- PAGE 10 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+FIGURE 12. Humidity membership function curve.
+FIGURE 13. Digital HTC-2 thermometer hygrometer.
+This calibration to test the precision level of the DHT22
+sensor is done by taking 60 data simultaneously. The results
+of this test showed a temperature difference of 0.18◦C and
+humidity of 7.78%. The comparison chart of DHT22 and
+Digital HTC-2 Thermometer Hygrometer temperature mea-
+surements is shown in Figure 14. As for the humidity, it is
+listed in Figure 15.
+B. RESPONSE OF TOOLS AND MOBILE APPLICATIONS
+The tools in this study have been applied to rooms that
+are not too spacious. The area of the room tested measured
+400 cm × 400 cm wide, while the height was 350 cm. The
+area of the room can affect the control system that is built. The
+more spacious the room implemented, the more difficult it is
+to control its temperature, unless a control fan is implemented
+in large quantities.
+While the mobile application as a control medium has been
+tested with a fairly good success rate. The results of some tests
+are listed in Table 5.
+Table 5 shows the mobile application’s response to changes
+in data on the server. The mobile application response test
+is carried out by providing two connection sources, namely
+WiFi and mobile data. Based on the tests conducted, the
+mobile application can communicate well as long as it is
+connected to a network that has stable speed. The fastest
+result, the application can provide a response of <200 ms
+with an internet network speed of 29 Mbps. While on an
+unstable network, the application still provides a response
+even with a long response time. This application response
+test is also performed against a missing network connection.
+If the connection is dropped then the application will not give
+a response until the connection is available again. Based on
+this description, it can be concluded that the internet network
+connection greatly affects the application’s response time in
+accessing data on the server, both when updating data and
+reading data. Not only mobile applications, the response of
+built-in ESP32 devices is also affected by network speed
+conditions. Networking is a major influencing factor when
+interacting with IoT because all connected devices commu-
+nicate over the network.
+In addition to the internet network, the component that is
+also needed by the device or tool that is built is the availability
+6218
+VOLUME 11, 2023
+
+--- PAGE 11 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+FIGURE 14. Comparison of temperature measurements.
+FIGURE 15. Comparison of humidity measurements.
+of electrical power sources. In Indonesia, the availability of
+electricity is often a challenge because there are frequent
+power outages, especially for areas far from urban areas.
+The duration of these power outages usually varies, ranging
+from just a few minutes, a few hours and even a few days.
+When the power source is off, the tool will automatically turn
+off. However, the cached change data will still be stored in
+google’s firebase database. Therefore, when the power source
+is available again, it will access the latest data changes to
+firebase to give the room action. When the tool accesses data
+on firebase, it must still reconnect to the internet network con-
+nection. The results of the experiment are shown in Table 5,
+while the results of its execution are as shown in Figure 16.
+These control tools are designed and built by applying
+the needs to network connections. If the ESP32 device is
+not connected to the internet network, the tool automatically
+VOLUME 11, 2023
+6219
+
+--- PAGE 12 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+FIGURE 16. Application to the room.
+cannot access data changes in the database. However the flow
+chart on the program code of the tool is created independent
+of the internet connection. When the internet connection on
+the tool is lost, the tool will turn off the ’’Turn on the fan
+without a human object’’ mode and the ’’Manual Control’’
+mode. After that, the tool will check the presence of humans
+and check the temperature and humidity of the air in the room
+offline / locally. If in the room there are human activities
+and temperature conditions above normal conditions, then the
+tool will activate the ’’Automatic Control’’ mode by applying
+fuzzy logic calculations to produce the ideal fan speed in
+controlling temperature needs in the room.
+In this condition, users cannot monitor the device remotely
+on a smartphone / mobile application because the tool cannot
+update data changes in the database. Therefore, indirectly
+the mobile application also cannot be synchronized with the
+tool. Even so, users can still see the fan status (ON/OFF), fan
+speed, temperature, and humidity in real time on the LCD
+attached to the device set. This condition is not permanent,
+because if the tool is connected to the network, the tool will
+be able to access data changes on the database again. The
+workflow of this tool is shown in Figure 17.
+An internet connection not only affects the control tools
+built in, but also affects the mobile applications that are
+designed. If the smartphone connection is lost, the user is
+also unable to monitor and control the device remotely.
+This condition will end when the application reconnects
+to the network. The mobile app flowchart is listed in
+Figure 18.
+C. TESTING THE IMPACT OF THE TOOL ON THE ROOM
+This temperature and humidity control device is tested by
+placing a DHT22 sensor (temperature and humidity gauge) in
+three different places. This test aims to provide information
+related to the influence of devices that expect a decrease in
+heat temperature in the room. Visually, the placement position
+can be seen in Figure 19.
+These three DHT22 sensor positions will be tested to deter-
+mine the effect of this control device on room temperature,
+whether exposed to fan blowing or not. For more details,
+6220
+VOLUME 11, 2023
+
+--- PAGE 13 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+FIGURE 17. Tool working flowchart.
+FIGURE 18. Mobile app working flowchart.
+Figure 20 is an illustration of the position of the fan and
+DHT22 sensor which is included with the size of the room
+on each side of the room which is viewed through the 4th side
+based on the illustration listed in Figure 19.
+VOLUME 11, 2023
+6221
+
+--- PAGE 14 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+FIGURE 19. Simulated position of the fan and DHT22 sensor.
+FIGURE 20. Position of the DHT22 sensors and fan when viewed from side 4.
+These three sensor positions are exposed to different wind
+gusts of force, ranging from those that are hardly exposed to
+the slightest wind to those that are directly exposed to the
+wind. The DHT22 sensor at each of these positions will be
+tested to provide information regarding the effect of fan rota-
+tion that has been set with fuzzy logic on room temperature
+and humidity. A description of the wind touch at each position
+of the DHT22 sensor is shown in Table 6.
+The test is carried out in the conditions of a closed room,
+so that there is no air cycle in and out of the house. Testing
+in the first position, the rotation of the fan did not make
+a significant impact. The test results show the temperature
+graph of some tests cannot be inferred. Because some tests
+show the temperature is moving up. Meanwhile, several other
+tests showed temperatures moving down. The temperature
+changes in rise and fall are also not very significant, which
+only ranges from 0.3-0.5◦C. The graph of the first few test
+positions is shown in Figure 21.
+The test at the second position showed that the temperature
+continued to rise as evidenced by the form of its test graph.
+6222
+VOLUME 11, 2023
+
+--- PAGE 15 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+FIGURE 21. First position test (behind the fan).
+TABLE 3. Fuzzy rule base.
+This temperature rise ranges from 0.3-0.4◦C only. If it is
+rotated for a longer time, the temperature decreases again. But
+this temperature drop is not too drastic. This second position
+test chart is as in Figure 22.
+In the third position, the results of all tests show that
+the temperature continues to rise, which results are almost
+TABLE 4. Fan speed decision-making test data.
+the same as those in the second position. The temperature
+changes that occur also range from 0.3-0.5◦C. The third
+position testing graph is shown in Figure 23.
+Tests that have been carried out on the three fan positions
+show that the temperature will change if a fan is applied.
+VOLUME 11, 2023
+6223
+
+--- PAGE 16 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+FIGURE 22. Second position test (next to the fan).
+FIGURE 23. Third position test (facing the fan).
+Based on several tests carried out, the temperature changes
+that occur are contrary to the objectives of this study. The
+temperature does not move down but moves up. The time used
+in this test ranged from 40-75 minutes. The results obtained
+from the test within 40-75 minutes showed a temperature
+change of only around 0.3-0.5◦C.
+Overall, this study shows that the temperature will move
+up when the closed room is fanned by a fan. This is caused
+by air circulation which does not change with fresh air from
+outside so that only the air in the room is continuously fanned
+by the fan. Therefore, a new problem arises, namely to pro-
+vide a change in hot temperature to decrease and fresh, air
+6224
+VOLUME 11, 2023
+
+--- PAGE 17 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+TABLE 5. Mobile application response testing.
+TABLE 6. Description of the position and wind touch of the fan.
+circulation is needed so that outside air can enter the room.
+This can be done by using ventilation or using an exhaust fan.
+However, if the room is difficult to reach the temperature from
+the outside, using an air conditioner may be more efficient
+than using a fan in a room without air circulation.
+V. CONCLUSION
+In this study, the fuzzy method can play a good role. The fan
+speed output can be adjusted according to the temperature and
+humidity conditions of the room in real time. However, the
+results of the fan are not able to reduce the room temperature
+but the temperature rises. These results indicate that a room
+that is fanned in a closed state without ventilation or air
+circulation will make the temperature hotter. Tests carried out
+within 40-75 minutes showed an average temperature rise of
+03-05◦C. Even though the temperature increase is not very
+significant, this result gives an output that is not as expected.
+So with that, through this research the authors suggest in
+further research to replace the cooling media using exhaust
+fans or air conditioners. Meanwhile, the IoT-based mobile
+applications that are built can function properly as long as the
+tools and applications are still connected to a stable internet
+network.
+REFERENCES
+[1] G. Lamberti, ‘‘Thermal comfort in the built environment: Current solutions
+and future expectations,’’ in Proc. IEEE Int. Conf. Environ. Electr. Eng.
+IEEE Ind. Commercial Power Syst. Eur. (EEEIC/I&CPS Eur.), Jun. 2020,
+pp. 1–6, doi: 10.1109/EEEIC/ICPSEurope49358.2020.9160558.
+[2] P. Wolkoff, K. Azuma, and P. Carrer, ‘‘Health, work performance, and risk
+of infection in office-like environments: The role of indoor temperature,
+air humidity, and ventilation,’’ Int. J. Hygiene Environ. Health, vol. 233,
+Apr. 2021, Art. no. 113709, doi: 10.1016/j.ijheh.2021.113709.
+[3] L. J. L. Ruiz, M. Ridder, D. Fan, J. Gong, B. M. Li, A. C. Mills,
+E. Cobarrubias, J. Strohmaier, J. S. Jur, and J. Lach, ‘‘Self-powered cardiac
+monitoring: Maintaining vigilance with multi-modal harvesting and E-
+textiles,’’ IEEE Sensors J., vol. 21, no. 2, pp. 2263–2276, Jan. 2021, doi:
+10.1109/JSEN.2020.3017706.
+[4] J.-H.
+Huh
+and
+M.
+J.
+Brandemuehl,
+‘‘Optimization
+of
+air-
+conditioning system operating strategies for hot and humid climates,’’
+Energy Buildings, vol. 40, no. 7, pp. 1202–1213, Jan. 2008, doi:
+10.1016/j.enbuild.2007.10.018.
+[5] A. Zare and M. T. Iqbal, ‘‘Low-cost ESP32, raspberry pi, node-red,
+and MQTT protocol based SCADA system,’’ in Proc. IEEE Int. IoT,
+Electron. Mechatronics Conf. (IEMTRONICS), Sep. 2020, pp. 1–4, doi:
+10.1109/IEMTRONICS51293.2020.9216412.
+[6] D. Yolanda, L. Arief, T. A. Sundara, M. Deza, and D. Oktavia, ‘‘Control
+of electrical conductivity for NFT hydroponic systems using fuzzy logic
+and Android environment,’’ in Proc. Int. Conf. Inf. Technol. Syst. Innov.
+(ICITSI), Oct. 2018, pp. 508–514, doi: 10.1109/ICITSI.2018.8695923.
+[7] Y. Perwej, K. Haq, F. Parwej, and M. M., ‘‘The Internet of Things (IoT) and
+its application domains,’’ Int. J. Comput. Appl., vol. 182, no. 49, pp. 36–49,
+Apr. 2019, doi: 10.5120/ijca2019918763.
+[8] M. N. Bhuiyan, M. M. Rahman, M. M. Billah, and D. Saha, ‘‘Internet
+of Things (IoT): A review of its enabling technologies in healthcare
+applications, standards protocols, security, and market opportunities,’’
+IEEE Internet Things J., vol. 8, no. 13, pp. 10474–10498, Jul. 2021, doi:
+10.1109/JIOT.2021.3062630.
+[9] R. Mamoun, M. Nasor, and S. H. Abulikailik, ‘‘Design and development of
+mobile healthcare application prototype using flutter,’’ in Proc. Int. Conf.
+Comput., Control, Electr., Electron. Eng. (ICCCEEE), Feb. 2021, pp. 1–6,
+doi: 10.1109/ICCCEEE49695.2021.9429595.
+[10] M. Babiuch, P. Foltynek, and P. Smutny, ‘‘Using the ESP32 microcontroller
+for data processing,’’ in Proc. 20th Int. Carpathian Control Conf. (ICCC),
+May 2019, pp. 1–6, doi: 10.1109/CarpathianCC.2019.8765944.
+[11] M.
+Muslih,
+Somantri,
+D.
+Supardi,
+E.
+Multipi,
+Y.
+M.
+Nyaman,
+A. Rismawan,
+and
+Gunawansyah,
+‘‘Developing
+smart
+workspace
+based IoT with artificial intelligence using telegram chatbot,’’ in Proc.
+Int. Conf. Comput., Eng., Design (ICCED), Sep. 2018, pp. 230–234, doi:
+10.1109/ICCED.2018.00052.
+[12] M. O. Onibonoje, P. N. Bokoro, N. I. Nwulu, and S. L. Gbadamosi,
+‘‘An IoT-based approach to real-time conditioning and control in a server
+room,’’ in Proc. Int. Artif. Intell. Data Process. Symp. (IDAP), Sep. 2019,
+pp. 1–6, doi: 10.1109/IDAP.2019.8875880.
+[13] A. F. Subahi and K. E. Bouazza, ‘‘An intelligent IoT-based system design
+for controlling and monitoring greenhouse temperature,’’ IEEE Access,
+vol. 8, pp. 125488–125500, 2020, doi: 10.1109/ACCESS.2020.3007955.
+[14] R. Rakhmawati, Irianto, F. D. Murdianto, A. Luthfi, and A. Y. Rahman,
+‘‘Thermal optimization on incubator using fuzzy inference system based
+IoT,’’ in Proc. Int. Conf. Artif. Intell. Inf. Technol. (ICAIIT), Mar. 2019,
+pp. 464–468, doi: 10.1109/ICAIIT.2019.8834530.
+[15] M. F. H. Hambali, R. K. Patchmuthu, and A. T. Wan, ‘‘IoT based smart
+poultry farm in Brunei,’’ in Proc. 8th Int. Conf. Inf. Commun. Technol.
+(ICoICT), Jun. 2020, pp. 1–5.
+VOLUME 11, 2023
+6225
+
+--- PAGE 18 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+[16] A. W. Jabbar, ‘‘Design and fabrication of smart home with Inter-
+net of Things enabled automation system,’’ IEEE Access, vol. 7,
+pp. 144059–144074, 2017, doi: 10.1109/ACCESS.2017.
+[17] A. K. Gupta and R. Johari, ‘‘IoT based electrical device surveillance and
+control system,’’ in Proc. 4th Int. Conf. Internet Things, Smart Innov.
+Usages (IoT-SIU), Apr. 2019, pp. 1–5.
+[18] Arlenny and D. Setiawan, ‘‘Optimization of electrical energy in the
+fan using fuzzy logic controllers,’’ IOP Conf. Ser., Earth Environ.
+Sci., vol. 1041, no. 1, Jun. 2022, Art. no. 012025, doi: 10.1088/1755-
+1315/1041/1/012025.
+[19] F. H. Purwanto, E. Utami, and E. Pramono, ‘‘Design of server room
+temperature and humidity control system using fuzzy logic based on
+microcontroller,’’ in Proc. Int. Conf. Inf. Commun. Technol. (ICOIACT),
+Mar. 2018, pp. 390–395, doi: 10.1109/ICOIACT.2018.8350770.
+[20] G. Aceto, V. Persico, and A. Pescapé, ‘‘Industry 4.0 and health: Internet
+of Things, big data, and cloud computing for healthcare 4.0,’’ J. Ind.
+Inf. Integr., vol. 18, Jun. 2020, Art. no. 100129, doi: 10.1016/j.jii.2020.
+100129.
+[21] A. Rusmardiana, T. Y. Akhirina, D. Yulistyanti, and U. Pauziah, ‘‘A web-
+based high school major decision support system in banten using
+Tsukamoto’s fuzzy method,’’ in Proc. Int. Seminar Intell. Technol.
+Its Appl. (ISITIA), Aug. 2018, pp. 233–238, doi: 10.1109/ISITIA.2018.
+8711337.
+[22] M. Marbun, W. Ramdhan, D. Priyanto, M. Zarlis, and Z. Nasution, ‘‘Phi-
+losophy of fuzzy logic as fundamental of decision making based on rule,’’
+J. Phys., Conf. Ser., vol. 1230, no. 1, Jul. 2019, Art. no. 012021, doi:
+10.1088/1742-6596/1230/1/012021.
+[23] B. Saleha, S. M. Nasution, and A. L. Prasasti, ‘‘Design of IoT-
+based smart laundry applications using fuzzy algorithms,’’ in Proc. Int.
+Conf. Inf. Technol. Syst. Innov. (ICITSI), Oct. 2020, pp. 393–397, doi:
+10.1109/ICITSI50517.2020.9264936.
+[24] L. T. H. Lan, T. M. Tuan, T. T. Ngan, L. H. Son, N. L. Giang, V. T. Nhu
+Ngoc, and P. V. Hai, ‘‘A new complex fuzzy inference system with fuzzy
+knowledge graph and extensions in decision making,’’ IEEE Access, vol. 8,
+pp. 164899–164921, 2020, doi: 10.1109/ACCESS.2020.3021097.
+[25] A. Lipare, D. R. Edla, and S. R. Parne, ‘‘Fuzzy rule-based system for
+energy efficiency in wireless sensor networks,’’ J. Supercomput., vol. 77,
+no. 9, pp. 9947–9970, Sep. 2021, doi: 10.1007/s11227-021-03668-w.
+[26] T. Sutikno, A. C. Subrata, and A. Elkhateb, ‘‘Evaluation of fuzzy mem-
+bership function effects for maximum power point tracking technique of
+photovoltaic system,’’ IEEE Access, vol. 9, pp. 109157–109165, 2021, doi:
+10.1109/ACCESS.2021.3102050.
+[27] S. N. Putri and D. R. S. Saputro, ‘‘Construction fuzzy logic with
+curve shoulder in inference system Mamdani,’’ J. Phys., Conf. Ser.,
+vol. 1776, no. 1, Feb. 2021, Art. no. 012060, doi: 10.1088/1742-
+6596/1776/1/012060.
+[28] Y. Kravchenko, O. Leshchenko, N. Dakhno, V. Deinega, H. Shevchenko,
+and O. Trush, ‘‘Intellectual fuzzy system air pollution control,’’ in
+Proc. IEEE 2nd Int. Conf. Adv. Trends Inf. Theory (ATIT), Nov. 2020,
+pp. 186–191, doi: 10.1109/ATIT50783.2020.9349334.
+[29] P. G. Singerman, S. M. ORourke, R. M. Narayanan, and M. Rangaswamy,
+‘‘Language-based cost functions: Another step toward a truly cognitive
+radar,’’ IEEE Trans. Aerosp. Electron. Syst., vol. 57, no. 6, pp. 3827–3843,
+Dec. 2021, doi: 10.1109/TAES.2021.3082714.
+[30] A. Krol and G. Sierpinski, ‘‘Application of a genetic algorithm with a fuzzy
+objective function for optimized siting of electric vehicle charging devices
+in urban road networks,’’ IEEE Trans. Intell. Transp. Syst., vol. 23, no. 7,
+pp. 8680–8691, Jul. 2022, doi: 10.1109/TITS.2021.3085103.
+[31] Y. M. Tashtoush and D. A. Al Aziz Orabi, ‘‘Tweets emotion pre-
+diction by using fuzzy logic system,’’ in Proc. 6th Int. Conf. Social
+Netw. Anal., Manage. Secur. (SNAMS), Oct. 2019, pp. 83–90, doi:
+10.1109/SNAMS.2019.8931878.
+[32] O. M. Olabanji and K. Mpofu, ‘‘Hybridized fuzzy analytic hierar-
+chy process and fuzzy weighted average for identifying optimal design
+concept,’’ Heliyon, vol. 6, no. 1, Jan. 2020, Art. no. e03182, doi:
+10.1016/j.heliyon.2020.e03182.
+[33] K. B. R. Teja, M. Monika, C. Chandravathi, and P. Kodali, ‘‘Smart monitor-
+ing system for pond management and automation in aquaculture,’’ in Proc.
+Int. Conf. Commun. Signal Process. (ICCSP), Jul. 2020, pp. 204–208, doi:
+10.1109/ICCSP48568.2020.9182187.
+[34] L. O. Aghenta and M. T. Iqbal, ‘‘Low-cost, open source IoT-based SCADA
+system design using thinger.IO and ESP32 thing,’’ Electronics, vol. 8, no. 8,
+pp. 1–24, 2019, doi: 10.3390/electronics8080822.
+[35] E. Vavrinsky, T. Zavodnik, T. Debnar, L. Cernaj, J. Kozarik, M. Micjan,
+J. Nevrela, M. Donoval, M. Kopani, and H. Kosnacova, ‘‘Research and
+development of a COVID-19 tracking system in order to implement ana-
+lytical tools to reduce the infection risk,’’ Sensors, vol. 22, no. 2, p. 526,
+Jan. 2022, doi: 10.3390/s22020526.
+[36] S. N. Khine and Z. Tun, ‘‘Mongodb on cloud for weather data
+(temperature and humidity) in sittway,’’ in Proc. IEEE Conf. Com-
+put. Appl. (ICCA), Feb. 2020, pp. 1–6, doi: 10.1109/ICCA49400.2020.
+9022825.
+[37] H. Jamal, M. Huzaifa, M. A. Sodunke, and J. O. Odiete, ‘‘Smart
+heat stress and toxic gases monitoring instrument with a developed
+graphical user interface using IoT,’’ in Proc. Int. Conf. Electr.,
+Commun.,
+Comput.
+Eng.
+(ICECCE),
+Jul.
+2019,
+pp. 24–25,
+doi:
+10.1109/ICECCE47252.2019.8940738.
+[38] F. Salamone, G. Chinazzo, L. Danza, C. Miller, S. Sibilio, and M. Masullo,
+‘‘Low-cost thermohygrometers to assess thermal comfort in the built
+environment: A laboratory evaluation of their measurement perfor-
+mance,’’ Buildings, vol. 12, no. 5, p. 579, Apr. 2022, doi: 10.3390/build-
+ings12050579.
+[39] P. De, A. Chatterjee, and A. Rakshit, ‘‘PIR sensor-based AAL tool for
+human movement detection: Modified MCP-based dictionary learning
+approach,’’ IEEE Trans. Instrum. Meas., vol. 69, no. 10, pp. 7377–7385,
+Oct. 2020, doi: 10.1109/TIM.2020.2981106.
+[40] L. Wu and Y. Wang, ‘‘A low-power electric-mechanical driving approach
+for true occupancy detection using a shuttered passive infrared sen-
+sor,’’ IEEE Sensors J., vol. 19, no. 1, pp. 47–57, Jan. 2019, doi:
+10.1109/JSEN.2018.2875659.
+[41] M. Jacoby, ‘‘Whisper: Wireless home identification and sensing platform
+for energy reduction,’’ J. Sensor Actuator Netw., vol. 10, no. 4, pp. 1–33,
+2021, doi: 10.3390/jsan10040071.
+[42] J. C. Kim, D. O. Neacsu, R. Ball, and B. Lehman, ‘‘Clearing series
+AC arc faults and avoiding false alarms using only voltage waveforms,’’
+IEEE Trans. Power Del., vol. 35, no. 2, pp. 946–956, Apr. 2020, doi:
+10.1109/TPWRD.2019.2931276.
+[43] M. A. Hannan, J. A. Ali, A. Mohamed, and A. Hussain, ‘‘Optimiza-
+tion techniques to enhance the performance of induction motor drives:
+A review,’’ Renew. Sustain. Energy Rev., vol. 81, no. 2, pp. 1611–1626,
+Jun. 2017, doi: 10.1016/j.rser.2017.05.240.
+[44] S. Boukhary and E. Colmenares, ‘‘A clean approach to flutter develop-
+ment through the flutter clean architecture package,’’ in Proc. Int. Conf.
+Comput. Sci. Comput. Intell. (CSCI), Dec. 2019, pp. 1115–1120, doi:
+10.1109/CSCI49370.2019.00211.
+[45] P. Nawrocki, K. Wrona, M. Marczak, and B. Sniezynski, ‘‘A compari-
+son of native and cross-platform frameworks for mobile applications,’’
+Computer, vol. 54, no. 3, pp. 18–27, Mar. 2021, doi: 10.1109/MC.2020.
+2983893.
+[46] J. Z. Blanco and D. Lucrédio, ‘‘A holistic approach for cross-platform soft-
+ware development,’’ J. Syst. Softw., vol. 179, Sep. 2021, Art. no. 110985,
+doi: 10.1016/j.jss.2021.110985.
+[47] G. I. Arb and K. Al-Majdi, ‘‘A freights status management system
+based on dart and flutter programming language,’’ J. Phys., Conf.
+Ser., vol. 1530, no. 1, May 2020, Art. no. 012020, doi: 10.1088/1742-
+6596/1530/1/012020.
+[48] S. Choi, E. Salter, X. Zhang, and B. C. Wunsche, ‘‘Bird eyes: A cloud-
+based object detection system for customisable surveillance,’’ in Proc. Int.
+Conf. Image Vis. Comput. New Zealand (IVCNZ), Nov. 2018, pp. 1–6, doi:
+10.1109/IVCNZ.2018.8634751.
+[49] R. R. Singh, ‘‘IoT embedded cloud-based intelligent power quality mon-
+itoring system for industrial drive application,’’ Future Gener. Com-
+put. Syst., vol. 112, pp. 884–898, Nov. 2020, doi: 10.1016/j.future.2020.
+06.032.
+[50] D. Gupta, S. Bhatt, M. Gupta, O. Kayode, and A. S. Tosun, ‘‘Access control
+model for Google cloud IoT,’’ in Proc. IEEE IEEE 6th Int. Conf. Big Data
+Secur. Cloud (BigDataSecurity) Int. Conf. High Perform. Smart Comput.,
+(HPSC) IEEE Int. Conf. Intell. Data Secur. (IDS), May 2020, pp. 198–208,
+doi: 10.1109/BigDataSecurity-HPSC-IDS49724.2020.00044.
+[51] K. E. Adetunji and M. K. Joseph, ‘‘Development of a cloud-based mon-
+itoring system using 4Duino: Applications in agriculture,’’ in Proc. Int.
+Conf. Adv. Big Data, Comput. Data Commun. Syst. (icABCD), Aug. 2018,
+pp. 4849–4854, doi: 10.1109/ICABCD.2018.8465418.
+[52] A. Yudhana and Priyatno, ‘‘Development of door safety fingerprint ver-
+ification using neural network,’’ J. Phys., Conf. Ser., vol. 1373, no. 1,
+Nov. 2019, Art. no. 012053, doi: 10.1088/1742-6596/1373/1/012053.
+6226
+VOLUME 11, 2023
+
+--- PAGE 19 ---
+Sunardi et al.: Tsukamoto Fuzzy Inference System on Internet of Things-Based for Room Temperature and Humidity Control
+[53] A. Yudhana, S. Mukhopadhyay, O. D. A. Prima, S. A. Akbar,
+F. Nuraisyah, I. Mufandi, K. H. Fauzi, and N. A. Nasyah, ‘‘Multi sensor
+application-based for measuring the quality of human urine on first-void
+urine,’’ Sens. Bio-Sens. Res., vol. 34, Dec. 2021, Art. no. 100461, doi:
+10.1016/j.sbsr.2021.100461.
+[54] A. Yudhana, D. Sulistyo, and I. Mufandi, ‘‘GIS-based and Naïve Bayes for
+nitrogen soil mapping in lendah, Indonesia,’’ Sens. Bio-Sens. Res., vol. 33,
+Aug. 2021, Art. no. 100435, doi: 10.1016/j.sbsr.2021.100435.
+[55] A. Yudhana, J. Rahmawan, and C. U. P. Negara, ‘‘Flex sensors and
+MPU6050 sensors responses on smart glove for sign language translation,’’
+IOP Conf. Ser., Mater. Sci. Eng., vol. 403, Oct. 2018, Art. no. 012032, doi:
+10.1088/1757-899X/403/1/012032.
+[56] N. H. Wijaya, A. Yudhana, Robiyansah, and D. Sukwono, ‘‘X-ray machine
+control with wireless based on mA parameters,’’ IOP Conf. Ser., Mater.
+Sci. Eng., vol. 1088, no. 1, Feb. 2021, Art. no. 012080, doi: 10.1088/1757-
+899x/1088/1/012080.
+[57] A. Kashevnik, I. Lashkov, and A. Gurtov, ‘‘Methodology and mobile
+application for driver behavior analysis and accident prevention,’’ IEEE
+Trans. Intell. Transp. Syst., vol. 21, no. 6, pp. 2427–2436, Jun. 2020, doi:
+10.1109/TITS.2019.2918328.
+[58] C. Rieger and T. A. Majchrzak, ‘‘Towards the definitive evaluation frame-
+work for cross-platform app development approaches,’’ J. Syst. Softw.,
+vol. 153, pp. 175–199, Jul. 2019, doi: 10.1016/j.jss.2019.04.001.
+[59] R. Siregar, M. Zarlis, and Z. Situmorang, ‘‘Tsukamoto’s fuzzy logic devel-
+opment analysis to predict caesarean or normal delivery,’’ in Proc. 3rd
+Int. Conf. Mech., Electron., Comput., Ind. Technol. (MECnIT), Jun. 2020,
+pp. 152–157, doi: 10.1109/MECnIT48290.2020.9166594.
+SUNARDI received the bachelor’s degree from
+Universitas Gadjah Mada, Yogyakarta, Indonesia,
+in 1999, the master’s degree from the Institut
+Teknologi Bandung, Bandung, Indonesia, in 2003,
+and the Ph.D. degree from Universiti Teknologi
+Malaysia, Johor Bahru, Malaysia, in 2011, all in
+electrical engineering. Currently, he is an Asso-
+ciate Professor with the Department of Elec-
+trical Engineering, Universitas Ahmad Dahlan,
+Yogyakarta. His research interests include data,
+information, and communication.
+ANTON YUDHANA (Member, IEEE) received
+the B.Eng. degree in electrical engineering from
+the Institut Teknologi Sepuluh Nopember, in 2001,
+the M.Eng. degree in electrical engineering from
+Universitas Gadjah Mada, Indonesia, in 2005,
+and the Ph.D. degree from Universiti Teknologi
+Malaysia, in 2011. He is currently an Associate
+Professor with the Department of Electrical Engi-
+neering, Universitas Ahmad Dahlan, Indonesia,
+and the Leader with the Center for Electrical and
+Electronic Research and Development (CEERD). His current research inter-
+ests include agriculture precision, biomedic engineering, and food engineer-
+ing based on the Internet of Things.
+FURIZAL was born in Kesra, Riau, Indonesia,
+in 1999. He received the B.Eng. degree in infor-
+matics engineering from Universitas Islam Riau,
+Indonesia, in
+2022. He is currently pursuing
+the master’s degree in informatics with Uni-
+versitas Ahmad Dahlan, Yogyakarta, Indonesia.
+From 2017 to 2018, he was an Instructor of
+computer courses at Yuri Computer. Since 2021,
+he has been a Web Developer with the Faculty of
+Engineering, Universitas Islam Riau. His research
+interests include artificial intelligence, decision support systems, the Internet
+of Things, and web and mobile development.
+VOLUME 11, 2023
+6227

@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "author": "Transformer CBM Project Team",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": 50, "left": 100, "attrs": {} },
+    {
+      "type": "wokwi-lcd1602",
+      "id": "lcd",
+      "top": -160,
+      "left": 80,
+      "attrs": { "pins": "i2c" }
+    },
+    {
+      "type": "wokwi-ds18b20",
+      "id": "temp_core",
+      "top": 60,
+      "left": -170,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-ds18b20",
+      "id": "temp_inlet",
+      "top": 180,
+      "left": -170,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_pullup",
+      "top": 120,
+      "left": -70,
+      "attrs": { "value": "4700" }
+    },
+    {
+      "type": "wokwi-slide-switch",
+      "id": "sw_main",
+      "top": 300,
+      "left": 50,
+      "attrs": { "label": "SW1: Main ON" }
+    },
+    {
+      "type": "wokwi-slide-switch",
+      "id": "sw_setup",
+      "top": 300,
+      "left": 200,
+      "attrs": { "label": "SW2: Setup AP" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_pson",
+      "top": 280,
+      "left": -40,
+      "attrs": { "color": "green", "label": "PS_ON Status" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_led",
+      "top": 250,
+      "left": -70,
+      "attrs": { "value": "330" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX0", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX0", "$serialMonitor:TX", "", [] ],
+
+    [ "esp:5V", "lcd:VCC", "red", [ "v-30", "h-20" ] ],
+    [ "esp:GND.1", "lcd:GND", "black", [ "v-40", "h-10" ] ],
+    [ "esp:D21", "lcd:SDA", "green", [ "v-60", "h-40" ] ],
+    [ "esp:D22", "lcd:SCL", "blue", [ "v-70", "h-50" ] ],
+
+    [ "esp:3V3", "temp_core:VDD", "red", [ "h-60", "v0" ] ],
+    [ "temp_core:VDD", "temp_inlet:VDD", "red", [ "h-20", "v120" ] ],
+    [ "esp:GND.2", "temp_core:GND", "black", [ "h-80", "v-80" ] ],
+    [ "temp_core:GND", "temp_inlet:GND", "black", [ "h-30", "v120" ] ],
+
+    [ "esp:D27", "temp_core:DQ", "gold", [ "h-40", "v-50" ] ],
+    [ "temp_core:DQ", "temp_inlet:DQ", "gold", [ "h-15", "v120" ] ],
+
+    [ "esp:3V3", "r_pullup:1", "red", [ "h-40", "v30" ] ],
+    [ "esp:D27", "r_pullup:2", "gold", [ "h-20", "v20" ] ],
+
+    [ "esp:D32", "r_led:1", "limegreen", [ "h-30", "v70" ] ],
+    [ "r_led:2", "led_pson:A", "limegreen", [ "h10", "v20" ] ],
+    [ "led_pson:C", "esp:GND.2", "black", [ "h-20", "v-120" ] ],
+
+    [ "esp:D18", "sw_main:2", "purple", [ "v100", "h-30" ] ],
+    [ "sw_main:1", "esp:GND.2", "black", [ "v20", "h-60", "v-150" ] ],
+
+    [ "esp:D23", "sw_setup:2", "magenta", [ "v100", "h10" ] ],
+    [ "sw_setup:1", "esp:GND.1", "black", [ "v30", "h-120", "v-160" ] ]
+  ]
+}
