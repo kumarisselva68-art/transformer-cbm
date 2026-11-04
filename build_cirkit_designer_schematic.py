@@ -203,12 +203,8 @@ def generate_cirkit_svg():
     </g>
 
     <!-- Center Silkscreen -->
-    <text x="105" y="98" fill="#f8fafc" font-size="19" font-weight="900" text-anchor="middle">INA219</text>
-    <text x="105" y="119" fill="#fef08a" font-size="15" font-weight="800" text-anchor="middle">+12V SHUNT</text>
-
-    <!-- Address Badge (Zero Collision: safely above pin labels!) -->
-    <rect x="65" y="128" width="80" height="22" rx="3" fill="#3b0764" stroke="#a855f7"/>
-    <text class="pin-label" x="105" y="144" fill="#fef08a" font-size="13" font-weight="700" text-anchor="middle">ADDR: 0x40</text>
+    <text x="105" y="106" fill="#f8fafc" font-size="20" font-weight="900" text-anchor="middle">INA219</text>
+    <text x="105" y="132" fill="#fef08a" font-size="16" font-weight="800" text-anchor="middle">+12V SHUNT</text>
 
     <!-- 4-Pin Logic Header at Bottom (Global y = 325) -->
     <g transform="translate(0, 190)">
@@ -225,7 +221,7 @@ def generate_cirkit_svg():
   </g>
 
 
-  <!-- 3. INA219 #2 (5V RAIL CURRENT MONITOR - ADDR 0x41) - IN LINE! -->
+  <!-- 3. INA219 #2 (5V RAIL CURRENT MONITOR) - IN LINE! -->
   <g id="ina219-5v" transform="translate(650, 135)" filter="url(#pcb-shadow)">
     <rect width="210" height="210" rx="8" fill="#581c87" stroke="#7e22ce" stroke-width="2"/>
     <circle cx="12" cy="12" r="4.5" fill="#581c87" stroke="#eab308" stroke-width="1.5"/>
@@ -251,12 +247,8 @@ def generate_cirkit_svg():
     </g>
 
     <!-- Center Silkscreen -->
-    <text x="105" y="98" fill="#f8fafc" font-size="19" font-weight="900" text-anchor="middle">INA219</text>
-    <text x="105" y="119" fill="#fca5a5" font-size="15" font-weight="800" text-anchor="middle">+5V SHUNT</text>
-
-    <!-- Address Badge -->
-    <rect x="55" y="128" width="100" height="22" rx="3" fill="#3b0764" stroke="#a855f7"/>
-    <text class="pin-label" x="105" y="144" fill="#fef08a" font-size="13" font-weight="700" text-anchor="middle">ADDR: 0x41 [A0]</text>
+    <text x="105" y="106" fill="#f8fafc" font-size="20" font-weight="900" text-anchor="middle">INA219</text>
+    <text x="105" y="132" fill="#fca5a5" font-size="16" font-weight="800" text-anchor="middle">+5V SHUNT</text>
 
     <!-- 4-Pin Logic Header at Bottom (Global y = 325) -->
     <g transform="translate(0, 190)">
@@ -273,7 +265,7 @@ def generate_cirkit_svg():
   </g>
 
 
-  <!-- 4. INA219 #3 (3.3V RAIL CURRENT MONITOR - ADDR 0x44) - IN LINE! -->
+  <!-- 4. INA219 #3 (3.3V RAIL CURRENT MONITOR) - IN LINE! -->
   <g id="ina219-3v3" transform="translate(910, 135)" filter="url(#pcb-shadow)">
     <rect width="210" height="210" rx="8" fill="#581c87" stroke="#7e22ce" stroke-width="2"/>
     <circle cx="12" cy="12" r="4.5" fill="#581c87" stroke="#eab308" stroke-width="1.5"/>
@@ -299,12 +291,8 @@ def generate_cirkit_svg():
     </g>
 
     <!-- Center Silkscreen -->
-    <text x="105" y="98" fill="#f8fafc" font-size="19" font-weight="900" text-anchor="middle">INA219</text>
-    <text x="105" y="119" fill="#fed7aa" font-size="15" font-weight="800" text-anchor="middle">+3.3V SHUNT</text>
-
-    <!-- Address Badge -->
-    <rect x="55" y="128" width="100" height="22" rx="3" fill="#3b0764" stroke="#a855f7"/>
-    <text class="pin-label" x="105" y="144" fill="#fef08a" font-size="13" font-weight="700" text-anchor="middle">ADDR: 0x44 [A1]</text>
+    <text x="105" y="106" fill="#f8fafc" font-size="20" font-weight="900" text-anchor="middle">INA219</text>
+    <text x="105" y="132" fill="#fed7aa" font-size="16" font-weight="800" text-anchor="middle">+3.3V SHUNT</text>
 
     <!-- 4-Pin Logic Header at Bottom (Global y = 325) -->
     <g transform="translate(0, 190)">
@@ -321,7 +309,7 @@ def generate_cirkit_svg():
   </g>
 
 
-  <!-- 5. MULTI-RAIL EXTERNAL SYSTEM LOADS (CLEAN BENCHTOP PANEL, ZERO WIRE OVERLAPS) -->
+  <!-- 5. EXTERNAL LOAD (CLEAN & MINIMAL) -->
   <g id="external-loads" transform="translate(1180, 135)" filter="url(#pcb-shadow)">
     <!-- Industrial Slate Enclosure -->
     <rect width="480" height="210" rx="8" fill="#1e293b" stroke="#475569" stroke-width="2"/>
@@ -330,49 +318,38 @@ def generate_cirkit_svg():
     <circle cx="14" cy="196" r="5" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5"/>
     <circle cx="466" cy="196" r="5" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5"/>
 
-    <!-- 4 Heavy Binding Posts: 3 Positive Monitored Rail Inputs + 1 Common Return Ground -->
-    <!-- Incoming wires enter the top of posts (y = 46) directly from above with ZERO text collisions! -->
-    
+    <!-- 4 Heavy Binding Posts: 3 Positive Rail Inputs + 1 Common Return Ground -->
     <!-- 1. +12V LOAD IN (cx = 65, cy = 46 -> Global: 1245, 181) -->
     <g transform="translate(65, 46)">
       <circle cx="0" cy="0" r="14" fill="#d97706" stroke="#fef08a" stroke-width="3"/>
       <circle cx="0" cy="0" r="5" fill="#78350f"/>
-      <text class="pin-label-lg" x="0" y="26" fill="#fef08a" text-anchor="middle">+12V</text>
-      <text x="0" y="44" fill="#fef08a" font-size="11" font-weight="700" text-anchor="middle">VIN (+12V)</text>
-      <text x="0" y="60" fill="#cbd5e1" font-size="12" font-weight="700" text-anchor="middle">10Ω (50W)</text>
+      <text class="pin-label-lg" x="0" y="28" fill="#fef08a" text-anchor="middle">+12V</text>
     </g>
 
     <!-- 2. +5V LOAD IN (cx = 175, cy = 46 -> Global: 1355, 181) -->
     <g transform="translate(175, 46)">
       <circle cx="0" cy="0" r="14" fill="#dc2626" stroke="#fca5a5" stroke-width="3"/>
       <circle cx="0" cy="0" r="5" fill="#7f1d1d"/>
-      <text class="pin-label-lg" x="0" y="26" fill="#fca5a5" text-anchor="middle">+5V</text>
-      <text x="0" y="44" fill="#fca5a5" font-size="11" font-weight="700" text-anchor="middle">VIN (+5V)</text>
-      <text x="0" y="60" fill="#cbd5e1" font-size="12" font-weight="700" text-anchor="middle">5V AUX</text>
+      <text class="pin-label-lg" x="0" y="28" fill="#fca5a5" text-anchor="middle">+5V</text>
     </g>
 
     <!-- 3. +3.3V LOAD IN (cx = 285, cy = 46 -> Global: 1465, 181) -->
     <g transform="translate(285, 46)">
       <circle cx="0" cy="0" r="14" fill="#ea580c" stroke="#fed7aa" stroke-width="3"/>
       <circle cx="0" cy="0" r="5" fill="#7c2d12"/>
-      <text class="pin-label-lg" x="0" y="26" fill="#fed7aa" text-anchor="middle">+3.3V</text>
-      <text x="0" y="44" fill="#fed7aa" font-size="11" font-weight="700" text-anchor="middle">VIN (+3.3V)</text>
-      <text x="0" y="60" fill="#cbd5e1" font-size="12" font-weight="700" text-anchor="middle">3.3V AUX</text>
+      <text class="pin-label-lg" x="0" y="28" fill="#fed7aa" text-anchor="middle">+3.3V</text>
     </g>
 
     <!-- 4. COMMON GND (cx = 395, cy = 46 -> Global: 1575, 181) -->
     <g transform="translate(395, 46)">
       <circle cx="0" cy="0" r="14" fill="#334155" stroke="#94a3b8" stroke-width="3"/>
       <circle cx="0" cy="0" r="5" fill="#1e293b"/>
-      <text class="pin-label-lg" x="0" y="26" fill="#f8fafc" text-anchor="middle">GND</text>
-      <text x="0" y="44" fill="#94a3b8" font-size="11" font-weight="700" text-anchor="middle">COMMON</text>
-      <text x="0" y="60" fill="#cbd5e1" font-size="12" font-weight="700" text-anchor="middle">RETURN</text>
+      <text class="pin-label-lg" x="0" y="28" fill="#f8fafc" text-anchor="middle">GND</text>
     </g>
 
-    <!-- Lower Panel Silkscreen (Completely clear of wires!) -->
-    <line x1="25" y1="125" x2="455" y2="125" stroke="#334155" stroke-width="1.5" stroke-dasharray="4,4"/>
-    <text x="240" y="156" fill="#f8fafc" font-size="19" font-weight="800" letter-spacing="0.5" text-anchor="middle">MULTI-RAIL EXTERNAL SYSTEM LOADS</text>
-    <text x="240" y="180" fill="#94a3b8" font-size="13" font-weight="600" text-anchor="middle">Independent Monitored Positive Rails with Common Ground</text>
+    <!-- Lower Panel Silkscreen: Clean, bold EXTERNAL LOAD -->
+    <line x1="25" y1="110" x2="455" y2="110" stroke="#334155" stroke-width="1.5" stroke-dasharray="4,4"/>
+    <text x="240" y="165" fill="#f8fafc" font-size="24" font-weight="900" letter-spacing="1.5" text-anchor="middle">EXTERNAL LOAD</text>
   </g>
 
 
@@ -547,12 +524,11 @@ def generate_cirkit_svg():
 
 
   <!-- 10. DUAL DS18B20 TEMPERATURE SENSORS -->
-  <!-- PROBE 1: TRANSFORMER CORE TEMP -->
+  <!-- PROBE 1: CORE TEMP -->
   <g id="temp-core-mod" transform="translate(460, 955)" filter="url(#pcb-shadow)">
     <rect width="270" height="170" rx="8" fill="#1e3a8a" stroke="#1d4ed8" stroke-width="2"/>
-    <text x="25" y="52" fill="#ffffff" font-size="24" font-weight="900" letter-spacing="0.5px">PROBE 1</text>
-    <text x="25" y="85" fill="#f8fafc" font-size="19" font-weight="800">TRANSFORMER</text>
-    <text x="25" y="112" fill="#f8fafc" font-size="19" font-weight="800">CORE TEMP</text>
+    <text x="25" y="55" fill="#ffffff" font-size="24" font-weight="900" letter-spacing="0.5px">PROBE 1</text>
+    <text x="25" y="95" fill="#f8fafc" font-size="20" font-weight="800">CORE TEMP</text>
 
     <circle cx="245" cy="40" r="10" fill="#ea580c" stroke="#fed7aa" stroke-width="3"/>
     <text x="224" y="47" fill="#fed7aa" font-size="22" font-weight="800" text-anchor="end">VCC</text>
@@ -562,12 +538,11 @@ def generate_cirkit_svg():
     <text x="224" y="137" fill="#f8fafc" font-size="22" font-weight="800" text-anchor="end">GND</text>
   </g>
 
-  <!-- PROBE 2: AMBIENT AIR TEMP -->
+  <!-- PROBE 2: AMBIENT TEMP -->
   <g id="temp-amb-mod" transform="translate(460, 1175)" filter="url(#pcb-shadow)">
     <rect width="270" height="170" rx="8" fill="#1e3a8a" stroke="#1d4ed8" stroke-width="2"/>
-    <text x="25" y="52" fill="#ffffff" font-size="24" font-weight="900" letter-spacing="0.5px">PROBE 2</text>
-    <text x="25" y="85" fill="#f8fafc" font-size="19" font-weight="800">AMBIENT</text>
-    <text x="25" y="112" fill="#f8fafc" font-size="19" font-weight="800">AIR TEMP</text>
+    <text x="25" y="55" fill="#ffffff" font-size="24" font-weight="900" letter-spacing="0.5px">PROBE 2</text>
+    <text x="25" y="95" fill="#f8fafc" font-size="20" font-weight="800">AMBIENT TEMP</text>
 
     <circle cx="245" cy="40" r="10" fill="#ea580c" stroke="#fed7aa" stroke-width="3"/>
     <text x="224" y="47" fill="#fed7aa" font-size="22" font-weight="800" text-anchor="end">VCC</text>
@@ -576,7 +551,7 @@ def generate_cirkit_svg():
     <circle cx="245" cy="130" r="10" fill="#0f172a" stroke="#f8fafc" stroke-width="3"/>
     <text x="224" y="137" fill="#f8fafc" font-size="22" font-weight="800" text-anchor="end">GND</text>
   </g>
-  <text class="comp-title-lg" x="595" y="1410" text-anchor="middle">DS18B20 TEMPERATURE SENSORS</text>
+  <text class="comp-title-lg" x="595" y="1410" text-anchor="middle">DS18B20 SENSORS</text>
 
 
   <!-- 11. 16x2 CHARACTER LCD WITH PCF8574 I2C BACKPACK -->
@@ -590,7 +565,7 @@ def generate_cirkit_svg():
     <!-- PCF8574 I2C BACKPACK -->
     <g transform="translate(90, 8)">
       <rect width="520" height="64" rx="4" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
-      <text class="pin-label" x="40" y="38" fill="#f8fafc">I2C BACKPACK (0x27)</text>
+      <text class="pin-label" x="40" y="38" fill="#f8fafc">I2C BACKPACK</text>
 
       <circle cx="350" cy="30" r="10" fill="#0f172a" stroke="#f8fafc" stroke-width="3"/>
       <text class="pin-label-lg" x="350" y="58" fill="#f8fafc" text-anchor="middle">GND</text>
@@ -613,7 +588,7 @@ def generate_cirkit_svg():
       ATX:ON  FAN:100%[ACT]
     </text>
   </g>
-  <text class="comp-title-lg" x="1360" y="1410" text-anchor="middle">16×2 I2C CHARACTER LCD (STANDBY 5V POWERED)</text>
+  <text class="comp-title-lg" x="1360" y="1410" text-anchor="middle">16×2 I2C LCD</text>
 
 
   <!-- ===================================================================== -->
