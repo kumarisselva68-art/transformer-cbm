@@ -768,8 +768,8 @@ void updateLcdScreen() {
   switch (lcdScreenIndex) {
     case 0:
       // Screen 1: Thermal Metrics (T1, T2, Delta T, Virtual Hotspot)
-      snprintf(line1, sizeof(line1), "T1:%4.1fC T2:%4.1fC", telemetry.t_core, telemetry.t_inlet);
-      snprintf(line2, sizeof(line2), "dT:%4.1fC HST:%4.1f", (telemetry.t_core - telemetry.t_inlet), telemetry.t_hotspot);
+      snprintf(line1, sizeof(line1), "T1:%4.1f T2:%4.1fC", telemetry.t_core, telemetry.t_inlet);
+      snprintf(line2, sizeof(line2), "dT:%4.1f HST:%4.1f", (telemetry.t_core - telemetry.t_inlet), telemetry.t_hotspot);
       break;
 
     case 1:
