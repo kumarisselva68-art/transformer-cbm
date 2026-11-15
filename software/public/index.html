@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Transformer CBM | Predictive Thermal Management Platform</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <!-- Chart.js for High-Precision Streaming Graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+  <!-- ==================== SVG SYMBOL DEFINITIONS ==================== -->
+  <svg style="display: none;">
+    <defs>
+      <!-- Industrial Transformer Core Symbol -->
+      <g id="icon-transformer">
+        <rect x="3" y="3" width="18" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M8 6v12M16 6v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M8 10h8M8 14h8" stroke="var(--color-primary)" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="12" cy="12" r="2.5" fill="var(--color-primary)"/>
+      </g>
+      <!-- Power Icon -->
+      <g id="icon-power">
+        <path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <!-- Activity / Trend -->
+      <g id="icon-activity">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <!-- Gauge -->
+      <g id="icon-gauge">
+        <path d="M12 2v2M4.93 4.93l1.41 1.41M2 12h2M20 12h2M17.66 6.34l1.41-1.41M12 6a6 6 0 1 0 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="12" y1="12" x2="16" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <!-- Fan (Industrial 4-Blade Symmetric Hub) -->
+      <g id="icon-fan">
+        <path fill="currentColor" d="M12,11a1,1,0,1,0,1,1,1,1,0,0,0-1-1m.5-9C17,2,17.1,5.57,14.73,6.75a3.36,3.36,0,0,0-1.62,2.47,3.17,3.17,0,0,1,1.23.91C18,8.13,22,8.92,22,12.5c0,4.5-3.58,4.6-4.75,2.23a3.44,3.44,0,0,0-2.5-1.62,3.24,3.24,0,0,1-.91,1.23c2,3.69,1.2,7.66-2.38,7.66C7,22,6.89,18.42,9.26,17.24a3.46,3.46,0,0,0,1.62-2.45,3,3,0,0,1-1.25-.92C5.94,15.85,2,15.07,2,11.5,2,7,5.54,6.89,6.72,9.26A3.39,3.39,0,0,0,9.2,10.87a2.91,2.91,0,0,1,.92-1.22C8.13,6,8.92,2,12.48,2Z"/>
+      </g>
+      <!-- Controls / Sliders -->
+      <g id="icon-sliders">
+        <line x1="4" y1="21" x2="4" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="4" y1="10" x2="4" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="12" y1="21" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="12" y1="8" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="20" y1="21" x2="20" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="20" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="1" y1="14" x2="7" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="9" y1="8" x2="15" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="17" y1="16" x2="23" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <!-- Settings / Sliders Cog -->
+      <g id="icon-settings">
+        <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="currentColor" stroke-width="2"/>
+      </g>
+      <!-- Shield / Security -->
+      <g id="icon-shield">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <!-- Alert Triangle -->
+      <g id="icon-alert">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <!-- Sun -->
+      <g id="icon-sun">
+        <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+        <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <!-- Moon -->
+      <g id="icon-moon">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <!-- Stop Octagon (Emergency) -->
+      <g id="icon-stop">
+        <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <!-- Check Circle -->
+      <g id="icon-check">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <polyline points="22 4 12 14.01 9 11.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <!-- Chevron Down / Up -->
+      <g id="icon-chevron">
+        <polyline points="6 9 12 15 18 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <!-- External Link -->
+      <g id="icon-external">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </defs>
+  </svg>
+
+  <!-- ============================================================== -->
+  <!-- 1. FULL-BLEED APPLE / LINEAR STYLE LANDING PAGE (UNAUTHENTICATED) -->
+  <!-- ============================================================== -->
+  <div id="landingView" class="landing-page-wrap">
+    
+    <!-- Sticky Glassmorphism Header -->
+    <header class="landing-nav-header">
+      <div class="landing-nav-container">
+        <div class="landing-brand">
+          <svg class="landing-nav-logo" viewBox="0 0 24 24"><use href="#icon-transformer"/></svg>
+          <span class="landing-brand-name">TRANSFORMER CBM</span>
+          <span class="landing-rev-pill">REV 3.0</span>
+        </div>
+
+        <div class="landing-nav-actions">
+          <button class="theme-toggle-btn" id="btnLandingThemeToggle" title="Toggle Night / Light Theme">
+            <svg class="theme-icon icon-sun" viewBox="0 0 24 24"><use href="#icon-sun"/></svg>
+            <svg class="theme-icon icon-moon" viewBox="0 0 24 24"><use href="#icon-moon"/></svg>
+          </button>
+          <div id="landingNavGoogleBtn" class="landing-nav-auth"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Full-Page Editorial Flow -->
+    <main class="landing-main-flow">
+      
+      <!-- Hero Section -->
+      <section class="landing-hero-section">
+        <h1 class="hero-display-headline">
+          Transformer Condition Monitoring
+        </h1>
+        
+        <p class="hero-editorial-sub">
+          Real-time multi-rail power telemetry, predictive thermal management, and fail-safe hardware supervisory protection.
+        </p>
+
+        <!-- Primary Action Callout -->
+        <div class="hero-cta-box">
+          <div id="googleBtnContainer" class="hero-google-btn"></div>
+          <div id="loginError" class="auth-error-banner hidden"></div>
+          <p class="hero-security-note">Authorized engineering personnel &amp; academic faculty access</p>
+        </div>
+      </section>
+
+      <!-- Live Dashboard Showcase Frame -->
+      <section class="landing-showcase-section">
+        <div class="showcase-frame reveal-on-scroll">
+          <div class="showcase-header">
+            <div class="showcase-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <span class="showcase-title">Supervisory Telemetry &amp; Regression Engine — Live Preview</span>
+            <div class="showcase-meta">
+              <span class="status-indicator-dot"></span>
+              <span>STANDBY ACQUISITION</span>
+            </div>
+          </div>
+
+          <div class="showcase-body">
+            <!-- Mock Gauges -->
+            <div class="mock-gauges-row">
+              <div class="mock-gauge-card">
+                <span class="mock-caption">CORE HOTSPOT (T1)</span>
+                <span class="mock-reading amber">48.2 <small>°C</small></span>
+                <span class="mock-sub">DS18B20 Winding Contact</span>
+              </div>
+              <div class="mock-gauge-card">
+                <span class="mock-caption">COOLING INLET (T2)</span>
+                <span class="mock-reading cyan">29.6 <small>°C</small></span>
+                <span class="mock-sub">Ambient Air Intake Probe</span>
+              </div>
+              <div class="mock-gauge-card">
+                <span class="mock-caption">PROJECTED HORIZON (Tp)</span>
+                <span class="mock-reading yellow">52.4 <small>°C</small></span>
+                <span class="mock-sub">+30s Rolling Trend Slope</span>
+              </div>
+              <div class="mock-gauge-card">
+                <span class="mock-caption">COOLING SYSTEM</span>
+                <span class="mock-reading emerald">75 <small>%</small></span>
+                <span class="mock-sub">Adaptive PWM Speed</span>
+              </div>
+            </div>
+
+            <!-- Mock Chart Ribbon -->
+            <div class="mock-chart-ribbon">
+              <div class="mock-ribbon-header">
+                <span>10-Second Telemetry Streaming with Dual Trip Boundaries</span>
+                <span class="mono">Rate of Rise: +0.14 °C/s</span>
+              </div>
+              <div class="mock-wave-preview">
+                <div class="mock-wave-line core"></div>
+                <div class="mock-wave-line inlet"></div>
+                <div class="mock-wave-line pred"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Engineering Innovations Bento Grid -->
+      <section class="landing-bento-section">
+        <div class="bento-header reveal-on-scroll">
+          <h2 class="bento-title">Engineered for Fail-Safe Operation</h2>
+        </div>
+
+        <div class="bento-grid">
+          <div class="bento-card reveal-on-scroll">
+            <div class="bento-icon-wrap">
+              <svg viewBox="0 0 24 24" class="bento-svg"><use href="#icon-gauge"/></svg>
+            </div>
+            <h3 class="bento-card-title">Dual-Probe Temperature Differential</h3>
+            <p class="bento-card-text">
+              Direct winding hotspot probe (T1) and ambient intake airflow probe (T2) deliver continuous ΔT thermal differential monitoring with 0.0625°C precision.
+            </p>
+          </div>
+
+          <div class="bento-card reveal-on-scroll">
+            <div class="bento-icon-wrap">
+              <svg viewBox="0 0 24 24" class="bento-svg"><use href="#icon-activity"/></svg>
+            </div>
+            <h3 class="bento-card-title">Rolling Trend Extrapolation</h3>
+            <p class="bento-card-text">
+              An ordinary least-squares regression calculates temperature rate-of-rise over a 30-sample sliding window to anticipate thermal breaches 30 seconds ahead.
+            </p>
+          </div>
+
+          <div class="bento-card reveal-on-scroll">
+            <div class="bento-icon-wrap">
+              <svg viewBox="0 0 24 24" class="bento-svg"><use href="#icon-shield"/></svg>
+            </div>
+            <h3 class="bento-card-title">Fail-Safe Hardware Isolation</h3>
+            <p class="bento-card-text">
+              Active-low optocoupler interlock instantly cuts off transformer output rails if core temperature reaches 65.0°C or forward projection exceeds 70.0°C.
+            </p>
+          </div>
+
+          <div class="bento-card reveal-on-scroll">
+            <div class="bento-icon-wrap">
+              <svg viewBox="0 0 24 24" class="bento-svg"><use href="#icon-power"/></svg>
+            </div>
+            <h3 class="bento-card-title">Continuous Standby Telemetry</h3>
+            <p class="bento-card-text">
+              Microcontroller runs on uninterrupted +5VSB auxiliary standby power, maintaining sensor monitoring and alert connectivity even during a main trip.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Capstone Engineering Specification & Academic Roster -->
+      <section class="landing-academic-section">
+        <div class="academic-container reveal-on-scroll">
+          <div class="academic-institution-block">
+            <span class="academic-badge">CAPSTONE ENGINEERING SPECIFICATION</span>
+            <h2 class="academic-college-title">Rajalakshmi Institute of Technology, Chennai</h2>
+            <p class="academic-dept-title">Department of Electronics and Communication Engineering &bull; Batch 2021&ndash;2025</p>
+          </div>
+
+          <div class="academic-roster-grid">
+            <div class="academic-member-card">
+              <span class="member-role">PROJECT RESEARCHER</span>
+              <span class="member-name">Selvakumari S</span>
+              <span class="member-reg mono">Reg. No: 211721106085</span>
+            </div>
+
+            <div class="academic-member-card">
+              <span class="member-role">PROJECT RESEARCHER</span>
+              <span class="member-name">Shreya S</span>
+              <span class="member-reg mono">Reg. No: 211721106095</span>
+            </div>
+
+            <div class="academic-member-card">
+              <span class="member-role">PROJECT RESEARCHER</span>
+              <span class="member-name">Susmitha G</span>
+              <span class="member-reg mono">Reg. No: 211721106103</span>
+            </div>
+
+            <div class="academic-mentor-card">
+              <span class="mentor-badge-label">PROJECT MENTOR</span>
+              <span class="mentor-name-title">Mrs. V. Subashini</span>
+              <span class="mentor-dept-role">Assistant Professor, Department of ECE</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Clean Editorial Footer -->
+    <footer class="landing-bottom-footer">
+      <div class="landing-footer-container">
+        <span>Transformer Condition Monitoring &amp; Predictive Thermal Management</span>
+        <span class="mono">TMS-ESP32 Rev 3.0 Platform</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 2. AUTHENTICATED WORKSPACE SHELL                               -->
+  <!-- ============================================================== -->
+  <div id="appContainer" class="app-shell hidden">
+
+    <!-- Top Navigation Header (Normal Standard Height & Touch Targets) -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="header-brand">
+          <svg class="header-logo-svg" viewBox="0 0 24 24"><use href="#icon-transformer"/></svg>
+          <div class="brand-text">
+            <span class="brand-title">TRANSFORMER CBM</span>
+            <span class="brand-version">TMS-ESP32 Rev 3.0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs (Desktop) -->
+      <nav class="desktop-nav" id="desktopNav">
+        <button class="nav-tab active" data-tab="tab-dashboard">
+          <svg class="nav-icon" viewBox="0 0 24 24"><use href="#icon-gauge"/></svg>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-controls">
+          <svg class="nav-icon" viewBox="0 0 24 24"><use href="#icon-sliders"/></svg>
+          <span>Controls</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-rails">
+          <svg class="nav-icon" viewBox="0 0 24 24"><use href="#icon-activity"/></svg>
+          <span>Power Rails</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-alerts">
+          <svg class="nav-icon" viewBox="0 0 24 24"><use href="#icon-alert"/></svg>
+          <span>Incidents</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-settings">
+          <svg class="nav-icon" viewBox="0 0 24 24"><use href="#icon-settings"/></svg>
+          <span>Settings &amp; Architecture</span>
+        </button>
+      </nav>
+
+      <!-- Header Right Utilities -->
+      <div class="header-right">
+        <!-- System Health Status Pill -->
+        <div class="health-pill" id="healthPill">
+          <span class="health-dot" id="healthDot"></span>
+          <span class="health-text" id="healthStatusText">SYSTEM NORMAL</span>
+        </div>
+
+        <!-- Dark/Light Theme Toggle -->
+        <button class="theme-toggle-btn" id="btnThemeToggle" title="Toggle Night / Light Theme">
+          <svg class="theme-icon icon-sun" viewBox="0 0 24 24"><use href="#icon-sun"/></svg>
+          <svg class="theme-icon icon-moon" viewBox="0 0 24 24"><use href="#icon-moon"/></svg>
+        </button>
+
+        <!-- User Profile & Sign Out -->
+        <div class="user-profile-menu">
+          <img id="userAvatar" class="avatar-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' fill='%2371717a'%3E%3Ccircle cx='16' cy='16' r='16'/%3E%3C/svg%3E" alt="User">
+          <div class="user-text-meta">
+            <span id="userName" class="user-display-name">--</span>
+            <span id="userRoleBadge" class="user-badge">VIEWER</span>
+          </div>
+          <button id="btnSignOut" class="btn-icon-signout" title="Sign Out">
+            <svg viewBox="0 0 24 24" class="signout-svg"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Content -->
+    <main class="main-workspace">
+
+      <!-- ==================== TAB 1: DASHBOARD ==================== -->
+      <section id="tab-dashboard" class="tab-pane active">
+        
+        <!-- Compact Linear-Style Telemetry KPI Ribbon -->
+        <div class="hero-status-card compact-kpi-ribbon" id="heroStatusCard">
+          <div class="kpi-left-group">
+            <span class="status-chip" id="mainStateChip">MAIN OUTPUT ENERGIZED</span>
+            <div class="kpi-divider"></div>
+            <div class="kpi-status-heading">
+              <span class="kpi-live-dot"></span>
+              <span class="hero-heading" id="heroHeading">SYSTEM NORMAL</span>
+            </div>
+            <p class="hero-sub hidden" id="heroSub">Continuous FreeRTOS sensor sampling, EMA rate-of-rise trend extrapolation, and dual overtemperature supervision.</p>
+          </div>
+
+          <div class="kpi-right-group">
+            <span class="heartbeat-meta"><svg class="heartbeat-icon" viewBox="0 0 24 24"><use href="#icon-pulse"/></svg> Heartbeat: <strong id="lastHeartbeatTime" class="mono">--:--:--</strong></span>
+            <button id="btnExportTelemetry" class="btn-secondary-outline compact-csv-btn" title="Download Telemetry History as CSV">
+              <svg class="btn-svg-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Export CSV</span>
+            </button>
+            <button id="heroBtnTripStop" class="btn-danger-emergency compact-emergency-btn" title="Instant Latching Emergency Cutoff">
+              <svg class="btn-svg-icon" viewBox="0 0 24 24"><use href="#icon-stop"/></svg>
+              <span>Emergency Cutoff</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Radial Precision Gauges Grid -->
+        <div class="gauges-grid">
+          
+          <!-- Gauge 1: Transformer Core Hotspot (T1) -->
+          <div class="gauge-card" id="gaugeCardCore" data-tooltip="DS18B20 digital 1-Wire probe mounted in direct thermal contact with transformer core iron">
+            <div class="card-top-row">
+              <span class="card-caption">TRANSFORMER CORE HOTSPOT</span>
+              <span class="card-tag">T1 • DS18B20</span>
+            </div>
+            <div class="radial-gauge-container">
+              <svg class="radial-gauge-svg" viewBox="0 0 120 120">
+                <circle class="gauge-track" cx="60" cy="60" r="48"/>
+                <circle id="arcCoreTemp" class="gauge-fill color-core" cx="60" cy="60" r="48"/>
+              </svg>
+              <div class="radial-center-readout">
+                <span id="readoutCoreTemp" class="radial-num">--.-</span>
+                <span class="radial-deg">°C</span>
+              </div>
+            </div>
+            <div class="gauge-footer-meta">
+              <span>Threshold: <strong id="lblCoreThreshold">65.0</strong> °C</span>
+              <span id="tagCoreStatus" class="tag-status-normal">NOMINAL</span>
+            </div>
+          </div>
+
+          <!-- Gauge 2: Cooling Airflow Inlet (T2) -->
+          <div class="gauge-card" data-tooltip="DS18B20 ambient intake probe measuring incoming cooling air temperature before passing coils">
+            <div class="card-top-row">
+              <span class="card-caption">COOLING AIRFLOW INLET</span>
+              <span class="card-tag">T2 • DS18B20</span>
+            </div>
+            <div class="radial-gauge-container">
+              <svg class="radial-gauge-svg" viewBox="0 0 120 120">
+                <circle class="gauge-track" cx="60" cy="60" r="48"/>
+                <circle id="arcInletTemp" class="gauge-fill color-inlet" cx="60" cy="60" r="48"/>
+              </svg>
+              <div class="radial-center-readout">
+                <span id="readoutInletTemp" class="radial-num">--.-</span>
+                <span class="radial-deg">°C</span>
+              </div>
+            </div>
+            <div class="gauge-footer-meta">
+              <span>Thermal Rise (ΔT):</span>
+              <span id="readoutDeltaT" class="mono font-bold">--.- °C</span>
+            </div>
+          </div>
+
+          <!-- Gauge 3: Predicted Horizon (Tp) -->
+          <div class="gauge-card" id="gaugeCardPred" data-tooltip="Rolling ordinary least-squares trend projected 30 seconds forward to preempt overtemperature trips">
+            <div class="card-top-row">
+              <span class="card-caption">PREDICTED HORIZON</span>
+              <span class="card-tag">+30s Projection</span>
+            </div>
+            <div class="radial-gauge-container">
+              <svg class="radial-gauge-svg" viewBox="0 0 120 120">
+                <circle class="gauge-track" cx="60" cy="60" r="48"/>
+                <circle id="arcPredTemp" class="gauge-fill color-pred" cx="60" cy="60" r="48"/>
+              </svg>
+              <div class="radial-center-readout">
+                <span id="readoutPredTemp" class="radial-num">--.-</span>
+                <span class="radial-deg">°C</span>
+              </div>
+            </div>
+            <div class="gauge-footer-meta">
+              <span>Rate of Rise:</span>
+              <span id="readoutRateOfRise" class="mono font-bold">+0.00 °C/s</span>
+            </div>
+          </div>
+
+          <!-- Gauge 4: Active Cooling Fan Modulation -->
+          <div class="gauge-card" data-tooltip="TB6612FNG H-bridge driver delivering silent 25 kHz ultrasonic PWM cooling fan modulation">
+            <div class="card-top-row">
+              <span class="card-caption">ACTIVE COOLING FAN</span>
+              <span class="card-tag">TB6612 • PWM</span>
+            </div>
+            <div class="radial-gauge-container">
+              <svg class="radial-gauge-svg" viewBox="0 0 120 120">
+                <circle class="gauge-track" cx="60" cy="60" r="48"/>
+                <circle id="arcFanSpeed" class="gauge-fill color-fan" cx="60" cy="60" r="48"/>
+              </svg>
+              <div class="radial-center-readout">
+                <svg class="animated-fan-svg" id="animatedFanSvg" viewBox="0 0 24 24"><use href="#icon-fan"/></svg>
+                <span id="readoutFanSpeed" class="radial-num-sm">AUTO</span>
+              </div>
+            </div>
+            <div class="gauge-footer-meta">
+              <span>Modulation:</span>
+              <span id="readoutFanMode" class="tag-status-normal">AUTO-PID</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Predictive Health & Insulation Engine -->
+        <div class="surface-card prognostics-surface">
+          <div class="surface-header">
+            <div>
+              <h3 class="surface-title">Predictive Health &amp; Insulation</h3>
+            </div>
+            <span class="health-status-badge" id="badgeHealthClassification">OPTIMAL</span>
+          </div>
+
+          <div class="prognostics-grid">
+            <!-- Metric 1: Health Index -->
+            <div class="prognostic-stat-card" data-tooltip="Composite health score derived from thermal excursions and cumulative Arrhenius insulation wear">
+              <div class="prognostic-label">
+                <span>Health Index</span>
+                <span class="mono">HI</span>
+              </div>
+              <div class="prognostic-value-wrap">
+                <span class="prognostic-number" id="valHealthIndex">96.4</span>
+                <span class="prognostic-unit">%</span>
+              </div>
+              <div class="health-track-bar">
+                <div class="health-fill-bar" id="barHealthIndex" style="width: 96.4%;"></div>
+              </div>
+            </div>
+
+            <!-- Metric 2: Virtual Hot-Spot -->
+            <div class="prognostic-stat-card" data-tooltip="Estimated internal copper winding hot-spot (core surface measurement plus 4.2°C internal coil gradient)">
+              <div class="prognostic-label">
+                <span>Est. Hot-Spot</span>
+                <span class="mono">T<sub>HST</sub></span>
+              </div>
+              <div class="prognostic-value-wrap">
+                <span class="prognostic-number" id="valHotspotEstimate">38.7</span>
+                <span class="prognostic-unit">°C</span>
+              </div>
+              <span class="prognostic-desc">Core + 4.2°C Gradient</span>
+            </div>
+
+            <!-- Metric 3: Arrhenius Acceleration Factor -->
+            <div class="prognostic-stat-card" data-tooltip="IEEE Std C57.91 Arrhenius aging acceleration factor relative to continuous 110°C baseline endurance">
+              <div class="prognostic-label">
+                <span>Aging Factor</span>
+                <span class="mono">F<sub>AA</sub></span>
+              </div>
+              <div class="prognostic-value-wrap">
+                <span class="prognostic-number" id="valArrheniusFactor">0.005</span>
+                <span class="prognostic-unit">&times;</span>
+              </div>
+              <span class="prognostic-desc">110°C Base Rate</span>
+            </div>
+
+            <!-- Metric 4: Thermal Gradient Rise -->
+            <div class="prognostic-stat-card" data-tooltip="Differential thermal extraction rise between core and inlet air (T_core - T_inlet)">
+              <div class="prognostic-label">
+                <span>Core Rise</span>
+                <span class="mono">&Delta;T</span>
+              </div>
+              <div class="prognostic-value-wrap">
+                <span class="prognostic-number" id="valThermalDelta">+7.3</span>
+                <span class="prognostic-unit">°C</span>
+              </div>
+              <span class="prognostic-desc">T<sub>core</sub> &minus; T<sub>inlet</sub></span>
+            </div>
+          </div>
+
+          <div class="prognostics-advisory-box">
+            <span class="kpi-live-dot"></span>
+            <span class="advisory-text" id="textHealthAdvisory">Thermal margin optimal — Class B endurance verified.</span>
+            <span id="titleHealthAdvisory" style="display:none"></span>
+          </div>
+        </div>
+
+        <!-- Master Trend Graph Card -->
+        <div class="surface-card chart-surface">
+          <div class="surface-header">
+            <div>
+              <h3 class="surface-title">Thermal Extrapolation &amp; Trend Analysis</h3>
+              <p class="surface-desc">High-precision telemetry streaming with EMA trendline and safety bounds</p>
+            </div>
+            <div class="surface-actions">
+              <span class="streaming-indicator">
+                <span class="pulse-beacon"></span>
+                <span>EDGE STREAMING</span>
+              </span>
+            </div>
+          </div>
+          <div class="chart-canvas-container">
+            <canvas id="masterThermalChart"></canvas>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==================== TAB 2: CONTROLS ==================== -->
+      <section id="tab-controls" class="tab-pane">
+        <div class="controls-layout">
+
+          <!-- Card: Sleek Master Power Output Toggle Switch -->
+          <div class="surface-card">
+            <div class="surface-header">
+              <div>
+                <h3 class="surface-title">Main Power Output Control</h3>
+                <p class="surface-desc">Supervisory energization of the transformer main load rails</p>
+              </div>
+              <div class="power-status-tag" id="ctrlPowerStatusTag">ACTIVE [ENERGIZED]</div>
+            </div>
+
+            <!-- Master Toggle Interface Box -->
+            <div class="master-power-card">
+              <div class="power-state-info">
+                <span class="power-state-title" id="lblPowerStateTitle">Main Output Energized</span>
+                <p class="power-state-sub" id="lblPowerStateSub">Transformer main rails are active and delivering power to the load.</p>
+              </div>
+
+              <div class="power-toggle-action">
+                <label class="master-toggle-switch" title="Toggle Main Transformer Output">
+                  <input type="checkbox" id="chkMasterPowerToggle" checked>
+                  <span class="master-slider-switch"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="interlock-notice-box">
+              <svg class="notice-svg" viewBox="0 0 24 24"><use href="#icon-shield"/></svg>
+              <div>
+                <strong>Hardware Safety Interlock:</strong>
+                <span>Energization commands are automatically rejected by local firmware if core temperature exceeds the safety trip limit to guarantee fail-safe physical operation.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: Fan Modulation & Speed Control -->
+          <div class="surface-card">
+            <div class="surface-header">
+              <div>
+                <h3 class="surface-title">Cooling Fan Modulation</h3>
+                <p class="surface-desc">Switch between automatic PID regulation and manual PWM duty cycle</p>
+              </div>
+            </div>
+
+            <div class="fan-control-group">
+              <div class="segmented-control">
+                <button id="btnFanModeAuto" class="segmented-btn active">Automatic (Firmware PID)</button>
+                <button id="btnFanModeManual" class="segmented-btn">Manual Override</button>
+              </div>
+
+              <div class="slider-wrapper" id="fanSliderWrap" style="opacity: 0.5; pointer-events: none;">
+                <div class="slider-label-row">
+                  <span>Manual Fan PWM Duty Cycle:</span>
+                  <span id="lblFanSpeedVal" class="mono font-bold">50%</span>
+                </div>
+                <input type="range" id="sliderFanSpeed" min="0" max="100" value="50" class="custom-range-slider">
+                <div class="slider-ticks">
+                  <span>0% (OFF)</span>
+                  <span>25%</span>
+                  <span>50%</span>
+                  <span>75%</span>
+                  <span>100% (MAX)</span>
+                </div>
+                <button id="btnApplyFan" class="btn-primary-sm" style="margin-top: 14px;">Apply Manual Speed</button>
+              </div>
+            </div>
+
+            <!-- Firmware Piecewise Thermal Modulation Curve Visualizer -->
+            <div class="fan-curve-box">
+              <div class="fan-curve-header">
+                <span class="fan-curve-caption">FIRMWARE THERMAL PWM TRANSFER FUNCTION</span>
+                <span class="fan-curve-live-meta">Current Operating Point: <strong id="lblCurveTemp" class="mono">--.-°C</strong> &rarr; <strong id="lblCurvePWM" class="mono">--%</strong></span>
+              </div>
+              <div class="fan-curve-svg-wrap">
+                <svg viewBox="0 0 460 110" class="fan-curve-svg">
+                  <!-- Grid Zones -->
+                  <rect x="30" y="10" width="85" height="75" fill="rgba(6, 182, 212, 0.05)" />
+                  <rect x="115" y="10" width="135" height="75" fill="rgba(16, 185, 129, 0.05)" />
+                  <rect x="250" y="10" width="95" height="75" fill="rgba(245, 158, 11, 0.08)" />
+                  <rect x="345" y="10" width="95" height="75" fill="rgba(244, 63, 94, 0.08)" />
+                  
+                  <!-- Axes -->
+                  <line x1="30" y1="85" x2="440" y2="85" stroke="var(--border-strong)" stroke-width="1.5" />
+                  <line x1="30" y1="10" x2="30" y2="85" stroke="var(--border-strong)" stroke-width="1.5" />
+                  
+                  <!-- Axis Labels -->
+                  <text x="30" y="100" class="curve-axis-text">25°C</text>
+                  <text x="115" y="100" class="curve-axis-text">35°C</text>
+                  <text x="250" y="100" class="curve-axis-text">55°C</text>
+                  <text x="345" y="100" class="curve-axis-text">65°C</text>
+                  <text x="440" y="100" class="curve-axis-text">75°C</text>
+                  
+                  <text x="24" y="88" class="curve-axis-text" text-anchor="end">0%</text>
+                  <text x="24" y="52" class="curve-axis-text" text-anchor="end">50%</text>
+                  <text x="24" y="18" class="curve-axis-text" text-anchor="end">100%</text>
+
+                  <!-- Transfer Function Curve Line -->
+                  <polyline points="30,85 115,85 250,25 345,15 345,85 440,85" fill="none" stroke="var(--color-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                  
+                  <!-- Zone Labels -->
+                  <text x="72" y="32" class="curve-zone-tag">STANDBY</text>
+                  <text x="182" y="48" class="curve-zone-tag">PID RAMP</text>
+                  <text x="297" y="24" class="curve-zone-tag">MAX 100%</text>
+                  <text x="392" y="55" class="curve-zone-tag danger">TRIP ISOLATION</text>
+
+                  <!-- Live Operating Cursor -->
+                  <circle id="fanCurveLiveDot" cx="115" cy="85" r="5" class="curve-live-dot" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: Viva Presentation & Fault Injection Simulator -->
+          <div class="surface-card demo-simulator-surface">
+            <div class="surface-header">
+              <div>
+                <h3 class="surface-title">Viva Defense &amp; Fault Injection Simulator</h3>
+                <p class="surface-desc">Execute deterministic benchmark scenarios for examiners and evaluation committees</p>
+              </div>
+              <span class="status-chip off" id="badgeDemoMode">LIVE SENSOR SYNC</span>
+            </div>
+
+            <div class="demo-actions-grid">
+              <button id="btnDemoNormal" class="btn-demo-scenario" title="Simulate nominal operating load">
+                <svg class="btn-svg-icon" viewBox="0 0 24 24"><use href="#icon-check"/></svg>
+                <div class="demo-btn-text">
+                  <span class="demo-title">Nominal Baseline</span>
+                  <span class="demo-sub">38.2°C Core • 50% Fan • Normal</span>
+                </div>
+              </button>
+
+              <button id="btnDemoOverheat" class="btn-demo-scenario danger" title="Simulate rapid thermal rise past trip threshold">
+                <svg class="btn-svg-icon" viewBox="0 0 24 24"><use href="#icon-alert"/></svg>
+                <div class="demo-btn-text">
+                  <span class="demo-title">Thermal Trip Excursion</span>
+                  <span class="demo-sub">Ramp &rarr; 67.5°C • 100% Fan • Trip Cutoff</span>
+                </div>
+              </button>
+
+              <button id="btnDemoCooldown" class="btn-demo-scenario" title="Simulate high fan extraction cooling">
+                <svg class="btn-svg-icon" viewBox="0 0 24 24"><use href="#icon-fan"/></svg>
+                <div class="demo-btn-text">
+                  <span class="demo-title">Forced Cooldown</span>
+                  <span class="demo-sub">Rapid -0.2°C/s Heat Extraction</span>
+                </div>
+              </button>
+
+              <button id="btnDemoLiveHardware" class="btn-demo-scenario active" title="Revert to real hardware telemetry">
+                <svg class="btn-svg-icon" viewBox="0 0 24 24"><use href="#icon-pulse"/></svg>
+                <div class="demo-btn-text">
+                  <span class="demo-title">Live Hardware Sync</span>
+                  <span class="demo-sub">Stream ESP32 Cloudflare Edge</span>
+                </div>
+              </button>
+            </div>
+          </div>
+          </div>
+
+          <!-- Card: Emergency Cutoff & Fault Reset -->
+          <div class="surface-card danger-surface">
+            <div class="surface-header">
+              <div>
+                <h3 class="surface-title text-danger">Emergency Safety Override</h3>
+                <p class="surface-desc">Immediate hardware shutdown signal and supervisory lockout release</p>
+              </div>
+            </div>
+
+            <div class="danger-actions-row">
+              <button id="btnEmergencyStop" class="btn-emergency-refined">
+                <svg class="btn-svg-icon" viewBox="0 0 24 24"><use href="#icon-stop"/></svg>
+                <div class="emergency-text">
+                  <span class="emergency-title">Emergency Cutoff Stop</span>
+                  <span class="emergency-sub">Instantly disconnect transformer load rails</span>
+                </div>
+              </button>
+
+              <button id="btnResetFaultLatch" class="btn-secondary-outline">
+                <svg class="btn-svg-icon" viewBox="0 0 24 24"><use href="#icon-check"/></svg>
+                <span>Reset Supervisory Fault Latch</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==================== TAB 3: POWER RAILS ==================== -->
+      <section id="tab-rails" class="tab-pane">
+        
+        <!-- Total System Power & Load Distribution Split Bar -->
+        <div class="surface-card total-power-card">
+          <div class="total-power-header">
+            <div>
+              <span class="card-caption">COMPOSITE SYSTEM POWER CONSUMPTION</span>
+              <div class="total-power-value-row">
+                <span class="total-power-number" id="valTotalPower">34.8</span>
+                <span class="total-power-unit">W</span>
+                <span class="power-efficiency-chip">98.2% CONVERSION EFFICIENCY</span>
+              </div>
+            </div>
+            <div class="power-load-distribution">
+              <span class="load-split-label">Real-Time Multi-Rail Load Allocation</span>
+              <div class="load-split-bar">
+                <div id="splitBar12v" class="split-segment rail-12v" style="width: 78%;" title="+12V Rail"></div>
+                <div id="splitBar5v" class="split-segment rail-5v" style="width: 14%;" title="+5V Rail"></div>
+                <div id="splitBar3v3" class="split-segment rail-3v3" style="width: 8%;" title="+3.3V Rail"></div>
+              </div>
+              <div class="load-split-legend">
+                <span><span class="legend-dot rail-12v"></span> +12V: <strong id="pctRail12v">78%</strong></span>
+                <span><span class="legend-dot rail-5v"></span> +5V: <strong id="pctRail5v">14%</strong></span>
+                <span><span class="legend-dot rail-3v3"></span> +3.3V: <strong id="pctRail3v3">8%</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rails-summary-grid">
+          
+          <div class="rail-card" data-tooltip="INA219 high-side shunt at I2C 0x40 measuring primary output load power">
+            <div class="rail-header">
+              <span class="rail-name">+12V Main Load Rail</span>
+              <span class="rail-addr">INA219 @ 0x40</span>
+            </div>
+            <div class="rail-meters">
+              <div class="rail-meter-box">
+                <span class="meter-caption">VOLTAGE</span>
+                <span id="rail12vVolts" class="meter-value">12.04</span>
+                <span class="meter-unit">V</span>
+              </div>
+              <div class="rail-meter-box">
+                <span class="meter-caption">CURRENT</span>
+                <span id="rail12vAmps" class="meter-value">2.45</span>
+                <span class="meter-unit">A</span>
+              </div>
+              <div class="rail-meter-box">
+                <span class="meter-caption">POWER</span>
+                <span id="rail12vWatts" class="meter-value">29.5</span>
+                <span class="meter-unit">W</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="rail-card" data-tooltip="INA219 high-side shunt at I2C 0x41 measuring auxiliary 5V rail and cooling fan draw">
+            <div class="rail-header">
+              <span class="rail-name">+5V Logic &amp; Fan Rail</span>
+              <span class="rail-addr">INA219 @ 0x41</span>
+            </div>
+            <div class="rail-meters">
+              <div class="rail-meter-box">
+                <span class="meter-caption">VOLTAGE</span>
+                <span id="rail5vVolts" class="meter-value">5.01</span>
+                <span class="meter-unit">V</span>
+              </div>
+              <div class="rail-meter-box">
+                <span class="meter-caption">CURRENT</span>
+                <span id="rail5vAmps" class="meter-value">0.85</span>
+                <span class="meter-unit">A</span>
+              </div>
+              <div class="rail-meter-box">
+                <span class="meter-caption">POWER</span>
+                <span id="rail5vWatts" class="meter-value">4.26</span>
+                <span class="meter-unit">W</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="rail-card" data-tooltip="INA219 high-side shunt at I2C 0x44 measuring micro-logic and 1-Wire sensor bus power">
+            <div class="rail-header">
+              <span class="rail-name">+3.3V Microcontroller Rail</span>
+              <span class="rail-addr">INA219 @ 0x44</span>
+            </div>
+            <div class="rail-meters">
+              <div class="rail-meter-box">
+                <span class="meter-caption">VOLTAGE</span>
+                <span id="rail3v3Volts" class="meter-value">3.31</span>
+                <span class="meter-unit">V</span>
+              </div>
+              <div class="rail-meter-box">
+                <span class="meter-caption">CURRENT</span>
+                <span id="rail3v3Amps" class="meter-value">0.42</span>
+                <span class="meter-unit">A</span>
+              </div>
+              <div class="rail-meter-box">
+                <span class="meter-caption">POWER</span>
+                <span id="rail3v3Watts" class="meter-value">1.39</span>
+                <span class="meter-unit">W</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Rail Chart -->
+        <div class="surface-card" style="margin-top: 20px;">
+          <div class="surface-header">
+            <div>
+              <h3 class="surface-title">Load Current Multi-Rail Distribution</h3>
+              <p class="surface-desc">High-speed telemetry across simultaneous instrumentation shunts</p>
+            </div>
+            <span class="streaming-indicator"><span class="pulse-beacon"></span> LIVE</span>
+          </div>
+          <div class="chart-canvas-container">
+            <canvas id="railsChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 4: INCIDENTS AUDIT TRAIL ==================== -->
+      <section id="tab-alerts" class="tab-pane">
+        <div class="surface-card">
+          <div class="surface-header">
+            <div>
+              <h3 class="surface-title">Supervisory Audit Trail &amp; Safety Events</h3>
+              <p class="surface-desc">Cryptographically timestamped incident history committed to Cloudflare D1</p>
+            </div>
+            <button id="btnRefreshAlerts" class="btn-secondary-sm">Refresh Log</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="platform-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Incident Classification</th>
+                  <th>Diagnostic Details</th>
+                  <th>Alert Dispatch</th>
+                </tr>
+              </thead>
+              <tbody id="incidentsTableBody">
+                <tr><td colspan="4" class="text-center text-muted">No safety incidents logged. Operating within nominal bounds.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 5: SETTINGS & ARCHITECTURE ==================== -->
+      <section id="tab-settings" class="tab-pane">
+        <div class="controls-layout">
+
+          <!-- 1. Safety Threshold Controls & Factory Reset -->
+          <div class="surface-card">
+            <div class="surface-header">
+              <div>
+                <h3 class="surface-title">Thermal Safety Thresholds</h3>
+                <p class="surface-desc">Configurable boundary limits for physical trip triggers and predictive extrapolation</p>
+              </div>
+              <button id="btnResetDefaults" class="btn-secondary-sm">Reset to Defaults</button>
+            </div>
+
+            <div class="settings-grid">
+              <div class="setting-field-card">
+                <label class="setting-label">Core Hotspot Trip Limit (°C)</label>
+                <div class="setting-input-wrap">
+                  <input type="number" id="inputCoreTripLimit" class="form-input mono" min="45" max="85" step="0.5" value="65.0">
+                  <span class="setting-unit">°C</span>
+                </div>
+                <span class="setting-hint">Default: 65.0 °C. Instant fail-safe cutoff.</span>
+              </div>
+
+              <div class="setting-field-card">
+                <label class="setting-label">Predicted Horizon Trip Limit (°C)</label>
+                <div class="setting-input-wrap">
+                  <input type="number" id="inputPredTripLimit" class="form-input mono" min="50" max="90" step="0.5" value="70.0">
+                  <span class="setting-unit">°C</span>
+                </div>
+                <span class="setting-hint">Default: 70.0 °C. Proactive regression cutoff.</span>
+              </div>
+
+              <div class="setting-field-card">
+                <label class="setting-label">Trend Extrapolation Horizon (s)</label>
+                <div class="setting-input-wrap">
+                  <input type="number" id="inputHorizonSec" class="form-input mono" min="10" max="120" step="5" value="30">
+                  <span class="setting-unit">sec</span>
+                </div>
+                <span class="setting-hint">Default: 30 seconds forward projection.</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 18px; display: flex; justify-content: flex-end;">
+              <button id="btnSaveThresholds" class="btn-primary-sm">Save Threshold Changes</button>
+            </div>
+          </div>
+
+          <!-- 2. Email Notification Preferences -->
+          <div class="surface-card">
+            <div class="surface-header">
+              <div>
+                <h3 class="surface-title">Notification &amp; Incident Dispatch Preferences</h3>
+                <p class="surface-desc">Configure automated Brevo transactional email dispatches for hardware silence, emergency trips, and power actions</p>
+              </div>
+              <span class="watchdog-state-pill" id="pillWatchdogState">PAUSED [OFF]</span>
+            </div>
+
+            <!-- Toggle 1: Overtemperature Trip -->
+            <div class="setting-toggle-row">
+              <div class="setting-text-wrap">
+                <span class="setting-title">Thermal Overtemperature Trip Alerts</span>
+                <p class="setting-desc">Dispatches an immediate incident email when measured core temperature (&ge; 65.0°C) or projected temperature (&ge; 70.0°C) breaches safety limits. Protected by a 15-minute deduplication guard.</p>
+              </div>
+              <label class="switch-toggle">
+                <input type="checkbox" id="chkNotifyOvertemp" checked>
+                <span class="slider-switch"></span>
+              </label>
+            </div>
+
+            <!-- Toggle 2: Emergency Manual Cutoff -->
+            <div class="setting-toggle-row">
+              <div class="setting-text-wrap">
+                <span class="setting-title">Emergency Manual Cutoff Override Dispatches</span>
+                <p class="setting-desc">Dispatches an immediate notification whenever an operator or administrator triggers the manual Emergency Stop override to sever load rails.</p>
+              </div>
+              <label class="switch-toggle">
+                <input type="checkbox" id="chkNotifyEmergency" checked>
+                <span class="slider-switch"></span>
+              </label>
+            </div>
+
+            <!-- Toggle 3: Remote Power De-energize -->
+            <div class="setting-toggle-row">
+              <div class="setting-text-wrap">
+                <span class="setting-title">Remote Power Output De-energize Notices</span>
+                <p class="setting-desc">Dispatches a notification when main output rails are turned OFF remotely, containing the safety advisory regarding residual core heat and stored capacitor energy.</p>
+              </div>
+              <label class="switch-toggle">
+                <input type="checkbox" id="chkNotifyPowerOff" checked>
+                <span class="slider-switch"></span>
+              </label>
+            </div>
+
+            <!-- Toggle 4: Hardware Communication Silence Watchdog -->
+            <div class="setting-toggle-row">
+              <div class="setting-text-wrap">
+                <span class="setting-title">Hardware Communication Loss Watchdog</span>
+                <p class="setting-desc">Audits heartbeat telemetry every minute; dispatches a single incident notification if the ESP32 remains silent for &gt; 120 seconds (with 6-hour anti-spam cooldown).</p>
+              </div>
+              <label class="switch-toggle">
+                <input type="checkbox" id="chkWatchdogEmail">
+                <span class="slider-switch"></span>
+              </label>
+            </div>
+
+            <!-- Toggle 5: Acoustic Industrial Safety Chime -->
+            <div class="setting-toggle-row" style="border-bottom: none;">
+              <div class="setting-text-wrap">
+                <span class="setting-title">Acoustic Industrial Safety Chime (Web Audio API)</span>
+                <p class="setting-desc">Emits an 880 Hz synthetic dual-pulse audible safety warning tone in the browser when an overtemperature trip or manual emergency shutdown occurs.</p>
+              </div>
+              <label class="switch-toggle">
+                <input type="checkbox" id="chkAudioChime" checked>
+                <span class="slider-switch"></span>
+              </label>
+            </div>
+
+            <div style="margin-top: 14px; display: flex; justify-content: flex-end;">
+              <button id="btnSaveNotifications" class="btn-primary-sm">Save Notification Preferences</button>
+            </div>
+
+            <div class="watchdog-meta-bar" style="margin-top: 10px; border-top: 1px solid var(--border-subtle);">
+              <span>Authorized Notification Recipients: <strong class="mono">kumarisselva68@gmail.com, yogarathinam26@gmail.com</strong></span>
+            </div>
+          </div>
+
+          <!-- 3. Collapsible System Architecture & Schematics -->
+          <div class="surface-card">
+            <div class="surface-header">
+              <div>
+                <h3 class="surface-title">Hardware Architecture &amp; Circuit Schematics</h3>
+                <p class="surface-desc">Review master circuit schematics, FreeRTOS pinout mappings, and mathematical models</p>
+              </div>
+              <button id="btnToggleArchViewer" class="btn-secondary-sm">
+                <span id="lblToggleArch">Show Architecture</span>
+                <svg class="btn-svg-sm" viewBox="0 0 24 24"><use href="#icon-chevron"/></svg>
+              </button>
+            </div>
+
+            <!-- Expandable Architecture Content (Hidden by default) -->
+            <div id="archViewerContainer" class="arch-collapsible hidden">
+              
+              <!-- Diagram Selector Buttons -->
+              <div class="diagram-selector-row">
+                <button class="diagram-btn active" data-diagram="07_master_hardware_circuit_schematic.svg">Master Hardware Schematic</button>
+                <button class="diagram-btn" data-diagram="01_hardware_circuit_block_diagram.svg">Hardware Block Diagram</button>
+                <button class="diagram-btn" data-diagram="02_software_cloud_architecture_block_diagram.svg">Software &amp; Cloud Tiers</button>
+                <button class="diagram-btn" data-diagram="05_predictive_thermal_algorithm_flowchart.svg">Predictive Thermal Flowchart</button>
+                <button class="diagram-btn" data-diagram="04_hardware_operational_state_flowchart.svg">State Machine Flowchart</button>
+              </div>
+
+              <!-- Diagram Display Viewer -->
+              <div class="diagram-viewer-card">
+                <div class="diagram-toolbar">
+                  <span id="diagramViewerTitle" class="diagram-viewer-title">Master Hardware Circuit Schematic</span>
+                  <a id="btnDiagramOpenFull" href="assets/diagrams/dark/07_master_hardware_circuit_schematic.svg" target="_blank" class="btn-diagram-full" title="Open Vector Diagram in New Tab">
+                    <svg viewBox="0 0 24 24" class="btn-svg-sm"><use href="#icon-external"/></svg>
+                    <span>Open Full SVG</span>
+                  </a>
+                </div>
+                <div class="diagram-canvas-box">
+                  <img id="diagramDisplayImg" class="diagram-display-img" src="assets/diagrams/dark/07_master_hardware_circuit_schematic.svg" alt="Architecture Diagram">
+                </div>
+              </div>
+
+              <!-- Pinout Allocations Table -->
+              <div style="margin-top: 20px;">
+                <h4 class="card-subtitle" style="margin-bottom: 12px;">Physical Hardware Pinouts &amp; Bus Allocations</h4>
+                <div class="table-responsive">
+                  <table class="platform-table">
+                    <thead>
+                      <tr>
+                        <th>Subsystem</th>
+                        <th>Component</th>
+                        <th>ESP32 Pin</th>
+                        <th>Bus / Protocol</th>
+                        <th>Function &amp; Operating Characteristics</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>Thermal Probes</strong></td>
+                        <td>Dual DS18B20 Probes</td>
+                        <td><span class="pin-badge">GPIO 4</span></td>
+                        <td>1-Wire Digital</td>
+                        <td>T1 (Winding Hotspot) &amp; T2 (Ambient Inlet), 12-bit resolution, 4.7kΩ pullup to +3.3V</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Power Monitors</strong></td>
+                        <td>3× INA219 Shunts</td>
+                        <td><span class="pin-badge">GPIO 21 (SDA)</span><br><span class="pin-badge">GPIO 22 (SCL)</span></td>
+                        <td>I2C Bus (400kHz)</td>
+                        <td>Addresses: <code>0x40</code> (+12V rail), <code>0x41</code> (+5V rail), <code>0x44</code> (+3.3V rail). High-side shunt sensing.</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Cooling Modulation</strong></td>
+                        <td>TB6612FNG Driver</td>
+                        <td><span class="pin-badge">GPIO 25 (PWMA)</span><br><span class="pin-badge">GPIO 26 / 27 / 14</span></td>
+                        <td>LEDC PWM @ 25kHz</td>
+                        <td>Dual H-bridge MOSFET driver. Active cooling fan speed modulated automatically via predictive algorithm.</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Fail-Safe Trip</strong></td>
+                        <td>ATX PS_ON# Relay</td>
+                        <td><span class="pin-badge">GPIO 19</span></td>
+                        <td>Active-Low Optocoupler</td>
+                        <td>Pull LOW to energize main transformer power rails; release HIGH-Z/HIGH to instantly de-energize on trip.</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Standby Telemetry</strong></td>
+                        <td>AMS1117-3.3 Regulator</td>
+                        <td><span class="pin-badge">VIN / 5V Rail</span></td>
+                        <td>+5VSB Auxiliary Rail</td>
+                        <td>Continuously powered even when main transformer rails are tripped, ensuring uninterrupted telemetry.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 4. Team Personnel Authorization (Google OAuth Whitelist) -->
+          <div class="surface-card admin-only" id="adminUsersCard">
+            <div class="surface-header">
+              <div>
+                <h3 class="surface-title">Personnel Authorization (Google OAuth Whitelist)</h3>
+                <p class="surface-desc">Manage role-based platform access for engineering researchers and mentors</p>
+              </div>
+            </div>
+
+            <div class="user-management-wrapper">
+              <div class="add-user-card">
+                <h4 class="card-subtitle">Authorize Team Member</h4>
+                <div class="user-input-row">
+                  <input type="email" id="inputNewEmail" class="form-input" placeholder="colleague@gmail.com">
+                  <input type="text" id="inputNewName" class="form-input" placeholder="Full Name (Optional)">
+                  <select id="selectNewRole" class="form-select">
+                    <option value="VIEWER">VIEWER (Read-Only)</option>
+                    <option value="OPERATOR">OPERATOR (Control Access)</option>
+                    <option value="ADMIN">ADMIN (Full Permissions)</option>
+                  </select>
+                  <button id="btnAddAuthorizedUser" class="btn-primary-sm">+ Authorize User</button>
+                </div>
+              </div>
+
+              <div class="users-roster-wrap">
+                <h4 class="card-subtitle">Active Authorized Users</h4>
+                <div class="users-roster" id="usersRosterList">
+                  <div class="text-muted text-sm">Querying user whitelist...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Capstone Engineering Specification & Academic Roster -->
+          <div class="surface-card">
+            <div class="surface-header">
+              <div>
+                <h3 class="surface-title">Capstone Engineering Specification &amp; Academic Roster</h3>
+                <p class="surface-desc">Rajalakshmi Institute of Technology &bull; Department of Electronics and Communication Engineering</p>
+              </div>
+              <span class="badge-role">BATCH 2021&ndash;2025</span>
+            </div>
+
+            <div class="academic-roster-grid" style="margin-top: 14px;">
+              <div class="academic-member-card">
+                <span class="member-role">PROJECT RESEARCHER</span>
+                <span class="member-name">Selvakumari S</span>
+                <span class="member-reg mono">Reg. No: 211721106085</span>
+              </div>
+
+              <div class="academic-member-card">
+                <span class="member-role">PROJECT RESEARCHER</span>
+                <span class="member-name">Shreya S</span>
+                <span class="member-reg mono">Reg. No: 211721106095</span>
+              </div>
+
+              <div class="academic-member-card">
+                <span class="member-role">PROJECT RESEARCHER</span>
+                <span class="member-name">Susmitha G</span>
+                <span class="member-reg mono">Reg. No: 211721106103</span>
+              </div>
+
+              <div class="academic-mentor-card">
+                <span class="mentor-badge-label">PROJECT MENTOR</span>
+                <span class="mentor-name-title">Mrs. V. Subashini</span>
+                <span class="mentor-dept-role">Assistant Professor, Department of ECE</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Mobile Bottom Navigation Bar -->
+    <nav class="mobile-bottom-bar" id="mobileBottomBar">
+      <button class="mobile-nav-item active" data-tab="tab-dashboard">
+        <svg class="mobile-nav-svg" viewBox="0 0 24 24"><use href="#icon-gauge"/></svg>
+        <span>Overview</span>
+      </button>
+      <button class="mobile-nav-item" data-tab="tab-controls">
+        <svg class="mobile-nav-svg" viewBox="0 0 24 24"><use href="#icon-sliders"/></svg>
+        <span>Controls</span>
+      </button>
+      <button class="mobile-nav-item" data-tab="tab-rails">
+        <svg class="mobile-nav-svg" viewBox="0 0 24 24"><use href="#icon-activity"/></svg>
+        <span>Rails</span>
+      </button>
+      <button class="mobile-nav-item" data-tab="tab-alerts">
+        <svg class="mobile-nav-svg" viewBox="0 0 24 24"><use href="#icon-alert"/></svg>
+        <span>Incidents</span>
+      </button>
+      <button class="mobile-nav-item" data-tab="tab-settings">
+        <svg class="mobile-nav-svg" viewBox="0 0 24 24"><use href="#icon-settings"/></svg>
+        <span>Settings</span>
+      </button>
+    </nav>
+
+    <!-- App Platform Footer -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <span>Transformer Condition Monitoring &amp; Predictive Thermal Management</span>
+        <span class="dot-separator">&bull;</span>
+        <span class="mono">TMS-ESP32 Platform</span>
+      </div>
+      <div class="footer-right">
+        <span class="mono">Edge Telemetry Verified</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ==================== PROPORTIONATE CONFIRMATION MODAL ==================== -->
+  <div id="customModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-icon-badge" id="modalIconWrap">
+          <svg class="modal-svg" viewBox="0 0 24 24"><use href="#icon-alert"/></svg>
+        </div>
+        <div class="modal-title-wrap">
+          <h3 class="modal-title" id="modalTitle">Confirm Command</h3>
+          <span class="modal-badge-type" id="modalBadgeType">SUPERVISORY ACTION</span>
+        </div>
+      </div>
+      <div class="modal-message-box" id="modalMessageBox">
+        <p class="modal-message" id="modalMessage">Are you sure you wish to proceed?</p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-cancel" id="btnModalCancel">Cancel</button>
+        <button type="button" class="btn-modal-confirm" id="btnModalConfirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== KEYBOARD SHORTCUTS MODAL ==================== -->
+  <div id="modalShortcuts" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-icon-badge">
+          <svg class="modal-svg" viewBox="0 0 24 24"><path d="M18 3a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h12zm-3 8h-2V9h2v2zm-4 0H9V9h2v2zm-4 0H5V9h2v2zm12 4h-2v-2h2v2zm-4 0H9v-2h6v2zm-8 0H5v-2h2v2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="modal-title-wrap">
+          <h3 class="modal-title">Keyboard Operator Shortcuts</h3>
+          <span class="modal-badge-type">QUICK CONTROLS</span>
+        </div>
+      </div>
+      <div class="shortcuts-list">
+        <div class="shortcut-row"><span>Switch to Dashboard</span><kbd>1</kbd></div>
+        <div class="shortcut-row"><span>Switch to Controls</span><kbd>2</kbd></div>
+        <div class="shortcut-row"><span>Switch to Power Rails</span><kbd>3</kbd></div>
+        <div class="shortcut-row"><span>Switch to Incidents</span><kbd>4</kbd></div>
+        <div class="shortcut-row"><span>Switch to Settings</span><kbd>5</kbd></div>
+        <div class="shortcut-row"><span>Toggle Theme (Night / Light)</span><kbd>T</kbd></div>
+        <div class="shortcut-row"><span>Trigger Emergency Cutoff</span><kbd>E</kbd></div>
+        <div class="shortcut-row"><span>Show Shortcuts Help</span><kbd>?</kbd></div>
+      </div>
+      <div class="modal-actions" style="margin-top: 18px;">
+        <button type="button" class="btn-modal-cancel" id="btnCloseShortcuts">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TOAST NOTIFICATION CONTAINER ==================== -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

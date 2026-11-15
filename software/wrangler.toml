@@ -1,0 +1,30 @@
+name = "transformer-cbm"
+main = "src/worker.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+account_id = "c1b3db80db529ae51060e0ba5d7f133a"
+
+# Serve the real-time web dashboard static assets
+assets = { directory = "./public", binding = "ASSETS" }
+
+# D1 Serverless Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "transformer-cbm-db"
+database_id = "26c5741c-27e4-4293-96fd-1c2a5c870b1f"
+
+# 1-minute Cron Trigger for autonomous ESP32 Heartbeat Watchdog
+[triggers]
+crons = ["* * * * *"]
+
+# Environment Variables
+[vars]
+ENVIRONMENT = "production"
+DEVICE_KEY = "cbm_esp32_sec_key_2026"
+GOOGLE_CLIENT_ID = "250848327932-c2rob7h7agcs6db8s7daf1r71fsa5ph4.apps.googleusercontent.com"
+ALLOWED_EMAILS = "kumarisselva68@gmail.com,yogarathinam26@gmail.com"
+BREVO_API_KEY = "xkeysib-REDACTED-USE-WRANGLER-SECRET"
+BREVO_SENDER_EMAIL = "kumarisselva68@gmail.com"
+ALERT_RECIPIENT_EMAIL = "kumarisselva68@gmail.com"
+# Set to "false" while hardware is idle/offline to prevent recurrent communication loss emails
+WATCHDOG_EMAIL_ENABLED = "false"

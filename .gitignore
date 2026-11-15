@@ -1,4 +1,27 @@
+# Dependencies & Build Artifacts
+node_modules/
+.wrangler/
+software/node_modules/
+software/.wrangler/
+dist/
+documentation/bin/
+*.exe
+
+# Environment Secrets
+.env
+.env.*
+!.env.example
+
+# Python Cache & Scratch
 __pycache__/
 *.pyc
 .system_generated/
+software/.git_sub_backup/
 render_diag*.typ
+
+# Logs & OS Files
+*.log
+npm-debug.log*
+yarn-debug.log*
+.DS_Store
+Thumbs.db

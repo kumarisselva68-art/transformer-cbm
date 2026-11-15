@@ -1,0 +1,29 @@
+{
+  "name": "transformer-cbm-cloud",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker edge backend, D1 database & real-time monitoring dashboard for Transformer CBM",
+  "main": "src/worker.js",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init:local": "wrangler d1 execute transformer-cbm-db --local --file=./schema.sql",
+    "db:init:remote": "wrangler d1 execute transformer-cbm-db --remote --file=./schema.sql",
+    "test": "node --test tests/api.test.js",
+    "simulate": "node tests/mock_esp32_simulator.js"
+  },
+  "keywords": [
+    "esp32",
+    "iot",
+    "transformer",
+    "condition-monitoring",
+    "cloudflare-workers",
+    "d1",
+    "google-oauth"
+  ],
+  "author": "Transformer CBM Team",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^4.160.0"
+  }
+}

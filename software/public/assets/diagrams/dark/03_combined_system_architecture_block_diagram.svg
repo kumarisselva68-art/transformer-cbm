@@ -1,0 +1,284 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 1080" width="1700" height="1080">
+  <defs>
+    <filter id="shadow" x="-3%" y="-3%" width="106%" height="108%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 2 L 11 6 L 1 10 z" fill="#d4d4d8"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 2 L 11 6 L 1 10 z" fill="#0284c7"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 2 L 11 6 L 1 10 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <style>
+    text {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+    .wire {
+      fill: none;
+      stroke: #334155;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .wire-blue {
+      fill: none;
+      stroke: #0284c7;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .wire-green {
+      fill: none;
+      stroke: #16a34a;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .tier-header-t1 {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-anchor: start;
+      fill: #1e40af;
+    }
+    .tier-header-t2 {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-anchor: start;
+      fill: #166534;
+    }
+    .tier-header-t3 {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-anchor: end;
+      fill: #334155;
+    }
+    .card-title-t1 {
+      font-size: 21px;
+      font-weight: 700;
+      fill: #0369a1;
+    }
+    .card-sub-t1 {
+      font-size: 14.5px;
+      font-weight: 500;
+      fill: #0284c7;
+    }
+    .card-title-t2 {
+      font-size: 21px;
+      font-weight: 700;
+      fill: #14532d;
+    }
+    .card-sub-t2 {
+      font-size: 14.5px;
+      font-weight: 500;
+      fill: #15803d;
+    }
+    .card-title-t3 {
+      font-size: 21px;
+      font-weight: 700;
+      fill: #0f172a;
+    }
+    .card-sub-t3 {
+      font-size: 14.5px;
+      font-weight: 500;
+      fill: #475569;
+    }
+  </style>
+
+  <!-- Background -->
+  <rect width="1700" height="1080" fill="#09090b"/>
+
+  <!-- Diagram Title -->
+  <text x="850.0" y="42" font-size="28" font-weight="800" fill="#f4f4f5">COMBINED HARDWARE &amp; SOFTWARE SYSTEM ARCHITECTURE</text>
+  <text x="850.0" y="72" font-size="15" font-weight="500" fill="#a1a1aa">End-to-End System Block Diagram • Physical Layer, Embedded Firmware &amp; Cloud Supervision</text>
+
+
+  <!-- ==================== TIER 1: CLOUD & REMOTE SUPERVISION LAYER ==================== -->
+  <rect x="60" y="100" width="1580" height="180" rx="12" fill="#f0f7ff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="90" y="125" class="tier-header-t1">TIER 1: CLOUD &amp; REMOTE SUPERVISION LAYER</text>
+
+  <!-- Cloud 1: Web Dashboard (Col 1) -->
+  <g transform="translate(100, 145)" filter="url(#shadow)">
+    <rect width="250" height="110" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="125" y="42" class="card-title-t1">Web Dashboard</text>
+    <text x="125" y="72" class="card-sub-t1">Firebase Hosting</text>
+  </g>
+
+  <!-- Cloud 2: Realtime Database (Col 2) -->
+  <g transform="translate(410, 145)" filter="url(#shadow)">
+    <rect width="250" height="110" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5"/>
+    <text x="125" y="42" class="card-title-t1">Realtime Database</text>
+    <text x="125" y="72" class="card-sub-t1">Firebase RTDB</text>
+  </g>
+  <!-- Wire: RTDB -> Dashboard -->
+  <path class="wire-blue" marker-end="url(#arrow-blue)" d="M 410 200 L 350 200"/>
+
+  <!-- Cloud 3: Watchdog Worker (Col 3) -->
+  <g transform="translate(720, 145)" filter="url(#shadow)">
+    <rect width="260" height="110" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="130" y="42" class="card-title-t1">Watchdog Worker</text>
+    <text x="130" y="72" class="card-sub-t1">Cloudflare Edge</text>
+  </g>
+  <!-- Wire: RTDB -> Watchdog -->
+  <path class="wire-blue" marker-end="url(#arrow-blue)" d="M 660 200 L 720 200"/>
+
+  <!-- Cloud 4: Email Gateway (Col 4) -->
+  <g transform="translate(1040, 145)" filter="url(#shadow)">
+    <rect width="250" height="110" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="125" y="42" class="card-title-t1">Email Gateway</text>
+    <text x="125" y="72" class="card-sub-t1">Brevo REST API</text>
+  </g>
+  <!-- Wire: Watchdog -> Email -->
+  <path class="wire-blue" marker-end="url(#arrow-blue)" d="M 980 200 L 1040 200"/>
+
+  <!-- Cloud 5: On-Call Engineers (Col 5) -->
+  <g transform="translate(1350, 145)" filter="url(#shadow)">
+    <rect width="250" height="110" rx="10" fill="#f0f9ff" stroke="#38bdf8" stroke-width="2"/>
+    <text x="125" y="42" class="card-title-t1">On-Call Engineers</text>
+    <text x="125" y="72" class="card-sub-t1">Incident Notifications</text>
+  </g>
+  <!-- Wire: Email -> Engineers -->
+  <path class="wire-blue" marker-end="url(#arrow-blue)" d="M 1290 200 L 1350 200"/>
+
+
+  <!-- ==================== TIER 2: EMBEDDED FIRMWARE LAYER ==================== -->
+  <rect x="60" y="325" width="1580" height="205" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+  <text x="90" y="350" class="tier-header-t2">TIER 2: ESP32 EMBEDDED FIRMWARE LAYER (FreeRTOS)</text>
+
+  <!-- FW 1: Sensor Acquisition (Col 1) -->
+  <g transform="translate(100, 370)" filter="url(#shadow)">
+    <rect width="250" height="115" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="125" y="42" class="card-title-t2">Sensor Acquisition</text>
+    <text x="125" y="74" class="card-sub-t2">1-Wire &amp; I2C Drivers</text>
+  </g>
+
+  <!-- FW 2: Thermal Model (Col 2) -->
+  <g transform="translate(410, 370)" filter="url(#shadow)">
+    <rect width="250" height="115" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+    <text x="125" y="42" class="card-title-t2">Thermal Model</text>
+    <text x="125" y="74" class="card-sub-t2">EMA &amp; 30s Projection</text>
+  </g>
+  <!-- Wire: Acquisition -> Thermal Model -->
+  <path class="wire-green" marker-end="url(#arrow-green)" d="M 350 427.5 L 410 427.5"/>
+
+  <!-- FW 3: Safety Machine (Col 3) -->
+  <g transform="translate(720, 370)" filter="url(#shadow)">
+    <rect width="260" height="115" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+    <text x="130" y="42" class="card-title-t2">Safety Machine</text>
+    <text x="130" y="74" class="card-sub-t2">10-State Supervisory</text>
+  </g>
+  <!-- Wire: Thermal Model -> Safety Machine -->
+  <path class="wire-green" marker-end="url(#arrow-green)" d="M 660 427.5 L 720 427.5"/>
+
+  <!-- FW 4: Local Web UI (Col 4) -->
+  <g transform="translate(1040, 370)" filter="url(#shadow)">
+    <rect width="250" height="115" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="125" y="42" class="card-title-t2">Local Web UI</text>
+    <text x="125" y="74" class="card-sub-t2">LittleFS Dashboard</text>
+  </g>
+  <!-- Wire: Safety Machine -> Local Web UI -->
+  <path class="wire-green" marker-end="url(#arrow-green)" d="M 980 427.5 L 1040 427.5"/>
+
+  <!-- FW 5: Cloud Dispatcher (Col 5) -->
+  <g transform="translate(1350, 370)" filter="url(#shadow)">
+    <rect width="250" height="115" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="125" y="42" class="card-title-t2">Cloud Dispatcher</text>
+    <text x="125" y="74" class="card-sub-t2">HTTPS Client</text>
+  </g>
+  <!-- Wire: Safety Machine -> Cloud Dispatcher (Underpass at y=505) -->
+  <path class="wire-green" marker-end="url(#arrow-green)"
+        d="M 980 460 L 1010 460 L 1010 505 L 1475 505 L 1475 485"/>
+
+  <!-- Overhead Bus: Cloud Dispatcher -> Realtime Database -->
+  <path class="wire-blue" stroke-width="2.5" marker-end="url(#arrow-blue)"
+        d="M 1475 370 L 1475 300 L 535 300 L 535 255"/>
+
+
+  <!-- ==================== TIER 3: PHYSICAL HARDWARE LAYER ==================== -->
+  <rect x="60" y="575" width="1580" height="455" rx="12" fill="#121215" stroke="#27272a" stroke-width="1.5"/>
+  <text x="1590" y="600" class="tier-header-t3">TIER 3: PHYSICAL HARDWARE &amp; SENSORS LAYER</text>
+
+  <!-- HW 1: Temperature Sensors (Col 1, Row 1) -->
+  <g transform="translate(100, 630)" filter="url(#shadow)">
+    <rect width="250" height="115" rx="10" fill="#18181f" stroke="#475569" stroke-width="2"/>
+    <text x="125" y="42" class="card-title-t3">Temperature Sensors</text>
+    <text x="125" y="74" class="card-sub-t3">DS18B20 Probes</text>
+  </g>
+  <!-- Wire: Temperature Sensors -> Sensor Acquisition (Straight vertical UP at x=225) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 225 630 L 225 485"/>
+
+  <!-- HW 2: LCD Display (Col 2, Row 1) -->
+  <g transform="translate(410, 630)" filter="url(#shadow)">
+    <rect width="250" height="115" rx="10" fill="#18181f" stroke="#475569" stroke-width="2"/>
+    <text x="125" y="42" class="card-title-t3">LCD Display</text>
+    <text x="125" y="74" class="card-sub-t3">16×2 Screen</text>
+  </g>
+  <!-- Wire: Sensor Acquisition -> LCD Display (Clean step at y=555) -->
+  <path class="wire" marker-end="url(#arrow)"
+        d="M 290 485 L 290 555 L 535 555 L 535 630"/>
+
+  <!-- HW 3: Cutoff Switch (Col 3, Row 1) -->
+  <g transform="translate(720, 630)" filter="url(#shadow)">
+    <rect width="260" height="115" rx="10" fill="#18181f" stroke="#475569" stroke-width="2"/>
+    <text x="130" y="42" class="card-title-t3">Cutoff Switch</text>
+    <text x="130" y="74" class="card-sub-t3">Relay Interlock</text>
+  </g>
+  <!-- Wire: Safety Machine -> Cutoff Switch (Straight vertical DOWN) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 850 485 L 850 630"/>
+
+  <!-- HW 4: Power Supply (Col 3, Row 2) -->
+  <g transform="translate(720, 825)" filter="url(#shadow)">
+    <rect width="260" height="120" rx="10" fill="#18181f" stroke="#475569" stroke-width="2"/>
+    <text x="130" y="44" class="card-title-t3">Power Supply</text>
+    <text x="130" y="76" class="card-sub-t3">ATX Multi-Rail</text>
+  </g>
+  <!-- Wire: Cutoff Switch -> Power Supply (Straight vertical DOWN) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 850 745 L 850 825"/>
+
+  <!-- HW 5: Fan Driver (Col 4, Row 1) -->
+  <g transform="translate(1040, 630)" filter="url(#shadow)">
+    <rect width="250" height="115" rx="10" fill="#18181f" stroke="#475569" stroke-width="2"/>
+    <text x="125" y="42" class="card-title-t3">Fan Driver</text>
+    <text x="125" y="74" class="card-sub-t3">PWM Motor Driver</text>
+  </g>
+  <!-- Wire: Safety Machine -> Fan Driver (Clean step at y=585) -->
+  <path class="wire" marker-end="url(#arrow)"
+        d="M 890 485 L 890 585 L 1165 585 L 1165 630"/>
+
+  <!-- HW 6: Cooling Fan (Col 5, Row 1) -->
+  <g transform="translate(1350, 630)" filter="url(#shadow)">
+    <rect width="250" height="115" rx="10" fill="#18181f" stroke="#475569" stroke-width="2"/>
+    <text x="125" y="42" class="card-title-t3">Cooling Fan</text>
+    <text x="125" y="74" class="card-sub-t3">12V DC Airflow</text>
+  </g>
+  <!-- Wire: Fan Driver -> Cooling Fan (Straight horizontal RIGHT) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 1290 687.5 L 1350 687.5"/>
+
+  <!-- HW 7: Power Monitors (Col 4, Row 2) -->
+  <g transform="translate(1040, 825)" filter="url(#shadow)">
+    <rect width="250" height="120" rx="10" fill="#18181f" stroke="#475569" stroke-width="2"/>
+    <text x="125" y="44" class="card-title-t3">Power Monitors</text>
+    <text x="125" y="76" class="card-sub-t3">INA219 Sensors</text>
+  </g>
+  <!-- Wire: Power Supply -> Power Monitors (Straight horizontal RIGHT) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 980 885 L 1040 885"/>
+
+  <!-- HW 8: Electrical Loads (Col 5, Row 2) -->
+  <g transform="translate(1350, 825)" filter="url(#shadow)">
+    <rect width="250" height="120" rx="10" fill="#18181f" stroke="#475569" stroke-width="2"/>
+    <text x="125" y="44" class="card-title-t3">Electrical Loads</text>
+    <text x="125" y="76" class="card-sub-t3">Multi-Rail Dynamic Loads</text>
+  </g>
+  <!-- Wire: Power Monitors -> Electrical Loads (Straight horizontal RIGHT) -->
+  <path class="wire" marker-end="url(#arrow)" d="M 1290 885 L 1350 885"/>
+
+</svg>
