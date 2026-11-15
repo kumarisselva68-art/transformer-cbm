@@ -171,19 +171,21 @@ struct DebouncedInput {
 DebouncedInput btnSetup = {PIN_BTN_SETUP, HIGH, HIGH, 0};
 DebouncedInput swRocker = {PIN_SW_ROCKER, HIGH, HIGH, 0};
 
-// Button Press Timing (Tap vs Hold)
+// Button Press Timing (Tap vs Long-Hold)
 unsigned long btnPressStart = 0;
 bool btnIsPressed = false;
+bool longPressHandled = false;
 
 // Remote Control Command Overrides
 bool remotePowerAllowed = true;
 
 // Task Timing Registers
-unsigned long lastSampleTick = 0;
-unsigned long lastCloudTick  = 0;
-unsigned long lastLcdTick    = 0;
-unsigned long lastBlinkTick  = 0;
-uint8_t lcdScreenIndex       = 0;
+unsigned long lastSampleTick    = 0;
+unsigned long lastCloudTick     = 0;
+unsigned long lastLcdTick       = 0;
+unsigned long lastBlinkTick     = 0;
+unsigned long lastWifiRetryTick = 0;
+uint8_t lcdScreenIndex          = 0;
 
 // Forward Declarations
 void printLcdRow(uint8_t row, const char* text);
@@ -211,6 +213,7 @@ void printLcdRow(uint8_t row, const char* text) {
 
 /**
  * Set Ultrasonic Fan Speed (0 - 100%)
+ * Compatible across ESP32 Arduino Core 2.x and 3.x
  */
 void setFanSpeed(int percent) {
   percent = constrain(percent, 0, 100);
@@ -219,10 +222,18 @@ void setFanSpeed(int percent) {
 
   if (percent == 0) {
     digitalWrite(PIN_FAN_DIR, LOW);
+#if defined(ESP_ARDUINO_VERSION_MAJOR) && (ESP_ARDUINO_VERSION_MAJOR >= 3)
     ledcWrite(PIN_FAN_PWM, 0);
+#else
+    ledcWrite(0, 0);
+#endif
   } else {
     digitalWrite(PIN_FAN_DIR, HIGH); // Forward airflow
+#if defined(ESP_ARDUINO_VERSION_MAJOR) && (ESP_ARDUINO_VERSION_MAJOR >= 3)
     ledcWrite(PIN_FAN_PWM, duty);
+#else
+    ledcWrite(0, duty);
+#endif
   }
 }
 
@@ -283,7 +294,12 @@ void handleRoot() {
 }
 
 void handleTelemetryApi() {
+#if ARDUINOJSON_VERSION_MAJOR >= 7
+  JsonDocument doc;
+#else
   StaticJsonDocument<768> doc;
+#endif
+
   doc["t_core"]         = round(telemetry.t_core * 10.0f) / 10.0f;
   doc["t_inlet"]        = round(telemetry.t_inlet * 10.0f) / 10.0f;
   doc["t_predicted"]    = round(telemetry.t_predicted * 10.0f) / 10.0f;
@@ -323,7 +339,12 @@ void handleControlApi() {
     return;
   }
 
+#if ARDUINOJSON_VERSION_MAJOR >= 7
+  JsonDocument doc;
+#else
   StaticJsonDocument<256> doc;
+#endif
+
   DeserializationError err = deserializeJson(doc, server.arg("plain"));
   if (err) {
     server.send(400, "application/json", "{\"status\":\"error\",\"message\":\"JSON parsing error\"}");
@@ -371,15 +392,26 @@ void handleControlApi() {
 void handleWifiScanApi() {
   Serial.println(F("[WIFI] Scanning 2.4 GHz spectrum..."));
   int n = WiFi.scanNetworks();
+
+#if ARDUINOJSON_VERSION_MAJOR >= 7
+  JsonDocument doc;
+  JsonArray arr = doc.to<JsonArray>();
+  for (int i = 0; i < n && i < 15; ++i) {
+    JsonObject obj = arr.add<JsonObject>();
+    obj["ssid"] = WiFi.SSID(i);
+    obj["rssi"] = WiFi.RSSI(i);
+    obj["secure"] = (WiFi.encryptionType(i) != WIFI_AUTH_OPEN);
+  }
+#else
   StaticJsonDocument<1024> doc;
   JsonArray arr = doc.to<JsonArray>();
-
   for (int i = 0; i < n && i < 15; ++i) {
     JsonObject obj = arr.createNestedObject();
     obj["ssid"] = WiFi.SSID(i);
     obj["rssi"] = WiFi.RSSI(i);
     obj["secure"] = (WiFi.encryptionType(i) != WIFI_AUTH_OPEN);
   }
+#endif
 
   String output;
   serializeJson(doc, output);
@@ -392,7 +424,12 @@ void handleWifiSaveApi() {
     return;
   }
 
+#if ARDUINOJSON_VERSION_MAJOR >= 7
+  JsonDocument doc;
+#else
   StaticJsonDocument<256> doc;
+#endif
+
   deserializeJson(doc, server.arg("plain"));
   const char* newSsid = doc["ssid"] | "";
   const char* newPass = doc["pass"] | "";
@@ -476,10 +513,15 @@ void setup() {
   digitalWrite(PIN_PS_ON, LOW);
   pinMode(PIN_PS_ON, OUTPUT);
 
-  // Initialize Fan Actuation Outputs
+  // Initialize Fan Actuation Outputs (Compatible with ESP32 Core 2.x and 3.x)
   pinMode(PIN_FAN_DIR, OUTPUT);
   digitalWrite(PIN_FAN_DIR, LOW);
+#if defined(ESP_ARDUINO_VERSION_MAJOR) && (ESP_ARDUINO_VERSION_MAJOR >= 3)
   ledcAttach(PIN_FAN_PWM, PWM_FREQUENCY, PWM_RESOLUTION);
+#else
+  ledcSetup(0, PWM_FREQUENCY, PWM_RESOLUTION);
+  ledcAttachPin(PIN_FAN_PWM, 0);
+#endif
   setFanSpeed(0);
 
   // Initialize HMI Pins
@@ -681,7 +723,12 @@ void syncWithCloudflareEdge() {
   http.setTimeout(3000);
 
   // Format Cloud JSON Payload
+#if ARDUINOJSON_VERSION_MAJOR >= 7
+  JsonDocument doc;
+#else
   StaticJsonDocument<512> doc;
+#endif
+
   doc["device_id"]     = DEVICE_ID;
   doc["t_core"]        = round(telemetry.t_core * 10.0f) / 10.0f;
   doc["t_inlet"]       = round(telemetry.t_inlet * 10.0f) / 10.0f;
@@ -703,7 +750,11 @@ void syncWithCloudflareEdge() {
 
   if (httpCode == HTTP_CODE_OK) {
     String response = http.getString();
+#if ARDUINOJSON_VERSION_MAJOR >= 7
+    JsonDocument respDoc;
+#else
     StaticJsonDocument<384> respDoc;
+#endif
     DeserializationError err = deserializeJson(respDoc, response);
 
     if (!err) {
@@ -827,21 +878,26 @@ void loop() {
   // --- Task A: Read Front-Panel HMI Controls (Tap vs Long-Hold) ---
   bool btnRaw = digitalRead(PIN_BTN_SETUP);
 
-  if (btnRaw == LOW && !btnIsPressed) {
-    // Button just pressed down
-    btnIsPressed = true;
-    btnPressStart = now;
-  } else if (btnRaw == HIGH && btnIsPressed) {
-    // Button released
-    unsigned long pressDuration = now - btnPressStart;
-    btnIsPressed = false;
-
-    if (pressDuration >= 2000) {
-      // Long press (>= 2.0s): Toggle Local AP Mode
+  if (btnRaw == LOW) {
+    if (!btnIsPressed) {
+      btnIsPressed = true;
+      btnPressStart = now;
+      longPressHandled = false;
+    } else if (!longPressHandled && (now - btnPressStart >= 2000)) {
+      // Immediate trigger upon reaching 2.0s hold threshold
+      longPressHandled = true;
       toggleApMode();
-    } else if (pressDuration >= DEBOUNCE_MS) {
-      // Short tap (< 2.0s): Step to next LCD screen immediately
-      advanceLcdScreen();
+    }
+  } else {
+    // Button is released (HIGH)
+    if (btnIsPressed) {
+      unsigned long pressDuration = now - btnPressStart;
+      btnIsPressed = false;
+      if (!longPressHandled && pressDuration >= DEBOUNCE_MS) {
+        // Short tap (< 2.0s): Advance LCD screen immediately
+        advanceLcdScreen();
+      }
+      longPressHandled = false;
     }
   }
 
@@ -874,7 +930,18 @@ void loop() {
     digitalWrite(PIN_STATUS_LED, telemetry.pson_active ? HIGH : LOW);
   }
 
-  // --- Task C: 1 Hz High-Precision Telemetry Sampling & Analytics ---
+  // --- Task C: Station Wi-Fi Reconnect Watchdog (Every 10s if disconnected) ---
+  if (!apModeActive && WiFi.status() != WL_CONNECTED) {
+    if (now - lastWifiRetryTick >= 10000) {
+      lastWifiRetryTick = now;
+      if (cfg_ssid.length() > 0 && cfg_ssid != "YOUR_WIFI_SSID") {
+        Serial.println(F("[WIFI] Attempting background Wi-Fi reconnection..."));
+        WiFi.reconnect();
+      }
+    }
+  }
+
+  // --- Task D: 1 Hz High-Precision Telemetry Sampling & Analytics ---
   if (now - lastSampleTick >= 1000) {
     float dtSeconds = (now - lastSampleTick) / 1000.0f;
     lastSampleTick = now;
@@ -899,14 +966,14 @@ void loop() {
                   telemetry.v_12v, telemetry.i_12v, telemetry.health_index, telemetry.pson_active);
   }
 
-  // --- Task D: 2.5s Alphanumeric 1602 LCD Automatic Carousel ---
+  // --- Task E: 2.5s Alphanumeric 1602 LCD Automatic Carousel ---
   if (now - lastLcdTick >= 2500) {
     lastLcdTick = now;
     lcdScreenIndex = (lcdScreenIndex + 1) % 5;
     updateLcdScreen();
   }
 
-  // --- Task E: 3s Cloudflare Worker Edge Telemetry Sync & Command Fetch ---
+  // --- Task F: 3s Cloudflare Worker Edge Telemetry Sync & Command Fetch ---
   if (now - lastCloudTick >= 3000) {
     lastCloudTick = now;
     syncWithCloudflareEdge();
