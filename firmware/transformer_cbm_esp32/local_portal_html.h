@@ -6,7 +6,7 @@
 /**
  * Embedded Zero-CDN Local Web Portal for Transformer CBM
  * Served directly from ESP32 PROGMEM in SoftAP / Local Mode.
- * Designed with an Apple/Linear obsidian industrial aesthetic.
+ * Designed with a clean, high-contrast Apple/Linear white aesthetic.
  * Fully responsive for mobile and desktop displays.
  * Strictly zero emojis and zero external internet dependencies.
  */
@@ -18,20 +18,21 @@ const char LOCAL_PORTAL_HTML[] PROGMEM = R"rawliteral(<!DOCTYPE html>
 <title>TRANSFORMER CBM &mdash; Local Console</title>
 <style>
 :root {
-  --bg-primary: #070a12;
-  --bg-card: #0f172a;
-  --bg-card-hover: #1e293b;
-  --border: #1e293b;
-  --border-light: #334155;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-dim: #64748b;
-  --accent-cyan: #38bdf8;
-  --accent-green: #10b981;
-  --accent-amber: #f59e0b;
-  --accent-crimson: #ef4444;
+  --bg-primary: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --border: #e2e8f0;
+  --border-light: #cbd5e1;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+  --accent-cyan: #0284c7;
+  --accent-green: #059669;
+  --accent-amber: #d97706;
+  --accent-crimson: #dc2626;
   --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --radius: 12px;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body {
@@ -48,10 +49,11 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 18px 22px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
   margin-bottom: 16px;
   flex-wrap: wrap;
   gap: 12px;
@@ -63,12 +65,12 @@ header {
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  padding: 6px 12px;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  padding: 6px 14px;
+  background: rgba(5, 150, 105, 0.08);
+  border: 1px solid rgba(5, 150, 105, 0.25);
   border-radius: 9999px;
   color: var(--accent-green);
 }
@@ -82,8 +84,8 @@ header {
 }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 .trip-active {
-  background: rgba(239, 68, 68, 0.15) !important;
-  border-color: rgba(239, 68, 68, 0.3) !important;
+  background: rgba(220, 38, 38, 0.1) !important;
+  border-color: rgba(220, 38, 38, 0.3) !important;
   color: var(--accent-crimson) !important;
 }
 .trip-active .status-dot {
@@ -100,13 +102,14 @@ header {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
   padding: 18px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
 }
-.card:hover { border-color: var(--border-light); }
+.card:hover { border-color: var(--border-light); transform: translateY(-1px); }
 .card-label {
   font-size: 11px;
   font-weight: 700;
@@ -120,11 +123,11 @@ header {
 }
 .card-val-row { display: flex; align-items: baseline; gap: 6px; }
 .card-val { font-size: 32px; font-weight: 800; color: var(--text-main); font-feature-settings: "tnum"; }
-.card-unit { font-size: 16px; font-weight: 600; color: var(--text-muted); }
+.card-unit { font-size: 15px; font-weight: 600; color: var(--text-muted); }
 .card-sub {
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   font-size: 12px;
@@ -138,10 +141,11 @@ header {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-.badge-green { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
-.badge-amber { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
-.badge-crimson { background: rgba(239, 68, 68, 0.15); color: var(--accent-crimson); }
-.badge-cyan { background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); }
+.badge-green { background: rgba(5, 150, 105, 0.1); color: var(--accent-green); }
+.badge-amber { background: rgba(217, 119, 6, 0.12); color: var(--accent-amber); }
+.badge-crimson { background: rgba(220, 38, 38, 0.1); color: var(--accent-crimson); }
+.badge-cyan { background: rgba(2, 132, 199, 0.1); color: var(--accent-cyan); }
+.badge-gray { background: #f1f5f9; color: var(--text-muted); }
 
 /* Control Panel Section */
 .controls-grid {
@@ -154,6 +158,7 @@ header {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
   padding: 20px;
 }
 .section-title {
@@ -180,20 +185,20 @@ header {
   text-align: center;
   user-select: none;
 }
-.btn-primary { background: #2563eb; color: #fff; }
-.btn-primary:hover { background: #1d4ed8; }
-.btn-danger { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: var(--accent-crimson); }
+.btn-primary { background: #0284c7; color: #fff; }
+.btn-primary:hover { background: #0369a1; }
+.btn-danger { background: rgba(220, 38, 38, 0.1); border-color: rgba(220, 38, 38, 0.3); color: var(--accent-crimson); }
 .btn-danger:hover { background: var(--accent-crimson); color: #fff; }
-.btn-success { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: var(--accent-green); }
-.btn-success:hover { background: var(--accent-green); color: #000; }
-.btn-secondary { background: #1e293b; color: var(--text-main); border-color: var(--border-light); }
-.btn-secondary:hover { background: #334155; }
+.btn-success { background: rgba(5, 150, 105, 0.1); border-color: rgba(5, 150, 105, 0.3); color: var(--accent-green); }
+.btn-success:hover { background: var(--accent-green); color: #fff; }
+.btn-secondary { background: #f1f5f9; color: var(--text-main); border-color: var(--border-light); }
+.btn-secondary:hover { background: #e2e8f0; }
 .slider-container { margin-top: 14px; }
 .slider-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
 input[type=range] {
   width: 100%;
   height: 6px;
-  background: #334155;
+  background: #e2e8f0;
   border-radius: 3px;
   outline: none;
   -webkit-appearance: none;
@@ -205,7 +210,7 @@ input[type=range]::-webkit-slider-thumb {
   border-radius: 50%;
   background: var(--accent-cyan);
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.4);
 }
 
 /* WiFi Provisioning Section */
@@ -213,7 +218,7 @@ input[type=range]::-webkit-slider-thumb {
 .form-group { display: flex; flex-direction: column; gap: 6px; }
 .form-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
 .form-input, .form-select {
-  background: #090d16;
+  background: #ffffff;
   border: 1px solid var(--border-light);
   color: var(--text-main);
   padding: 10px 14px;
@@ -229,11 +234,11 @@ input[type=range]::-webkit-slider-thumb {
   bottom: 24px;
   right: 24px;
   padding: 12px 20px;
-  background: #1e293b;
-  border: 1px solid var(--border-light);
+  background: #0f172a;
+  color: #ffffff;
   border-radius: 8px;
   font-weight: 600;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   opacity: 0;
   transform: translateY(10px);
   transition: all 0.25s ease;
@@ -272,7 +277,7 @@ footer {
         <span class="badge badge-green" id="tCoreBadge">NOMINAL</span>
       </div>
       <div class="card-val-row">
-        <span class="card-val" id="valTcore">--.-</span>
+        <span class="card-val" id="valTcore">0.0</span>
         <span class="card-unit">&deg;C</span>
       </div>
       <div class="card-sub">
@@ -284,15 +289,15 @@ footer {
     <div class="card">
       <div class="card-label">
         <span>Inlet Airflow (T2)</span>
-        <span class="badge badge-cyan">AMBIENT</span>
+        <span class="badge badge-cyan" id="tInletBadge">AMBIENT</span>
       </div>
       <div class="card-val-row">
-        <span class="card-val" id="valTinlet">--.-</span>
+        <span class="card-val" id="valTinlet">0.0</span>
         <span class="card-unit">&deg;C</span>
       </div>
       <div class="card-sub">
         <span>Thermal Rise (&Delta;T)</span>
-        <span id="valDeltaT">--.- &deg;C</span>
+        <span id="valDeltaT">0.0 &deg;C</span>
       </div>
     </div>
 
@@ -302,19 +307,19 @@ footer {
         <span class="badge badge-amber">+30s OLS</span>
       </div>
       <div class="card-val-row">
-        <span class="card-val" id="valTpred">--.-</span>
+        <span class="card-val" id="valTpred">0.0</span>
         <span class="card-unit">&deg;C</span>
       </div>
       <div class="card-sub">
         <span>Rate of Rise</span>
-        <span id="valRateOfRise">--.- &deg;C/s</span>
+        <span id="valRateOfRise">0.00 &deg;C/s</span>
       </div>
     </div>
 
     <div class="card">
       <div class="card-label">
         <span>Transformer Health Index</span>
-        <span class="badge badge-green" id="hiBadge">HEALTHY</span>
+        <span class="badge badge-green" id="hiBadge">BENCH IDLE</span>
       </div>
       <div class="card-val-row">
         <span class="card-val" id="valHI">100.0</span>
@@ -322,7 +327,7 @@ footer {
       </div>
       <div class="card-sub">
         <span>Virtual Hotspot (THST)</span>
-        <span id="valThst">--.- &deg;C</span>
+        <span id="valThst">0.0 &deg;C</span>
       </div>
     </div>
   </div>
@@ -332,45 +337,45 @@ footer {
     <div class="card">
       <div class="card-label">
         <span>+12V Main Load Rail</span>
-        <span class="badge badge-cyan">INA219 0x40</span>
+        <span class="badge badge-cyan" id="rail12Badge">INA219 0x40</span>
       </div>
       <div class="card-val-row">
-        <span class="card-val" id="valV12">--.-</span>
+        <span class="card-val" id="valV12">0.00</span>
         <span class="card-unit">V</span>
       </div>
       <div class="card-sub">
-        <span id="valI12">-- A</span>
-        <span id="valP12">-- W</span>
+        <span id="valI12">0.00 A</span>
+        <span id="valP12">0.00 W</span>
       </div>
     </div>
 
     <div class="card">
       <div class="card-label">
         <span>+5V Standby Rail</span>
-        <span class="badge badge-cyan">INA219 0x41</span>
+        <span class="badge badge-cyan" id="rail5Badge">INA219 0x41</span>
       </div>
       <div class="card-val-row">
-        <span class="card-val" id="valV5">--.-</span>
+        <span class="card-val" id="valV5">0.00</span>
         <span class="card-unit">V</span>
       </div>
       <div class="card-sub">
-        <span id="valI5">-- A</span>
-        <span id="valP5">-- W</span>
+        <span id="valI5">0.00 A</span>
+        <span id="valP5">0.00 W</span>
       </div>
     </div>
 
     <div class="card">
       <div class="card-label">
         <span>+3.3V Logic Bus</span>
-        <span class="badge badge-cyan">INA219 0x44</span>
+        <span class="badge badge-cyan" id="rail3Badge">INA219 0x44</span>
       </div>
       <div class="card-val-row">
-        <span class="card-val" id="valV33">--.-</span>
+        <span class="card-val" id="valV33">0.00</span>
         <span class="card-unit">V</span>
       </div>
       <div class="card-sub">
-        <span id="valI33">-- A</span>
-        <span id="valP33">-- W</span>
+        <span id="valI33">0.00 A</span>
+        <span id="valP33">0.00 W</span>
       </div>
     </div>
 
@@ -380,7 +385,7 @@ footer {
         <span class="badge badge-green" id="fanModeBadge">AUTO-PID</span>
       </div>
       <div class="card-val-row">
-        <span class="card-val" id="valFanSpeed">--</span>
+        <span class="card-val" id="valFanSpeed">0</span>
         <span class="card-unit">% PWM</span>
       </div>
       <div class="card-sub">
@@ -396,7 +401,7 @@ footer {
     <div class="control-card">
       <div class="section-title">
         <span>Main Power Supervisory Interlock</span>
-        <span class="badge badge-green" id="powerStatusBadge">ENERGIZED</span>
+        <span class="badge badge-crimson" id="powerStatusBadge">ISOLATED</span>
       </div>
       <p style="color:var(--text-muted);font-size:12px;margin-bottom:12px;">
         Direct active-low hardware isolation via 2N3904 transistor on PS_ON#. Latches off upon trip.
@@ -412,9 +417,9 @@ footer {
       <div class="slider-container">
         <div class="slider-labels">
           <span>Manual Duty Override</span>
-          <span id="sliderDutyLabel">50%</span>
+          <span id="sliderDutyLabel">0%</span>
         </div>
-        <input type="range" id="fanDutySlider" min="0" max="100" value="50" oninput="updateFanSliderLabel(this.value)" onchange="sendFanControl('MANUAL', this.value)">
+        <input type="range" id="fanDutySlider" min="0" max="100" value="0" oninput="updateFanSliderLabel(this.value)" onchange="sendFanControl('MANUAL', this.value)">
       </div>
       <div class="btn-group">
         <button class="btn btn-secondary" onclick="sendFanControl('AUTO', 0)">RESTORE AUTO-PID</button>
@@ -426,10 +431,10 @@ footer {
     <div class="control-card">
       <div class="section-title">
         <span>Wi-Fi Network Provisioning</span>
-        <span class="badge badge-cyan" id="netStateBadge">STANDALONE AP</span>
+        <span class="badge badge-cyan" id="netStateBadge">LOCAL AP</span>
       </div>
       <p style="color:var(--text-muted);font-size:12px;margin-bottom:8px;">
-        Configure station credentials to establish uplink with Cloudflare Edge.
+        Configure station credentials to establish uplink with Cloudflare Edge. SoftAP default key: <strong>12345678</strong>.
       </p>
       <form class="wifi-form" onsubmit="saveWifiConfig(event)">
         <div class="form-group">
@@ -480,9 +485,12 @@ function pollTelemetry() {
   fetch('/api/telemetry')
     .then(r => r.json())
     .then(data => {
+      const isCoreActive = data.t_core > 0.1;
+      const is12vActive = data.v_12v > 0.1;
+
       document.getElementById('valTcore').innerText = data.t_core.toFixed(1);
       document.getElementById('valTinlet').innerText = data.t_inlet.toFixed(1);
-      document.getElementById('valDeltaT').innerText = (data.t_core - data.t_inlet).toFixed(1) + ' \u00B0C';
+      document.getElementById('valDeltaT').innerText = (isCoreActive ? (data.t_core - data.t_inlet).toFixed(1) : '0.0') + ' \u00B0C';
       document.getElementById('valTpred').innerText = data.t_predicted.toFixed(1);
       document.getElementById('valRateOfRise').innerText = (data.rate_of_rise >= 0 ? '+' : '') + data.rate_of_rise.toFixed(2) + ' \u00B0C/s';
       document.getElementById('valHI').innerText = data.health_index.toFixed(1);
@@ -505,9 +513,12 @@ function pollTelemetry() {
       document.getElementById('valFanSpeed').innerText = data.fan_speed;
       document.getElementById('fanModeBadge').innerText = data.fan_auto ? 'AUTO-PID' : 'MANUAL';
 
-      // Badges & States
+      // Sensor Badges
       const tBadge = document.getElementById('tCoreBadge');
-      if (data.t_core >= 65.0) {
+      if (!isCoreActive) {
+        tBadge.className = 'badge badge-gray';
+        tBadge.innerText = 'DISCONNECTED';
+      } else if (data.t_core >= 65.0) {
         tBadge.className = 'badge badge-crimson';
         tBadge.innerText = 'TRIP BREACH';
       } else if (data.t_core >= 50.0) {
@@ -517,6 +528,11 @@ function pollTelemetry() {
         tBadge.className = 'badge badge-green';
         tBadge.innerText = 'NOMINAL';
       }
+
+      // INA219 Badges
+      const r12 = document.getElementById('rail12Badge');
+      r12.className = is12vActive ? 'badge badge-cyan' : 'badge badge-gray';
+      r12.innerText = is12vActive ? 'INA219 0x40' : 'DISCONNECTED';
 
       // Master Rail State
       const pwrBadge = document.getElementById('powerStatusBadge');

@@ -69,7 +69,7 @@ The three INA219 breakout boards share the I2C bus (`GPIO 21 / 22`) using hardwa
 ## 4. Local Embedded Web Console (Zero-CDN)
 
 When Local AP mode is active (or automatically upon boot Wi-Fi timeout), the ESP32 serves a self-contained, responsive Apple/Linear styled dashboard directly from PROGMEM:
-- **SoftAP Network:** `TRANSFORMER-CBM-AP` (Password: `cbm12345`)
+- **SoftAP Network:** `TRANSFORMER-CBM-AP` (Password: `12345678`)
 - **Console Gateway:** `http://192.168.4.1/` (Captive DNS server auto-redirects mobile browsers)
 - **Zero External Dependencies:** 100% offline operation with zero CDN or cloud asset requirements.
 - **Local Control Capabilities:**

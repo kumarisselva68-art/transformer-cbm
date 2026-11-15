@@ -76,4 +76,4 @@ INSERT OR IGNORE INTO authorized_users (email, name, role)
 VALUES ('yogarathinam26@gmail.com', 'Yogarathinam (Admin)', 'ADMIN');
 
 INSERT INTO telemetry (device_id, t_core, t_inlet, t_predicted, rate_of_rise, v_12v, i_12v, v_5v, i_5v, v_3v3, i_3v3, pson_active, fault_code)
-VALUES ('TRANSFORMER_01', 34.5, 27.2, 35.1, 0.02, 12.04, 2.15, 5.01, 0.85, 3.31, 0.42, 1, 0);
+VALUES ('TRANSFORMER_01', 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0);

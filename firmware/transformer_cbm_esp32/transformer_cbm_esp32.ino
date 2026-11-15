@@ -80,7 +80,7 @@ String cfg_pass = "";
 
 // SoftAP & Local Console Configuration
 const char* AP_SSID = "TRANSFORMER-CBM-AP";
-const char* AP_PASS = "cbm12345";
+const char* AP_PASS = "12345678";
 IPAddress apIP(192, 168, 4, 1);
 IPAddress netMsk(255, 255, 255, 0);
 const byte DNS_PORT = 53;
@@ -149,10 +149,10 @@ struct TelemetryData {
 };
 
 TelemetryData telemetry = {
-  34.5f, 27.2f, 34.5f, 0.0f, 34.5f, 38.7f, 0.005f, 96.4f,
-  12.04f, 0.0f, 0.0f,
-  5.01f,  0.0f, 0.0f,
-  3.31f,  0.0f, 0.0f,
+  0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 100.0f,
+  0.0f, 0.0f, 0.0f,
+  0.0f, 0.0f, 0.0f,
+  0.0f, 0.0f, 0.0f,
   false, false, false, 0
 };
 
@@ -617,16 +617,37 @@ void setup() {
 // 9. MATHEMATICAL PROCESSING: EMA, HORIZON, ARRHENIUS, HEALTH INDEX
 // =============================================================================
 void processThermalAnalytics(float rawCore, float rawInlet, float dtSeconds) {
-  // 1. Temperature Sensor Sanity Guard
-  if (rawCore > -40.0f && rawCore < 125.0f) {
+  // Check if sensors are physically attached and responding with valid telemetry
+  // DS18B20 returns -127.0C on disconnection, and 85.0C on uninitialized power-on scratchpad
+  bool coreValid  = (rawCore > -40.0f && rawCore < 125.0f && rawCore != 85.0f && rawCore != -127.0f);
+  bool inletValid = (rawInlet > -40.0f && rawInlet < 125.0f && rawInlet != 85.0f && rawInlet != -127.0f);
+
+  if (coreValid) {
     telemetry.t_core = rawCore;
+  } else {
+    telemetry.t_core = 0.0f; // Explicitly 0.0 when nothing is connected
   }
-  if (rawInlet > -40.0f && rawInlet < 125.0f) {
+
+  if (inletValid) {
     telemetry.t_inlet = rawInlet;
+  } else {
+    telemetry.t_inlet = 0.0f; // Explicitly 0.0 when nothing is connected
+  }
+
+  if (!coreValid) {
+    // Probes Disconnected / Idle Bench State: clear extrapolations to 0
+    telemetry.t_filtered   = 0.0f;
+    telemetry.rate_of_rise = 0.0f;
+    telemetry.t_predicted  = 0.0f;
+    telemetry.t_hotspot    = 0.0f;
+    telemetry.aging_factor = 0.0f;
+    telemetry.health_index = 100.0f; // Nominal / unburdened
+    if (fanAutoMode) setFanSpeed(0);
+    return;
   }
 
   // 2. Exponential Moving Average (EMA) Filtering
-  float prevFiltered = telemetry.t_filtered;
+  float prevFiltered = (telemetry.t_filtered > 0.0f) ? telemetry.t_filtered : telemetry.t_core;
   telemetry.t_filtered = (EMA_ALPHA * telemetry.t_core) + ((1.0f - EMA_ALPHA) * prevFiltered);
 
   // 3. Rate of Rise (dT/dt) & 30s Linear Trend Extrapolation
@@ -682,6 +703,10 @@ void sampleElectricalTelemetry() {
     telemetry.v_12v = ina12v.getBusVoltage_V() + (ina12v.getShuntVoltage_mV() / 1000.0f);
     telemetry.i_12v = max(0.0f, ina12v.getCurrent_mA() / 1000.0f);
     telemetry.p_12v = (telemetry.v_12v * telemetry.i_12v);
+  } else {
+    telemetry.v_12v = 0.0f;
+    telemetry.i_12v = 0.0f;
+    telemetry.p_12v = 0.0f;
   }
 
   // Rail 2: 5V Standby
@@ -689,6 +714,10 @@ void sampleElectricalTelemetry() {
     telemetry.v_5v = ina5v.getBusVoltage_V() + (ina5v.getShuntVoltage_mV() / 1000.0f);
     telemetry.i_5v = max(0.0f, ina5v.getCurrent_mA() / 1000.0f);
     telemetry.p_5v = (telemetry.v_5v * telemetry.i_5v);
+  } else {
+    telemetry.v_5v = 0.0f;
+    telemetry.i_5v = 0.0f;
+    telemetry.p_5v = 0.0f;
   }
 
   // Rail 3: 3.3V Logic
@@ -696,6 +725,10 @@ void sampleElectricalTelemetry() {
     telemetry.v_3v3 = ina3v3.getBusVoltage_V() + (ina3v3.getShuntVoltage_mV() / 1000.0f);
     telemetry.i_3v3 = max(0.0f, ina3v3.getCurrent_mA() / 1000.0f);
     telemetry.p_3v3 = (telemetry.v_3v3 * telemetry.i_3v3);
+  } else {
+    telemetry.v_3v3 = 0.0f;
+    telemetry.i_3v3 = 0.0f;
+    telemetry.p_3v3 = 0.0f;
   }
 
   // Overcurrent Protection Evaluation
@@ -947,8 +980,16 @@ void loop() {
     lastSampleTick = now;
 
     // Read DS18B20 Temperature Probes
-    float coreTemp  = tempSensors.getTempCByIndex(0);
-    float inletTemp = (tempSensors.getDeviceCount() > 1) ? tempSensors.getTempCByIndex(1) : (coreTemp - 7.3f);
+    int devCount = tempSensors.getDeviceCount();
+    float coreTemp  = -127.0f;
+    float inletTemp = -127.0f;
+
+    if (devCount > 0) {
+      coreTemp = tempSensors.getTempCByIndex(0);
+      if (devCount > 1) {
+        inletTemp = tempSensors.getTempCByIndex(1);
+      }
+    }
     tempSensors.requestTemperatures(); // Trigger next async conversion
 
     // Read Triple INA219 Power Monitors

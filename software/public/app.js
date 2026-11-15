@@ -11,7 +11,7 @@ let idToken = sessionStorage.getItem('google_id_token') || null;
 let pollTimer = null;
 let masterThermalChart = null;
 let railsChart = null;
-let currentTheme = localStorage.getItem('cbm_theme') || 'dark';
+let currentTheme = localStorage.getItem('cbm_theme') || 'light';
 let activeDiagramName = '07_master_hardware_circuit_schematic.svg';
 
 // DOM Elements
