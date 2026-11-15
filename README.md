@@ -111,30 +111,42 @@ Operates directly from ESP32 GPIOs without intermediary I2C backpack latencies. 
 ```
 Transformer_CBM/
 ├── firmware/
-│   └── transformer_cbm_esp32/
-│       ├── transformer_cbm_esp32.ino   # Complete production C++ FreeRTOS sketch
-│       └── README.md                   # Flashing instructions, pin table & libraries
-├── software/
-│   ├── public/                         # Apple / Linear Single Page Application
+│   ├── transformer_cbm_esp32/          # Production FreeRTOS C++ sketch & PlatformIO config
+│   │   ├── src/main.cpp
+│   │   ├── include/
+│   │   └── platformio.ini
+│   └── simulation_wokwi/               # Interactive browser-based Wokwi hardware simulation
+│       ├── sketch.ino
+│       ├── diagram.json
+│       └── libraries.txt
+├── software/                           # Cloudflare Workers serverless edge application
+│   ├── public/                         # Apple / Linear Single Page Application (SPA)
 │   │   ├── index.html                  # Responsive interface with themed vector diagrams
 │   │   ├── styles.css                  # Industrial design tokens & blueprint grid
 │   │   ├── app.js                      # Real-time WebSockets/polling & prognostics engine
 │   │   └── assets/                     # Industrial fan SVG & architectural schematics
-│   ├── src/
-│   │   ├── worker.js                   # Cloudflare Workers API route router
-│   │   ├── db.js                       # D1 SQLite query abstraction layer
-│   │   ├── email.js                    # Brevo transactional alert dispatcher
-│   │   └── auth.js                     # Google OAuth JWT cryptographic validation
-│   ├── tests/
-│   │   ├── api.test.js                 # Automated unit tests (Node.js test runner)
-│   │   └── mock_esp32_simulator.js     # Edge telemetry stress generator
-│   ├── schema.sql                      # D1 database initialization script
+│   ├── src/                            # Edge API routes, D1 database & Brevo notifications
+│   ├── tests/                          # Automated unit test suite & stress simulators
+│   ├── schema.sql                      # D1 database initialization schema
 │   └── wrangler.toml                   # Cloudflare Workers deployment configuration
-├── documentation/
-│   ├── hardware_commissioning_report.typ  # Typst commissioning report source
-│   ├── hardware_commissioning_report.pdf  # Compiled 12-page verification report
-│   └── diagrams/                          # Master schematics and block diagrams
-├── PPT/                                # Presentation decks and review slides
+├── documentation/                      # Technical reports, research papers & diagrams
+│   ├── diagrams/                       # Vector SVGs, circuit schematics & system diagrams
+│   ├── page_previews/                  # Rendered multi-page preview assets
+│   ├── references/                     # External IEEE & academic reference papers
+│   ├── summaries/                      # Markdown and text summaries of project literature
+│   ├── hardware_commissioning_report.pdf # 12-page hardware commissioning report
+│   ├── transformer_cbm_spec.pdf        # 26-page master engineering specification
+│   ├── transformer_cbm_paper.pdf       # Full research journal manuscript
+│   └── transformer_cbm_conference_paper.pdf # 4-page IEEE conference paper
+├── scripts/                            # Synthesis, assembly & schematic generator scripts
+│   ├── assemble_v3.py                  # Specification section assembler
+│   ├── build_all_system_diagrams.py   # Vector diagram compilation engine
+│   ├── build_cirkit_designer_schematic.py # Circuit schematic layout generator
+│   └── README.md                       # Manifest of all engineering automation scripts
+├── PPT/                                # Conference slide presentation (PPTX, PDF, Notes)
+│   ├── Transformer_CBM_Presentation.pptx
+│   ├── Transformer_CBM_Presentation.pdf
+│   └── PRESENTER_NOTES.md
 └── README.md                           # Master repository documentation
 ```
 

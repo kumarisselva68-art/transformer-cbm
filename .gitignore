@@ -12,9 +12,13 @@ documentation/bin/
 .env.*
 !.env.example
 
-# Python Cache & Scratch
+# Python Cache & Virtual Environments
 __pycache__/
 *.pyc
+venv/
+.venv/
+env/
+.pytest_cache/
 .system_generated/
 software/.git_sub_backup/
 render_diag*.typ
