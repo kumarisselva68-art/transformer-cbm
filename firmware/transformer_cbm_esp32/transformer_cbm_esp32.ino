@@ -10,14 +10,23 @@
  *  3. Ultrasonic 25 kHz PWM Forced-Air Cooling (Toshiba TB6612FNG on GPIO 16/17)
  *  4. SMPS Master Power Interlock (2N3904 NPN driver on GPIO 4 for PS_ON#)
  *  5. Local Alphanumeric HMI (Direct 4-Bit Parallel 1602 LCD on GPIO 13,14,27,26,25,33)
- *  6. Front-Panel Operator Controls (40ms Debounced Button GPIO 19, Rocker GPIO 23, LED GPIO 18)
- *  7. Cloudflare Worker Edge Telemetry & Bi-directional Remote Supervisory Commands
+ *  6. Front-Panel Operator Controls:
+ *     - Short Tap (< 1.5s): Cycle 1602 LCD screen carousel immediately
+ *     - Long Hold (>= 2.0s): Toggle Local SoftAP & Embedded Web Console
+ *     - Master Rocker Interlock: GPIO 23 (Active-LOW hardware isolation)
+ *     - Multi-Pattern Status LED: GPIO 18 (Normal, AP, Disconnected, Trip)
+ *  7. Cloudflare Worker Edge Telemetry & Bi-directional Remote Commands
+ *  8. Local Embedded Zero-CDN Web Portal (PROGMEM) with Captive DNS Server
+ *  9. Non-Volatile Flash Wi-Fi Provisioning Engine (ESP32 Preferences / NVS)
  * =============================================================================
  */
 
 #include <Arduino.h>
 #include <Wire.h>
 #include <WiFi.h>
+#include <WebServer.h>
+#include <DNSServer.h>
+#include <Preferences.h>
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
 #include <ArduinoJson.h>
@@ -25,6 +34,8 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <Adafruit_INA219.h>
+
+#include "local_portal_html.h"
 
 // =============================================================================
 // 1. PIN CONFIGURATION (MAPPED DIRECTLY FROM HARDWARE COMMISSIONING REPORT)
@@ -59,10 +70,21 @@ constexpr uint8_t PIN_I2C_SCL         = 22;  // Hardware I2C SCL
 constexpr uint8_t PIN_ONEWIRE_DQ      = 32;  // DS18B20 multi-drop with 4.7kΩ pull-up to 3.3V
 
 // =============================================================================
-// 2. NETWORK & CLOUD CREDENTIALS
+// 2. NETWORK, STORAGE & CLOUD CREDENTIALS
 // =============================================================================
-const char* WIFI_SSID     = "YOUR_WIFI_SSID";
-const char* WIFI_PASS     = "YOUR_WIFI_PASSWORD";
+const char* DEFAULT_WIFI_SSID = "YOUR_WIFI_SSID";
+const char* DEFAULT_WIFI_PASS = "YOUR_WIFI_PASSWORD";
+
+String cfg_ssid = "";
+String cfg_pass = "";
+
+// SoftAP & Local Console Configuration
+const char* AP_SSID = "TRANSFORMER-CBM-AP";
+const char* AP_PASS = "cbm12345";
+IPAddress apIP(192, 168, 4, 1);
+IPAddress netMsk(255, 255, 255, 0);
+const byte DNS_PORT = 53;
+bool apModeActive = false;
 
 // Cloudflare Worker Production Telemetry Ingestion Endpoint
 const char* CLOUD_API_URL = "https://transformer-cbm.kumarisselva68.workers.dev/api/telemetry";
@@ -97,6 +119,11 @@ DallasTemperature tempSensors(&oneWire);
 Adafruit_INA219 ina12v(0x40);  // Rail 1: 12V Main Load (A0=GND, A1=GND)
 Adafruit_INA219 ina5v(0x41);   // Rail 2: 5V Standby/Secondary (A0=VS+, A1=GND)
 Adafruit_INA219 ina3v3(0x44);  // Rail 3: 3.3V Logic/Auxiliary (A0=GND, A1=VS+)
+
+// Local Servers & Storage
+WebServer server(80);
+DNSServer dnsServer;
+Preferences preferences;
 
 // =============================================================================
 // 5. SYSTEM STATE & TELEMETRY REGISTERS
@@ -144,9 +171,12 @@ struct DebouncedInput {
 DebouncedInput btnSetup = {PIN_BTN_SETUP, HIGH, HIGH, 0};
 DebouncedInput swRocker = {PIN_SW_ROCKER, HIGH, HIGH, 0};
 
+// Button Press Timing (Tap vs Hold)
+unsigned long btnPressStart = 0;
+bool btnIsPressed = false;
+
 // Remote Control Command Overrides
 bool remotePowerAllowed = true;
-bool setupModeActive = false;
 
 // Task Timing Registers
 unsigned long lastSampleTick = 0;
@@ -154,6 +184,13 @@ unsigned long lastCloudTick  = 0;
 unsigned long lastLcdTick    = 0;
 unsigned long lastBlinkTick  = 0;
 uint8_t lcdScreenIndex       = 0;
+
+// Forward Declarations
+void printLcdRow(uint8_t row, const char* text);
+void updateLcdScreen();
+void setFanSpeed(int percent);
+void setMainPower(bool enable);
+void toggleApMode();
 
 // =============================================================================
 // 6. HELPER ROUTINES: LCD, ACTUATION, SENSORS
@@ -238,7 +275,201 @@ bool probeI2C(uint8_t address) {
 }
 
 // =============================================================================
-// 7. INITIALIZATION SETUP
+// 7. LOCAL WEB SERVER & CAPTIVE PORTAL ROUTING
+// =============================================================================
+
+void handleRoot() {
+  server.send_P(200, "text/html", LOCAL_PORTAL_HTML);
+}
+
+void handleTelemetryApi() {
+  StaticJsonDocument<768> doc;
+  doc["t_core"]         = round(telemetry.t_core * 10.0f) / 10.0f;
+  doc["t_inlet"]        = round(telemetry.t_inlet * 10.0f) / 10.0f;
+  doc["t_predicted"]    = round(telemetry.t_predicted * 10.0f) / 10.0f;
+  doc["rate_of_rise"]   = round(telemetry.rate_of_rise * 100.0f) / 100.0f;
+  doc["t_hotspot"]      = round(telemetry.t_hotspot * 10.0f) / 10.0f;
+  doc["aging_factor"]   = round(telemetry.aging_factor * 1000.0f) / 1000.0f;
+  doc["health_index"]   = round(telemetry.health_index * 10.0f) / 10.0f;
+
+  doc["v_12v"]          = round(telemetry.v_12v * 100.0f) / 100.0f;
+  doc["i_12v"]          = round(telemetry.i_12v * 100.0f) / 100.0f;
+  doc["p_12v"]          = round(telemetry.p_12v * 100.0f) / 100.0f;
+
+  doc["v_5v"]           = round(telemetry.v_5v * 100.0f) / 100.0f;
+  doc["i_5v"]           = round(telemetry.i_5v * 100.0f) / 100.0f;
+  doc["p_5v"]           = round(telemetry.p_5v * 100.0f) / 100.0f;
+
+  doc["v_3v3"]          = round(telemetry.v_3v3 * 100.0f) / 100.0f;
+  doc["i_3v3"]          = round(telemetry.i_3v3 * 100.0f) / 100.0f;
+  doc["p_3v3"]          = round(telemetry.p_3v3 * 100.0f) / 100.0f;
+
+  doc["pson_active"]    = telemetry.pson_active;
+  doc["fault_code"]     = telemetry.fault_code;
+  doc["fan_speed"]      = fanDutyPercent;
+  doc["fan_auto"]       = fanAutoMode;
+  doc["wifi_connected"] = (WiFi.status() == WL_CONNECTED);
+  doc["ip_addr"]        = (WiFi.status() == WL_CONNECTED) ? WiFi.localIP().toString() : "192.168.4.1";
+  doc["ap_active"]      = apModeActive;
+
+  String output;
+  serializeJson(doc, output);
+  server.send(200, "application/json", output);
+}
+
+void handleControlApi() {
+  if (!server.hasArg("plain")) {
+    server.send(400, "application/json", "{\"status\":\"error\",\"message\":\"Missing payload\"}");
+    return;
+  }
+
+  StaticJsonDocument<256> doc;
+  DeserializationError err = deserializeJson(doc, server.arg("plain"));
+  if (err) {
+    server.send(400, "application/json", "{\"status\":\"error\",\"message\":\"JSON parsing error\"}");
+    return;
+  }
+
+  const char* action = doc["action"] | "";
+
+  if (strcmp(action, "power") == 0) {
+    int val = doc["value"] | 0;
+    remotePowerAllowed = (val == 1);
+    setMainPower(remotePowerAllowed);
+    Serial.printf("[LOCAL-API] Power command: %s\n", remotePowerAllowed ? "ON" : "OFF");
+    server.send(200, "application/json", "{\"status\":\"ok\",\"message\":\"Main power state updated\"}");
+  } else if (strcmp(action, "fan") == 0) {
+    const char* mode = doc["mode"] | "AUTO";
+    int speed = doc["speed"] | 50;
+
+    if (strcmp(mode, "MANUAL") == 0) {
+      fanAutoMode = false;
+      setFanSpeed(speed);
+      Serial.printf("[LOCAL-API] Fan set to MANUAL %d%%\n", speed);
+    } else {
+      fanAutoMode = true;
+      Serial.println(F("[LOCAL-API] Fan restored to AUTO-PID mode"));
+    }
+    server.send(200, "application/json", "{\"status\":\"ok\",\"message\":\"Fan modulation updated\"}");
+  } else if (strcmp(action, "reset_fault") == 0) {
+    if (telemetry.t_core < CORE_TRIP_LIMIT_C && telemetry.t_predicted < PRED_TRIP_LIMIT_C) {
+      telemetry.thermal_trip = false;
+      telemetry.overcurrent_trip = false;
+      telemetry.fault_code = 0;
+      remotePowerAllowed = true;
+      setMainPower(swRocker.stable == LOW);
+      Serial.println(F("[LOCAL-API] Fault trips cleared"));
+      server.send(200, "application/json", "{\"status\":\"ok\",\"message\":\"Fault cleared successfully\"}");
+    } else {
+      server.send(400, "application/json", "{\"status\":\"error\",\"message\":\"Cannot clear: temperature remains elevated\"}");
+    }
+  } else {
+    server.send(400, "application/json", "{\"status\":\"error\",\"message\":\"Unknown action\"}");
+  }
+}
+
+void handleWifiScanApi() {
+  Serial.println(F("[WIFI] Scanning 2.4 GHz spectrum..."));
+  int n = WiFi.scanNetworks();
+  StaticJsonDocument<1024> doc;
+  JsonArray arr = doc.to<JsonArray>();
+
+  for (int i = 0; i < n && i < 15; ++i) {
+    JsonObject obj = arr.createNestedObject();
+    obj["ssid"] = WiFi.SSID(i);
+    obj["rssi"] = WiFi.RSSI(i);
+    obj["secure"] = (WiFi.encryptionType(i) != WIFI_AUTH_OPEN);
+  }
+
+  String output;
+  serializeJson(doc, output);
+  server.send(200, "application/json", output);
+}
+
+void handleWifiSaveApi() {
+  if (!server.hasArg("plain")) {
+    server.send(400, "application/json", "{\"status\":\"error\",\"message\":\"Missing payload\"}");
+    return;
+  }
+
+  StaticJsonDocument<256> doc;
+  deserializeJson(doc, server.arg("plain"));
+  const char* newSsid = doc["ssid"] | "";
+  const char* newPass = doc["pass"] | "";
+
+  if (strlen(newSsid) == 0) {
+    server.send(400, "application/json", "{\"status\":\"error\",\"message\":\"SSID cannot be blank\"}");
+    return;
+  }
+
+  // Persist to Non-Volatile Flash (NVS)
+  preferences.begin("cbm_cfg", false);
+  preferences.putString("ssid", newSsid);
+  preferences.putString("pass", newPass);
+  preferences.end();
+
+  cfg_ssid = newSsid;
+  cfg_pass = newPass;
+
+  Serial.printf("[WIFI] New credentials saved to NVS. Target SSID: %s\n", newSsid);
+  server.send(200, "application/json", "{\"status\":\"ok\",\"message\":\"Credentials saved. Connecting...\"}");
+
+  // Trigger background reconnect
+  WiFi.disconnect();
+  WiFi.begin(cfg_ssid.c_str(), cfg_pass.c_str());
+}
+
+void handleNotFound() {
+  if (apModeActive) {
+    // Captive Portal Redirection
+    server.sendHeader("Location", String("http://") + apIP.toString(), true);
+    server.send(302, "text/plain", "");
+  } else {
+    server.send(404, "text/plain", "Endpoint not found");
+  }
+}
+
+void setupLocalWebServer() {
+  server.on("/", HTTP_GET, handleRoot);
+  server.on("/api/telemetry", HTTP_GET, handleTelemetryApi);
+  server.on("/api/control", HTTP_POST, handleControlApi);
+  server.on("/api/wifi/scan", HTTP_GET, handleWifiScanApi);
+  server.on("/api/wifi/save", HTTP_POST, handleWifiSaveApi);
+
+  // Captive Portal Probe Endpoints
+  server.on("/generate_204", handleRoot);
+  server.on("/hotspot-detect.html", handleRoot);
+  server.on("/ncsi.txt", handleRoot);
+  server.onNotFound(handleNotFound);
+
+  server.begin();
+  Serial.println(F("[HTTP] Local embedded console server active on port 80"));
+}
+
+void toggleApMode() {
+  if (apModeActive) {
+    // Disable AP mode
+    apModeActive = false;
+    WiFi.softAPdisconnect(true);
+    dnsServer.stop();
+    Serial.println(F("[AP] SoftAP Mode deactivated. Resuming standard Station mode."));
+    printLcdRow(0, "LOCAL AP: OFF   ");
+    printLcdRow(1, "STATION RESUMED ");
+  } else {
+    // Enable AP mode
+    apModeActive = true;
+    WiFi.softAPConfig(apIP, apIP, netMsk);
+    WiFi.softAP(AP_SSID, AP_PASS);
+    dnsServer.start(DNS_PORT, "*", apIP);
+    Serial.printf("[AP] SoftAP Mode activated! SSID: %s | IP: 192.168.4.1\n", AP_SSID);
+    printLcdRow(0, "AP MODE ACTIVE  ");
+    printLcdRow(1, "192.168.4.1     ");
+  }
+  lastLcdTick = millis() + 1500; // Hold notification for 1.5s
+}
+
+// =============================================================================
+// 8. INITIALIZATION SETUP
 // =============================================================================
 void setup() {
   // CRITICAL FAILSAFE: Initialize PS_ON to LOW immediately before configuring output mode
@@ -269,9 +500,15 @@ void setup() {
   lcd.begin(16, 2);
   lcd.noCursor();
   lcd.noBlink();
-  printLcdRow(0, "TRANSFORMER CBM");
-  printLcdRow(1, "REV 3.0 INIT...");
+  printLcdRow(0, "TRANSFORMER CBM ");
+  printLcdRow(1, "REV 3.0 INIT... ");
   delay(1200);
+
+  // Read Non-Volatile Flash Configuration
+  preferences.begin("cbm_cfg", true);
+  cfg_ssid = preferences.getString("ssid", DEFAULT_WIFI_SSID);
+  cfg_pass = preferences.getString("pass", DEFAULT_WIFI_PASS);
+  preferences.end();
 
   // Initialize 1-Wire Dallas Temperature Bus
   tempSensors.begin();
@@ -306,14 +543,14 @@ void setup() {
     Serial.println(F("[INA219] WARN: 3.3V Monitor (0x44) not responding on I2C"));
   }
 
-  // Connect to WiFi (Non-blocking attempt)
-  printLcdRow(0, "CONNECTING WIFI");
-  printLcdRow(1, WIFI_SSID);
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  // Attempt Station Wi-Fi Connection
+  printLcdRow(0, "CONNECTING WIFI ");
+  printLcdRow(1, cfg_ssid.c_str());
+  WiFi.mode(WIFI_AP_STA);
+  WiFi.begin(cfg_ssid.c_str(), cfg_pass.c_str());
   
   unsigned long wifiStart = millis();
-  while (WiFi.status() != WL_CONNECTED && (millis() - wifiStart < 5000)) {
+  while (WiFi.status() != WL_CONNECTED && (millis() - wifiStart < 7000)) {
     delay(200);
     digitalWrite(PIN_STATUS_LED, !digitalRead(PIN_STATUS_LED));
   }
@@ -321,17 +558,21 @@ void setup() {
   if (WiFi.status() == WL_CONNECTED) {
     Serial.printf("[WIFI] Connected! Assigned IP: %s\n", WiFi.localIP().toString().c_str());
     digitalWrite(PIN_STATUS_LED, HIGH);
-    printLcdRow(1, "WIFI CONNECTED");
+    printLcdRow(0, "WIFI CONNECTED  ");
+    printLcdRow(1, WiFi.localIP().toString().c_str());
   } else {
-    Serial.println(F("[WIFI] Connection timeout. Operating in autonomous standalone mode."));
+    Serial.println(F("[WIFI] Connection timeout. Activating fallback Local AP mode."));
     digitalWrite(PIN_STATUS_LED, LOW);
-    printLcdRow(1, "STANDALONE MODE");
+    toggleApMode();
   }
-  delay(1000);
+
+  // Start Embedded Local Console Server
+  setupLocalWebServer();
+  delay(1200);
 }
 
 // =============================================================================
-// 8. MATHEMATICAL PROCESSING: EMA, HORIZON, ARRHENIUS, HEALTH INDEX
+// 9. MATHEMATICAL PROCESSING: EMA, HORIZON, ARRHENIUS, HEALTH INDEX
 // =============================================================================
 void processThermalAnalytics(float rawCore, float rawInlet, float dtSeconds) {
   // 1. Temperature Sensor Sanity Guard
@@ -391,7 +632,7 @@ void processThermalAnalytics(float rawCore, float rawInlet, float dtSeconds) {
 }
 
 // =============================================================================
-// 9. ELECTRICAL TELEMETRY SAMPLING (3x INA219)
+// 10. ELECTRICAL TELEMETRY SAMPLING (3x INA219)
 // =============================================================================
 void sampleElectricalTelemetry() {
   // Rail 1: 12V Main Load
@@ -423,11 +664,10 @@ void sampleElectricalTelemetry() {
 }
 
 // =============================================================================
-// 10. CLOUD EDGE TELEMETRY & COMMAND DISPATCH
+// 11. CLOUD EDGE TELEMETRY & COMMAND DISPATCH
 // =============================================================================
 void syncWithCloudflareEdge() {
   if (WiFi.status() != WL_CONNECTED) {
-    WiFi.reconnect();
     return;
   }
 
@@ -471,15 +711,15 @@ void syncWithCloudflareEdge() {
 
       // Execute Remote Supervisory Commands from Portal
       if (strcmp(pendingCommand, "POWER_ON") == 0) {
-        Serial.println(F("[COMMAND] Remote POWER_ON command received from cloud"));
+        Serial.println(F("[COMMAND] Remote POWER_ON received from cloud"));
         remotePowerAllowed = true;
         setMainPower(true);
       } else if (strcmp(pendingCommand, "POWER_OFF") == 0) {
-        Serial.println(F("[COMMAND] Remote POWER_OFF command received from cloud"));
+        Serial.println(F("[COMMAND] Remote POWER_OFF received from cloud"));
         remotePowerAllowed = false;
         setMainPower(false);
       } else if (strcmp(pendingCommand, "RESET_FAULT") == 0) {
-        Serial.println(F("[COMMAND] Remote RESET_FAULT command received from cloud"));
+        Serial.println(F("[COMMAND] Remote RESET_FAULT received from cloud"));
         if (telemetry.t_core < CORE_TRIP_LIMIT_C && telemetry.t_predicted < PRED_TRIP_LIMIT_C) {
           telemetry.thermal_trip = false;
           telemetry.overcurrent_trip = false;
@@ -510,14 +750,11 @@ void syncWithCloudflareEdge() {
 }
 
 // =============================================================================
-// 11. 16x2 LCD CAROUSEL DISPLAY
+// 12. 16x2 LCD SCREEN CAROUSEL & ADVANCE
 // =============================================================================
-void updateLcdCarousel() {
+void updateLcdScreen() {
   char line1[17];
   char line2[17];
-
-  // Rotate screen every 2.5 seconds
-  lcdScreenIndex = (lcdScreenIndex + 1) % 4;
 
   if (telemetry.fault_code > 0) {
     // Priority Trip Screen
@@ -550,7 +787,17 @@ void updateLcdCarousel() {
     case 3:
       // Screen 4: Operational System State
       snprintf(line1, sizeof(line1), "RAILS: %s", telemetry.pson_active ? "ENERGIZED" : "ISOLATED ");
-      snprintf(line2, sizeof(line2), "STATE: %s", (WiFi.status() == WL_CONNECTED) ? "ONLINE [OK]" : "STANDALONE");
+      if (WiFi.status() == WL_CONNECTED) {
+        snprintf(line2, sizeof(line2), "IP:%s", WiFi.localIP().toString().c_str());
+      } else {
+        snprintf(line2, sizeof(line2), "STATE:STANDALONE");
+      }
+      break;
+
+    case 4:
+      // Screen 5: Local SoftAP Information
+      snprintf(line1, sizeof(line1), "AP:%s", apModeActive ? "ACTIVE [ON]" : "STANDBY [OFF]");
+      snprintf(line2, sizeof(line2), "%s", apModeActive ? "192.168.4.1" : "HOLD BTN FOR AP");
       break;
   }
 
@@ -558,41 +805,76 @@ void updateLcdCarousel() {
   printLcdRow(1, line2);
 }
 
+void advanceLcdScreen() {
+  lcdScreenIndex = (lcdScreenIndex + 1) % 5;
+  lastLcdTick = millis();
+  updateLcdScreen();
+  Serial.printf("[HMI] Button tap: Switched to LCD screen %d\n", lcdScreenIndex);
+}
+
 // =============================================================================
-// 12. MAIN FREE-RUNNING REAL-TIME LOOP
+// 13. MAIN FREE-RUNNING REAL-TIME LOOP
 // =============================================================================
 void loop() {
   unsigned long now = millis();
 
-  // --- Task A: Read Front-Panel HMI Controls (40ms Debounce) ---
-  if (updateDebouncedInput(btnSetup)) {
-    if (btnSetup.stable == LOW) { // Button Pressed
-      setupModeActive = !setupModeActive;
-      Serial.printf("[HMI] Setup push-button toggled. Setup Mode: %s\n", setupModeActive ? "ACTIVE" : "INACTIVE");
+  // --- Task 0: Handle Embedded Web Server & DNS Captive Portal ---
+  server.handleClient();
+  if (apModeActive) {
+    dnsServer.processNextRequest();
+  }
+
+  // --- Task A: Read Front-Panel HMI Controls (Tap vs Long-Hold) ---
+  bool btnRaw = digitalRead(PIN_BTN_SETUP);
+
+  if (btnRaw == LOW && !btnIsPressed) {
+    // Button just pressed down
+    btnIsPressed = true;
+    btnPressStart = now;
+  } else if (btnRaw == HIGH && btnIsPressed) {
+    // Button released
+    unsigned long pressDuration = now - btnPressStart;
+    btnIsPressed = false;
+
+    if (pressDuration >= 2000) {
+      // Long press (>= 2.0s): Toggle Local AP Mode
+      toggleApMode();
+    } else if (pressDuration >= DEBOUNCE_MS) {
+      // Short tap (< 2.0s): Step to next LCD screen immediately
+      advanceLcdScreen();
     }
   }
 
+  // Master Rocker Interlock Switch
   if (updateDebouncedInput(swRocker)) {
     Serial.printf("[HMI] Rocker switch state changed to %s\n", (swRocker.stable == LOW) ? "CLOSED [ON]" : "OPEN [OFF]");
     setMainPower(swRocker.stable == LOW);
   }
 
-  // Status LED Signaling: 400ms flash in setup mode, solid ON if normal, fast strobe if tripped
+  // --- Task B: Enhanced LED Diagnostic Signaling ---
   if (telemetry.fault_code > 0) {
+    // 100ms Rapid Strobe on Safety Trip
     if (now - lastBlinkTick >= 100) {
       lastBlinkTick = now;
-      digitalWrite(PIN_STATUS_LED, !digitalRead(PIN_STATUS_LED)); // 100ms rapid strobe
+      digitalWrite(PIN_STATUS_LED, !digitalRead(PIN_STATUS_LED));
     }
-  } else if (setupModeActive) {
-    if (now - lastBlinkTick >= 400) {
+  } else if (apModeActive) {
+    // 1 Hz Cadence Pulse (500ms ON / 500ms OFF) in Local AP Mode
+    if (now - lastBlinkTick >= 500) {
       lastBlinkTick = now;
-      digitalWrite(PIN_STATUS_LED, !digitalRead(PIN_STATUS_LED)); // 400ms setup cadence
+      digitalWrite(PIN_STATUS_LED, !digitalRead(PIN_STATUS_LED));
     }
+  } else if (WiFi.status() != WL_CONNECTED) {
+    // Industrial Double-Strobe every 2000ms when Disconnected/Standalone
+    unsigned long cyclePos = now % 2000;
+    bool ledOn = (cyclePos < 80) || (cyclePos >= 180 && cyclePos < 260);
+    digitalWrite(PIN_STATUS_LED, ledOn ? HIGH : LOW);
   } else {
+    // Solid Continuous ON when main rails are energized; OFF when isolated
     digitalWrite(PIN_STATUS_LED, telemetry.pson_active ? HIGH : LOW);
   }
 
-  // --- Task B: 1 Hz High-Precision Telemetry Sampling & Analytics ---
+  // --- Task C: 1 Hz High-Precision Telemetry Sampling & Analytics ---
   if (now - lastSampleTick >= 1000) {
     float dtSeconds = (now - lastSampleTick) / 1000.0f;
     lastSampleTick = now;
@@ -617,13 +899,14 @@ void loop() {
                   telemetry.v_12v, telemetry.i_12v, telemetry.health_index, telemetry.pson_active);
   }
 
-  // --- Task C: 2.5s Alphanumeric 1602 LCD Carousel ---
+  // --- Task D: 2.5s Alphanumeric 1602 LCD Automatic Carousel ---
   if (now - lastLcdTick >= 2500) {
     lastLcdTick = now;
-    updateLcdCarousel();
+    lcdScreenIndex = (lcdScreenIndex + 1) % 5;
+    updateLcdScreen();
   }
 
-  // --- Task D: 3s Cloudflare Worker Edge Telemetry Sync & Command Fetch ---
+  // --- Task E: 3s Cloudflare Worker Edge Telemetry Sync & Command Fetch ---
   if (now - lastCloudTick >= 3000) {
     lastCloudTick = now;
     syncWithCloudflareEdge();
