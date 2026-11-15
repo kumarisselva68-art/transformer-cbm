@@ -19,7 +19,7 @@ A condition-based monitoring (CBM) and autonomous supervisory protection platfor
 
 ---
 
-## System Architecture
+## System Architecture & Engineering Schematics
 
 ```
                   PHYSICAL HARDWARE TIER
@@ -58,6 +58,55 @@ A condition-based monitoring (CBM) and autonomous supervisory protection platfor
 | - Prognostics: IEEE Std C57.91 Arrhenius Life Estimator     |
 +-------------------------------------------------------------+
 ```
+
+---
+
+### Master Hardware Circuit Wiring Schematic
+High-density pin-accurate wiring diagram illustrating ATX power distribution, multi-channel INA219 current sensing, TB6612 dynamic fan driver, parallel 1602 LCD bus, and active-low 2N3904 transistor trip interlock.
+
+[![Master Hardware Circuit Schematic](documentation/diagrams/transformer_cbm_circuit_diagram.svg)](documentation/diagrams/transformer_cbm_circuit_diagram.svg)
+
+*Interactive viewer available at [documentation/diagrams/transformer_cbm_circuit_diagram.html](documentation/diagrams/transformer_cbm_circuit_diagram.html).*
+
+---
+
+### System Architecture Block Diagrams
+
+#### Hardware Circuit Topology (Diagram 1)
+Dual-rail power distribution from ATX SMPS, INA219 digital power monitors on +12V, +5V, and +3.3V rails, dual 1-Wire DS18B20 digital thermal probes, and isolated transistor trip stage.
+
+[![Hardware Circuit Block Diagram](documentation/diagrams/diagram_1_hardware_block.svg)](documentation/diagrams/diagram_1_hardware_block.svg)
+
+#### Software & Cloud Telemetry Pipeline (Diagram 2)
+Dual-core FreeRTOS firmware state loop on ESP32, TLS 1.3 HTTPS telemetry streaming, Cloudflare D1 serverless database ingestion, and Brevo transactional incident dispatching.
+
+[![Software & Cloud Block Diagram](documentation/diagrams/diagram_2_software_cloud_block.svg)](documentation/diagrams/diagram_2_software_cloud_block.svg)
+
+#### Combined End-to-End System Architecture (Diagram 3)
+Complete hardware-to-cloud supervisory topology bridging physical magnetic components and sensors to edge intelligence and real-time operator portals.
+
+[![Combined Architecture Diagram](documentation/diagrams/diagram_3_combined_architecture_block.svg)](documentation/diagrams/diagram_3_combined_architecture_block.svg)
+
+---
+
+### Operational State Automata & Algorithmic Flowcharts
+
+#### Hardware Operational State Machine (Diagram 4)
+Finite state machine executed on ESP32 FreeRTOS Core 1 managing transitions between INITIALIZATION, NOMINAL_OPERATION, ADAPTIVE_COOLING, CRITICAL_OVERTEMP_TRIP, and OPERATOR_OVERRIDE.
+
+[![Hardware State Machine Flowchart](documentation/diagrams/diagram_4_hardware_state_flowchart.svg)](documentation/diagrams/diagram_4_hardware_state_flowchart.svg)
+
+#### Predictive Thermal & Arrhenius Prognostics Algorithm (Diagram 5)
+Mathematical processing pipeline executing 30-sample rolling Ordinary Least Squares (OLS) rate-of-rise trend extrapolation and IEEE Std C57.91 Arrhenius insulation degradation modeling.
+
+[![Predictive Thermal Algorithm Flowchart](documentation/diagrams/diagram_5_predictive_thermal_flowchart.svg)](documentation/diagrams/diagram_5_predictive_thermal_flowchart.svg)
+
+#### Supervisory Multi-Tier Cloud Failsafe Pipeline (Diagram 6)
+Supervisory protection hierarchy enforcing sub-5 millisecond autonomous edge isolation, cloud threshold arbitration, and external engineer notification.
+
+[![Supervisory Cloud Failsafe Flowchart](documentation/diagrams/diagram_6_combined_supervisory_flowchart.svg)](documentation/diagrams/diagram_6_combined_supervisory_flowchart.svg)
+
+*Complete interactive diagram gallery available at [documentation/diagrams/system_diagrams_gallery.html](documentation/diagrams/system_diagrams_gallery.html).*
 
 ---
 
